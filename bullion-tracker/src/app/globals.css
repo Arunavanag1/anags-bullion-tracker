@@ -1,0 +1,136 @@
+@import "tailwindcss";
+
+:root {
+  /* Background colors - warm neutral palette */
+  --bg-primary: #F5F3EF;         /* Page background */
+  --bg-card: #FFFFFF;            /* Card backgrounds */
+  --background-primary: #F5F3EF;
+  --background-secondary: #ECEAE6;
+  --background-card: #FFFFFF;
+
+  /* Section backgrounds */
+  --section-light: #F5F3EF;      /* Light warm neutral */
+  --section-accent: #FFF9F0;     /* Subtle warm accent */
+  --section-gray: #ECEAE6;       /* Medium warm neutral */
+  --section-footer: #FFFFFF;     /* White footer */
+
+  /* Text colors */
+  --text-primary: #2D2A26;       /* Headings, primary text */
+  --text-secondary: #6B6560;     /* Labels, descriptions */
+
+  /* Accent colors - teal and amber */
+  --accent-teal: #2A9D8F;        /* Interactive elements, buttons, active states */
+  --accent-amber: #E9C46A;       /* Highlights, warnings, secondary accent */
+  --accent-primary: #2A9D8F;
+  --accent-secondary: #E9C46A;
+
+  /* Status colors */
+  --positive: #2A9D8F;           /* Gains, positive % */
+  --negative: #E76F51;           /* Losses, negative % */
+  --color-success: #2A9D8F;
+  --color-warning: #E9C46A;
+
+  /* Metal colors */
+  --gold: #D4AF37;               /* Gold metal indicator */
+  --silver: #71706E;             /* Silver metal indicator */
+  --platinum: #8D9093;           /* Platinum metal indicator */
+  --gold-accent: #D4AF37;
+  --silver-accent: #71706E;
+  --platinum-accent: #8D9093;
+
+  /* Border color - warm tint */
+  --border: #D4CFCA;
+}
+
+@theme inline {
+  /* Background colors */
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-card: var(--bg-card);
+  --color-background-primary: var(--background-primary);
+  --color-background-secondary: var(--background-secondary);
+  --color-background-card: var(--background-card);
+
+  /* Section backgrounds */
+  --color-section-light: var(--section-light);
+  --color-section-accent: var(--section-accent);
+  --color-section-gray: var(--section-gray);
+  --color-section-footer: var(--section-footer);
+
+  /* Text colors */
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+
+  /* Accent colors */
+  --color-accent-teal: var(--accent-teal);
+  --color-accent-amber: var(--accent-amber);
+  --color-accent-primary: var(--accent-primary);
+  --color-accent-secondary: var(--accent-secondary);
+
+  /* Status colors */
+  --color-positive: var(--positive);
+  --color-negative: var(--negative);
+  --color-success: var(--color-success);
+  --color-warning: var(--color-warning);
+
+  /* Metal colors */
+  --color-gold: var(--gold);
+  --color-silver: var(--silver);
+  --color-platinum: var(--platinum);
+
+  /* Border */
+  --color-border: var(--border);
+
+  /* Fonts */
+  --font-heading: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, 'JetBrains Mono', monospace;
+}
+
+body {
+  background: var(--background-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Headings use Geist font */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+}
+
+/* Tabular figures for numerical data */
+.font-mono,
+.tabular-nums {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Smooth transitions for all interactive elements */
+button,
+a,
+input,
+textarea,
+select {
+  transition: all 150ms ease-in-out;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}

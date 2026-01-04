@@ -1,0 +1,175 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  emailVerified DateTime?
+  name          String?
+  password      String?   // Hashed password for email/password auth
+  image         String?
+
+  items         CollectionItem[]
+  snapshots     PortfolioSnapshot[]
+  accounts      Account[]
+  sessions      Session[]
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model CollectionItem {
+  id                  String   @id @default(cuid())
+  userId              String
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  type                String   // 'itemized' | 'bulk'
+  title               String?  // For itemized only
+  metal               String   // 'gold' | 'silver' | 'platinum'
+  quantity            Int      @default(1)
+  weightOz            Float
+  grade               String?
+  gradingService      String?
+  notes               String?
+
+  images              Image[]
+
+  bookValueType       String   // 'custom' | 'spot'
+  customBookValue     Float?
+  spotPriceAtCreation Float
+  purchaseDate        DateTime?
+
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model Image {
+  id        String   @id @default(cuid())
+  url       String
+  itemId    String
+  item      CollectionItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([itemId])
+}
+
+model PriceHistory {
+  id        String   @id @default(cuid())
+  metal     String
+  priceOz   Float
+  timestamp DateTime @default(now())
+
+  @@index([metal, timestamp])
+}
+
+model PortfolioSnapshot {
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  timestamp      DateTime @default(now())
+  totalMeltValue Float
+  totalBookValue Float
+  goldOz         Float
+  silverOz       Float
+  platinumOz     Float
+  goldPrice      Float
+  silverPrice    Float
+  platinumPrice  Float
+
+  @@index([userId, timestamp])
+}
+
+// OAuth/Plaid Integration Models
+model OAuthClient {
+  id             String   @id @default(cuid())
+  clientId       String   @unique
+  clientSecret   String
+  name           String   // e.g., "Plaid"
+  redirectUris   String[] // Allowed redirect URIs
+  createdAt      DateTime @default(now())
+
+  authCodes      OAuthAuthorizationCode[]
+  refreshTokens  OAuthRefreshToken[]
+}
+
+model OAuthAuthorizationCode {
+  id              String   @id @default(cuid())
+  code            String   @unique
+  clientId        String
+  client          OAuthClient @relation(fields: [clientId], references: [clientId], onDelete: Cascade)
+  userId          String
+  redirectUri     String
+  scope           String
+  codeChallenge   String?  // For PKCE
+  codeChallengeMethod String? // S256
+  expiresAt       DateTime
+  used            Boolean  @default(false)
+  createdAt       DateTime @default(now())
+
+  @@index([code])
+  @@index([clientId])
+}
+
+model OAuthRefreshToken {
+  id          String   @id @default(cuid())
+  token       String   @unique
+  clientId    String
+  client      OAuthClient @relation(fields: [clientId], references: [clientId], onDelete: Cascade)
+  userId      String
+  scope       String
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+
+  @@index([token])
+  @@index([clientId])
+  @@index([userId])
+}

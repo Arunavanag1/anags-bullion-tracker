@@ -1,0 +1,45 @@
+{
+  "expo": {
+    "name": "Bullion Tracker",
+    "slug": "bullion-tracker-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FFFBF8"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.bulliontracker.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FFFBF8"
+      },
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false,
+      "package": "com.bulliontracker.app"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "metalPriceApiKey": "de370593eb772aeca103b27bb7c8c226"
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow Bullion Tracker to access your photos to add images of your bullion items.",
+          "cameraPermission": "Allow Bullion Tracker to use your camera to take photos of your bullion items."
+        }
+      ],
+      "expo-secure-store"
+    ]
+  }
+}
