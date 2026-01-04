@@ -14,6 +14,9 @@ import {
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { EditItemModal } from './EditItemModal';
+import { CategoryBadge } from '@/components/numismatic/CategoryBadge';
+import { ConfidenceIndicator } from '@/components/numismatic/ConfidenceIndicator';
+import { ProblemBadge } from '@/components/numismatic/ProblemBadge';
 import { cn } from '@/lib/utils';
 
 interface CollectionCardProps {
@@ -35,10 +38,11 @@ export function CollectionCard({ item }: CollectionCardProps) {
   );
 
   const quantity = 'quantity' in item ? item.quantity : 1;
-  const totalWeight = item.weightOz * quantity;
+  const totalWeight = (item.weightOz || 0) * quantity;
   const hasImage = item.images && item.images.length > 0;
-  const displayTitle =
-    item.type === 'itemized' && 'title' in item ? item.title : `${item.metal.toUpperCase()} (Bulk)`;
+  const displayTitle = item.category === 'NUMISMATIC'
+    ? item.title || 'Numismatic Coin'
+    : (item.type === 'itemized' && 'title' in item ? item.title : `${item.metal.toUpperCase()} (Bulk)`);
 
   const handleDelete = async () => {
     if (confirm('Are you sure you want to delete this item?')) {
@@ -66,15 +70,22 @@ export function CollectionCard({ item }: CollectionCardProps) {
         </div>
       )}
 
-      {/* Title */}
+      {/* Title and Category Badge */}
       <div className="mb-3">
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+          <CategoryBadge category={item.category as 'BULLION' | 'NUMISMATIC'} />
+          {item.isProblemCoin && item.problemType && (
+            <ProblemBadge problemType={item.problemType} />
+          )}
+        </div>
         <h3 className="text-lg font-semibold text-text-primary line-clamp-2">
           {displayTitle}
         </h3>
-        {item.type === 'itemized' && item.grade && (
+        {item.category === 'NUMISMATIC' && (
           <div className="text-sm text-text-secondary mt-1">
             {item.gradingService && `${item.gradingService} `}
             {item.grade}
+            {item.certNumber && ` • Cert #${item.certNumber}`}
           </div>
         )}
       </div>
@@ -111,6 +122,11 @@ export function CollectionCard({ item }: CollectionCardProps) {
             </span>
           </div>
         </div>
+        {item.category === 'NUMISMATIC' && item.confidenceLevel && (
+          <div style={{ paddingTop: '8px' }}>
+            <ConfidenceIndicator level={item.confidenceLevel as 'high' | 'medium' | 'low' | 'user'} />
+          </div>
+        )}
       </div>
 
       {/* Expanded Details */}

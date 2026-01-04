@@ -8,6 +8,7 @@ import { calculateCurrentMeltValue, calculateCurrentBookValue } from '@/lib/calc
 import type { Metal, CollectionItem } from '@/types';
 
 type SortOption = 'date' | 'metal' | 'melt' | 'book' | 'weight';
+type CategoryFilter = 'all' | 'BULLION' | 'NUMISMATIC';
 
 interface CollectionGridProps {
   onAddItem: () => void;
@@ -17,14 +18,22 @@ export function CollectionGrid({ onAddItem }: CollectionGridProps) {
   const { data: items, isLoading, error } = useCollection();
   const { data: prices } = useSpotPrices();
   const [filterMetal, setFilterMetal] = useState<Metal | 'all'>('all');
+  const [filterCategory, setFilterCategory] = useState<CategoryFilter>('all');
   const [sortBy, setSortBy] = useState<SortOption>('date');
 
   // Filter and sort items
   const processedItems = useMemo(() => {
     if (!items || !prices) return [];
 
-    // Filter by metal
-    let filtered = filterMetal === 'all' ? items : items.filter((item: CollectionItem) => item.metal === filterMetal);
+    // Filter by category
+    let filtered = filterCategory === 'all'
+      ? items
+      : items.filter((item: CollectionItem) => item.category === filterCategory);
+
+    // Filter by metal (only for bullion items or when category is 'all')
+    if (filterMetal !== 'all') {
+      filtered = filtered.filter((item: CollectionItem) => item.metal === filterMetal);
+    }
 
     // Sort
     const sorted = [...filtered].sort((a: CollectionItem, b: CollectionItem) => {
@@ -63,13 +72,70 @@ export function CollectionGrid({ onAddItem }: CollectionGridProps) {
     });
 
     return sorted;
-  }, [items, prices, filterMetal, sortBy]);
+  }, [items, prices, filterMetal, filterCategory, sortBy]);
 
   return (
     <div style={{ fontFamily: "'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif" }}>
+      {/* Header with Add Piece button */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
+        <h2 style={{ fontSize: "22px", fontWeight: "600", color: "#1a1a1a", margin: 0 }}>
+          Collection
+        </h2>
+        <button
+          onClick={onAddItem}
+          style={{
+            background: "#1a1a1a",
+            color: "white",
+            border: "none",
+            borderRadius: "10px",
+            padding: "10px 20px",
+            fontSize: "14px",
+            fontWeight: "500",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: "6px",
+          }}
+        >
+          + Add Piece
+        </button>
+      </div>
+
       {/* Header with filters */}
       <div style={{ marginBottom: "28px" }}>
-        {/* Filter Section */}
+        {/* Category Filter Section */}
+        <div style={{ marginBottom: "20px" }}>
+          <span style={{
+            fontSize: "12px",
+            fontWeight: "600",
+            color: "#888",
+            textTransform: "uppercase",
+            letterSpacing: "0.5px",
+            display: "block",
+            marginBottom: "12px",
+          }}>
+            Filter by Category
+          </span>
+          <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+            <FilterButton
+              label="All"
+              active={filterCategory === 'all'}
+              onClick={() => setFilterCategory('all')}
+            />
+            <FilterButton
+              label="Bullion"
+              active={filterCategory === 'BULLION'}
+              onClick={() => setFilterCategory('BULLION')}
+            />
+            <FilterButton
+              label="Numismatic"
+              active={filterCategory === 'NUMISMATIC'}
+              onClick={() => setFilterCategory('NUMISMATIC')}
+            />
+          </div>
+        </div>
+
+        {/* Metal Filter Section */}
         <div style={{ marginBottom: "20px" }}>
           <span style={{
             fontSize: "12px",

@@ -53,6 +53,16 @@ export async function GET(request: NextRequest) {
         createdAt: item.createdAt,
         updatedAt: item.updatedAt,
         images: item.images.map((img) => img.url),
+        // Numismatic fields
+        category: (item.category as 'BULLION' | 'NUMISMATIC') || 'BULLION',
+        coinReferenceId: item.coinReferenceId || undefined,
+        certNumber: item.certNumber || undefined,
+        isProblemCoin: item.isProblemCoin || false,
+        problemType: item.problemType || undefined,
+        isGradeEstimated: item.isGradeEstimated || false,
+        numismaticValue: item.numismaticValue ? Number(item.numismaticValue) : undefined,
+        confidenceLevel: item.confidenceLevel || undefined,
+        purchaseDate: item.purchaseDate || undefined,
       };
 
       if (item.type === 'itemized') {
@@ -69,6 +79,8 @@ export async function GET(request: NextRequest) {
         return {
           ...baseItem,
           type: 'bulk' as const,
+          grade: item.grade || undefined,
+          gradingService: item.gradingService || undefined,
           notes: item.notes || undefined,
         };
       }

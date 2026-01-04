@@ -6,7 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAccessToken } from '@/lib/plaid/oauth-tokens';
 import { prisma } from '@/lib/db';
-import { getSpotPrices } from '@/lib/prices';
+import { fetchSpotPrices } from '@/lib/prices';
 
 export async function GET(
   request: NextRequest,
@@ -40,7 +40,7 @@ export async function GET(
     });
 
     // Get current spot prices
-    const spotPrices = await getSpotPrices();
+    const spotPrices = await fetchSpotPrices();
 
     // Group by metal
     const metalGroups: Record<string, {oz: number; value: number}> = {};

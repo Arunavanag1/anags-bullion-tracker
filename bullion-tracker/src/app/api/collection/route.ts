@@ -64,36 +64,102 @@ export async function POST(request: NextRequest) {
     const userId = await getUserId();
     const body = await request.json();
 
-    // Validate required fields
-    const { type, metal, weightOz, bookValueType, spotPriceAtCreation } = body;
+    const { category } = body;
 
-    if (!type || !metal || !weightOz || !bookValueType || spotPriceAtCreation === undefined) {
+    // Build create data based on category
+    const createData: any = {
+      userId,
+      category,
+    };
+
+    if (category === 'BULLION') {
+      // Validate bullion required fields
+      const { type, metal, weightOz, bookValueType, spotPriceAtCreation } = body;
+
+      if (!type || !metal || !weightOz || !bookValueType || spotPriceAtCreation === undefined) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'Missing required bullion fields',
+          },
+          { status: 400 }
+        );
+      }
+
+      createData.type = type;
+      createData.metal = metal;
+      createData.quantity = body.quantity || 1;
+      createData.weightOz = weightOz;
+      createData.bookValueType = bookValueType;
+      createData.spotPriceAtCreation = spotPriceAtCreation;
+
+      if (body.title !== undefined) createData.title = body.title;
+      if (body.customBookValue !== undefined) createData.customBookValue = body.customBookValue;
+    } else if (category === 'NUMISMATIC') {
+      // Validate numismatic required fields
+      const { coinReferenceId, grade, gradingService, bookValueType, metal } = body;
+
+      if (!coinReferenceId || !grade || !gradingService || !bookValueType) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'Missing required numismatic fields',
+          },
+          { status: 400 }
+        );
+      }
+
+      // Fetch coin reference to get metal, weight, and build title
+      const coinReference = await prisma.coinReference.findUnique({
+        where: { id: coinReferenceId },
+      });
+
+      if (!coinReference) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'Coin reference not found',
+          },
+          { status: 404 }
+        );
+      }
+
+      // Use provided metal, or fall back to coin reference metal
+      const finalMetal = metal || coinReference.metal || 'silver';
+      const finalWeightOz = coinReference.weightOz ? parseFloat(coinReference.weightOz.toString()) : null;
+
+      // Build title: [Year] [Grading Service/RAW] [Grade] [Denomination] [Coin Name]
+      // Example: "2025 PCGS MS65 $1 Morgan Dollar"
+      const gradingLabel = gradingService === 'RAW' ? 'RAW' : gradingService;
+      const gradeLabel = body.isGradeEstimated ? `~${grade}` : grade;
+      const title = `${coinReference.year} ${gradingLabel} ${gradeLabel} ${coinReference.denomination} ${coinReference.series}`.trim();
+
+      createData.coinReferenceId = coinReferenceId;
+      createData.grade = grade;
+      createData.gradingService = gradingService;
+      createData.bookValueType = bookValueType;
+      createData.metal = finalMetal;
+      createData.title = title;
+      if (finalWeightOz !== null) createData.weightOz = finalWeightOz;
+
+      if (body.certNumber !== undefined) createData.certNumber = body.certNumber;
+      if (body.isProblemCoin !== undefined) createData.isProblemCoin = body.isProblemCoin;
+      if (body.problemType !== undefined) createData.problemType = body.problemType;
+      if (body.isGradeEstimated !== undefined) createData.isGradeEstimated = body.isGradeEstimated;
+      if (body.customBookValue !== undefined) createData.customBookValue = body.customBookValue;
+      if (body.numismaticValue !== undefined) createData.numismaticValue = body.numismaticValue;
+    } else {
       return NextResponse.json(
         {
           success: false,
-          error: 'Missing required fields',
+          error: 'Invalid category',
         },
         { status: 400 }
       );
     }
 
-    // Build create data object, only including defined fields
-    const createData: any = {
-      userId,
-      type,
-      metal,
-      quantity: body.quantity || 1,
-      weightOz,
-      bookValueType,
-      spotPriceAtCreation,
-    };
-
-    // Add optional fields only if they are defined
-    if (body.title !== undefined) createData.title = body.title;
-    if (body.grade !== undefined) createData.grade = body.grade;
-    if (body.gradingService !== undefined) createData.gradingService = body.gradingService;
+    // Add common optional fields
     if (body.notes !== undefined) createData.notes = body.notes;
-    if (body.customBookValue !== undefined) createData.customBookValue = body.customBookValue;
     if (body.purchaseDate) createData.purchaseDate = new Date(body.purchaseDate);
     if (body.images && body.images.length > 0) {
       createData.images = {

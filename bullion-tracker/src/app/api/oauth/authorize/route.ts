@@ -4,8 +4,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
+import { getUserId } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import { createAuthorizationCode } from '@/lib/plaid/oauth-tokens';
 
@@ -45,18 +44,15 @@ export async function GET(request: NextRequest) {
   }
 
   // Check if user is logged in
-  const session = await getServerSession(authOptions);
-
-  if (!session?.user?.id) {
+  let userId: string;
+  try {
+    userId = await getUserId();
+  } catch (error) {
     // Redirect to login with return URL
     const loginUrl = new URL('/auth/signin', request.url);
     loginUrl.searchParams.set('callbackUrl', request.url);
     return NextResponse.redirect(loginUrl);
   }
-
-  // User is authenticated - show consent screen
-  // For now, auto-approve (in production, show consent UI)
-  const userId = session.user.id;
 
   // Generate authorization code
   const code = createAuthorizationCode();

@@ -30,6 +30,17 @@ export interface ItemizedPiece {
   spotPriceAtCreation: number;
   createdAt: Date;
   updatedAt: Date;
+
+  // Category and numismatic fields
+  category: 'BULLION' | 'NUMISMATIC';
+  coinReferenceId?: string;
+  certNumber?: string;
+  isProblemCoin: boolean;
+  problemType?: string;
+  isGradeEstimated: boolean;
+  numismaticValue?: number;
+  confidenceLevel?: string;
+  purchaseDate?: Date;
 }
 
 export interface BulkWeight {
@@ -45,6 +56,19 @@ export interface BulkWeight {
   spotPriceAtCreation: number;
   createdAt: Date;
   updatedAt: Date;
+
+  // Category and numismatic fields
+  category: 'BULLION' | 'NUMISMATIC';
+  coinReferenceId?: string;
+  certNumber?: string;
+  grade?: string;
+  gradingService?: string;
+  isProblemCoin: boolean;
+  problemType?: string;
+  isGradeEstimated: boolean;
+  numismaticValue?: number;
+  confidenceLevel?: string;
+  purchaseDate?: Date;
 }
 
 export type CollectionItem = ItemizedPiece | BulkWeight;

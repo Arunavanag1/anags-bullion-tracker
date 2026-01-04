@@ -69,26 +69,43 @@ model CollectionItem {
   userId              String
   user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  type                String   // 'itemized' | 'bulk'
-  title               String?  // For itemized only
-  metal               String   // 'gold' | 'silver' | 'platinum'
-  quantity            Int      @default(1)
-  weightOz            Float
-  grade               String?
-  gradingService      String?
-  notes               String?
+  // Category: 'BULLION' or 'NUMISMATIC'
+  category            String   @default("BULLION")
 
+  // Bullion fields
+  type                String?  // 'itemized' | 'bulk' (for bullion)
+  title               String?  // For itemized bullion or numismatic display
+  metal               String   // 'gold' | 'silver' | 'platinum' | 'copper'
+  quantity            Int      @default(1)
+  weightOz            Float?   // Optional for numismatics
+
+  // Numismatic fields
+  coinReferenceId     String?  // FK to CoinReference
+  certNumber          String?  // Grading cert number
+  grade               String?  // MS65, PR70, AU58, etc.
+  gradingService      String?  // PCGS, NGC, RAW
+  isProblemCoin       Boolean  @default(false)
+  problemType         String?  // cleaned, damaged, etc.
+  isGradeEstimated    Boolean  @default(false)
+
+  // Shared fields
+  notes               String?
   images              Image[]
 
-  bookValueType       String   // 'custom' | 'spot'
+  // Valuation
+  bookValueType       String   // 'custom' | 'spot' | 'numismatic'
   customBookValue     Float?
-  spotPriceAtCreation Float
+  numismaticValue     Float?   // Auto-populated from price guide
+  confidenceLevel     String?  // 'high' | 'medium' | 'low' | 'user'
+  spotPriceAtCreation Float?
   purchaseDate        DateTime?
 
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 
   @@index([userId])
+  @@index([category])
+  @@index([coinReferenceId])
 }
 
 model Image {
@@ -172,4 +189,57 @@ model OAuthRefreshToken {
   @@index([token])
   @@index([clientId])
   @@index([userId])
+}
+
+// Numismatics/Coin Reference Models
+model CoinReference {
+  id           String   @id @default(cuid())
+  pcgsNumber   Int      @unique
+  ngcNumber    Int?
+  year         Int
+  mintMark     String?  @db.VarChar(5)
+  denomination String   @db.VarChar(50)
+  series       String   @db.VarChar(100)
+  variety      String?  @db.VarChar(200)
+  metal        String?  @db.VarChar(20)
+  weightOz     Decimal? @db.Decimal(10, 4)
+  fineness     Decimal? @db.Decimal(5, 4)
+  mintage      Int?
+  fullName     String   @db.VarChar(300)
+  searchTokens String?  // Will be populated by scraper for full-text search
+
+  priceGuides  CoinPriceGuide[]
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([pcgsNumber])
+  @@index([series])
+  @@index([year])
+}
+
+model ValidGrade {
+  id            String   @id @default(cuid())
+  gradeCode     String   @unique @db.VarChar(10)
+  numericValue  Int
+  gradeCategory String   @db.VarChar(30)
+  displayOrder  Int
+
+  priceGuides   CoinPriceGuide[]
+
+  @@index([gradeCode])
+}
+
+model CoinPriceGuide {
+  id              String   @id @default(cuid())
+  coinReferenceId String
+  coinReference   CoinReference @relation(fields: [coinReferenceId], references: [id], onDelete: Cascade)
+  gradeCode       String   @db.VarChar(10)
+  grade           ValidGrade @relation(fields: [gradeCode], references: [gradeCode])
+  pcgsPrice       Decimal? @db.Decimal(12, 2)
+  priceDate       DateTime @db.Date
+  createdAt       DateTime @default(now())
+
+  @@unique([coinReferenceId, gradeCode, priceDate])
+  @@index([coinReferenceId, gradeCode])
 }

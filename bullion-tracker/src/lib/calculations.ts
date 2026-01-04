@@ -3,6 +3,8 @@ import { CollectionItem, CalculatedValues, Metal, CollectionSummary } from '@/ty
 /**
  * Calculate the current book value for a collection item based on current spot price
  * Implements the dynamic tracking logic:
+ * - For numismatic items: returns numismaticValue or customBookValue
+ * - For bullion with spot tracking: returns current melt value
  * - If custom book value is within 30% of spot melt value at creation, it tracks with spot
  * - Otherwise, it grows at 1% per annum from purchase date
  */
@@ -10,9 +12,22 @@ export function calculateCurrentBookValue(
   item: CollectionItem,
   currentSpotPrice: number
 ): number {
+  // Handle numismatic items
+  if (item.category === 'NUMISMATIC') {
+    if (item.bookValueType === 'numismatic' && item.numismaticValue !== undefined) {
+      return item.numismaticValue;
+    }
+    if (item.customBookValue !== undefined) {
+      return item.customBookValue;
+    }
+    // Fallback to 0 if no value is set
+    return 0;
+  }
+
+  // Handle bullion items
   const quantity = 'quantity' in item ? item.quantity : 1;
-  const totalWeight = item.weightOz * quantity;
-  const originalMelt = totalWeight * item.spotPriceAtCreation;
+  const totalWeight = (item.weightOz || 0) * quantity;
+  const originalMelt = totalWeight * (item.spotPriceAtCreation || currentSpotPrice);
 
   // If using spot value, just return current melt value
   if (item.bookValueType === 'spot') {
@@ -25,7 +40,7 @@ export function calculateCurrentBookValue(
 
   // Within 30% threshold - track with spot price movement proportionally
   if (percentDiff <= 0.30) {
-    const priceRatio = currentSpotPrice / item.spotPriceAtCreation;
+    const priceRatio = currentSpotPrice / (item.spotPriceAtCreation || currentSpotPrice);
     return customValue * priceRatio;
   }
 
@@ -50,7 +65,7 @@ export function calculateCurrentMeltValue(
   currentSpotPrice: number
 ): number {
   const quantity = 'quantity' in item ? item.quantity : 1;
-  return item.weightOz * quantity * currentSpotPrice;
+  return (item.weightOz || 0) * quantity * currentSpotPrice;
 }
 
 /**
