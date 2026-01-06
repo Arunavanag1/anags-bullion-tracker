@@ -34,8 +34,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function loadStoredAuth() {
     try {
-      const storedToken = await SecureStore.getItemAsync(TOKEN_KEY);
-      const storedUser = await SecureStore.getItemAsync(USER_KEY);
+      // Add timeout to prevent hanging on SecureStore issues
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('SecureStore timeout')), 3000)
+      );
+
+      const loadPromise = async () => {
+        const storedToken = await SecureStore.getItemAsync(TOKEN_KEY);
+        const storedUser = await SecureStore.getItemAsync(USER_KEY);
+        return { storedToken, storedUser };
+      };
+
+      const { storedToken, storedUser } = await Promise.race([
+        loadPromise(),
+        timeoutPromise
+      ]) as { storedToken: string | null; storedUser: string | null };
 
       if (storedToken && storedUser) {
         setToken(storedToken);

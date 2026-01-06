@@ -11,6 +11,9 @@ interface HistoricalPoint {
   date: string;
   meltValue: number;
   bookValue: number;
+  bullionValue: number;
+  numismaticValue: number;
+  totalValue: number;
   timestamp: number;
 }
 
@@ -110,11 +113,23 @@ export async function GET(request: NextRequest) {
     const portfolioHistory: HistoricalPoint[] = historicalPrices.map((pricePoint) => {
       let meltValue = 0;
       let bookValue = 0;
+      let bullionValue = 0;
+      let numismaticValue = 0;
 
       collection.forEach((item) => {
         const spotPrice = pricePoint[item.metal];
-        meltValue += calculateCurrentMeltValue(item, spotPrice);
-        bookValue += calculateCurrentBookValue(item, spotPrice);
+        const itemMeltValue = calculateCurrentMeltValue(item, spotPrice);
+        const itemBookValue = calculateCurrentBookValue(item, spotPrice);
+
+        meltValue += itemMeltValue;
+        bookValue += itemBookValue;
+
+        // Track by category - numismatic uses its numismaticValue, bullion uses melt
+        if (item.category === 'NUMISMATIC' && item.numismaticValue) {
+          numismaticValue += item.numismaticValue;
+        } else {
+          bullionValue += itemMeltValue;
+        }
       });
 
       const timestamp = pricePoint.timestamp.getTime();
@@ -128,6 +143,9 @@ export async function GET(request: NextRequest) {
         date,
         meltValue: Math.round(meltValue * 100) / 100,
         bookValue: Math.round(bookValue * 100) / 100,
+        bullionValue: Math.round(bullionValue * 100) / 100,
+        numismaticValue: Math.round(numismaticValue * 100) / 100,
+        totalValue: Math.round((bullionValue + numismaticValue) * 100) / 100,
         timestamp,
       };
     });

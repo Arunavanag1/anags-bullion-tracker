@@ -107,6 +107,9 @@ interface HistoricalPoint {
   date: string;
   meltValue: number;
   bookValue: number;
+  bullionValue: number;
+  numismaticValue: number;
+  totalValue: number;
   timestamp: number;
 }
 

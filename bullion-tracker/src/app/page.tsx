@@ -15,8 +15,10 @@ export default function BullionTrackerWeb() {
   const [valuationMode, setValuationMode] = useState<"spot" | "book">("spot");
   const [activeTab, setActiveTab] = useState("dashboard");
   const [timeRange, setTimeRange] = useState<TimeRange>("1M");
+  const [categoryFilter, setCategoryFilter] = useState<"all" | "bullion" | "numismatic">("all");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [expandedItemId, setExpandedItemId] = useState<string | null>(null);
+  const [hoveredPointIndex, setHoveredPointIndex] = useState<number | null>(null);
 
   // Fetch real data
   const { data: spotPricesData } = useSpotPrices();
@@ -89,23 +91,65 @@ export default function BullionTrackerWeb() {
     ? new Date(spotPricesData.gold.lastUpdated).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })
     : "N/A";
 
+  // Get chart value based on category filter
+  const getChartValue = (point: typeof chartPoints[0]) => {
+    switch (categoryFilter) {
+      case "bullion":
+        return point.bullionValue || point.meltValue;
+      case "numismatic":
+        return point.numismaticValue || 0;
+      case "all":
+      default:
+        return point.totalValue || point.meltValue;
+    }
+  };
+
+  // Calculate min/max for Y-axis (always start at 0)
+  const chartValues = chartPoints.map(p => getChartValue(p));
+  const chartMin = 0; // Always start at 0
+  const chartMax = chartValues.length > 0 ? Math.max(...chartValues) * 1.1 : 100; // Add 10% padding at top
+  const chartRange = chartMax - chartMin || 1;
+
+  // Format Y-axis value
+  const formatYAxisValue = (value: number) => {
+    if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`;
+    if (value >= 1000) return `$${(value / 1000).toFixed(0)}K`;
+    return `$${Math.round(value).toLocaleString()}`;
+  };
+
+  // Generate Y-axis ticks (5 evenly spaced from 0 to max)
+  const yAxisTicks = [0, 1, 2, 3, 4].map(i => {
+    const value = chartMax * (4 - i) / 4;
+    return { y: i * 40, value };
+  });
+
+  // Get X,Y coordinates for a point
+  const getPointCoords = (index: number) => {
+    const x = 70 + (index / (chartPoints.length - 1 || 1)) * 910;
+    const value = getChartValue(chartPoints[index]);
+    const y = 20 + ((chartMax - value) / chartRange) * 180;
+    return { x, y, value };
+  };
+
   // Normalize chart data for SVG rendering
   const getChartPath = () => {
     if (chartPoints.length === 0) return "";
 
-    const values = chartPoints.map(p => valuationMode === "spot" ? p.meltValue : p.bookValue);
-    const min = Math.min(...values);
-    const max = Math.max(...values);
-    const range = max - min || 1;
-
     return chartPoints
       .map((point, i) => {
-        const x = (i / (chartPoints.length - 1 || 1)) * 1000;
-        const value = valuationMode === "spot" ? point.meltValue : point.bookValue;
-        const y = 180 - ((value - min) / range) * 150;
+        const { x, y } = getPointCoords(i);
         return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
       })
       .join(' ');
+  };
+
+  // Get category label
+  const getCategoryLabel = () => {
+    switch (categoryFilter) {
+      case "bullion": return "Bullion";
+      case "numismatic": return "Numismatic";
+      default: return "Portfolio";
+    }
   };
 
   return (
@@ -199,7 +243,7 @@ export default function BullionTrackerWeb() {
             display: "flex",
             gap: "8px",
           }}>
-            {["Dashboard", "Collection", "Collage"].map(tab => (
+            {["Dashboard", "Collection"].map(tab => (
               <TabButton
                 key={tab}
                 label={tab}
@@ -208,6 +252,13 @@ export default function BullionTrackerWeb() {
                 badge={tab === "Collection" ? String(totalItems) : null}
               />
             ))}
+            <Link href="/collage">
+              <TabButton
+                label="Collage"
+                active={false}
+                onClick={() => {}}
+              />
+            </Link>
           </div>
         </div>
 
@@ -657,23 +708,66 @@ export default function BullionTrackerWeb() {
                 </div>
               </div>
 
+              {/* Category Filter */}
+              <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "16px" }}>
+                <span style={{ fontSize: "12px", color: "#888" }}>Show:</span>
+                <div style={{ display: "flex", gap: "4px", background: "#f5f5f5", borderRadius: "8px", padding: "3px" }}>
+                  {(["all", "bullion", "numismatic"] as const).map(filter => (
+                    <button
+                      key={filter}
+                      onClick={() => setCategoryFilter(filter)}
+                      style={{
+                        padding: "6px 12px",
+                        fontSize: "13px",
+                        fontWeight: "500",
+                        border: "none",
+                        borderRadius: "6px",
+                        cursor: "pointer",
+                        background: categoryFilter === filter ? "white" : "transparent",
+                        color: categoryFilter === filter ? "#1a1a1a" : "#666",
+                        boxShadow: categoryFilter === filter ? "0 1px 3px rgba(0,0,0,0.1)" : "none",
+                        transition: "all 0.15s ease",
+                        textTransform: "capitalize",
+                      }}
+                    >
+                      {filter === "all" ? "All" : filter.charAt(0).toUpperCase() + filter.slice(1)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               {/* Chart */}
               <div style={{
-                height: "180px",
+                height: "220px",
                 position: "relative",
               }}>
-                <svg width="100%" height="100%" viewBox="0 0 1000 180" preserveAspectRatio="none">
-                  {/* Grid lines */}
-                  {[0, 1, 2, 3].map(i => (
-                    <line
-                      key={i}
-                      x1="0"
-                      y1={i * 60}
-                      x2="1000"
-                      y2={i * 60}
-                      stroke="#f0f0f0"
-                      strokeWidth="1"
-                    />
+                <svg
+                  width="100%"
+                  height="100%"
+                  viewBox="0 0 1000 220"
+                  preserveAspectRatio="xMidYMid meet"
+                  onMouseLeave={() => setHoveredPointIndex(null)}
+                >
+                  {/* Y-axis labels and grid lines */}
+                  {yAxisTicks.map((tick, i) => (
+                    <g key={i}>
+                      <line
+                        x1="70"
+                        y1={20 + i * 45}
+                        x2="980"
+                        y2={20 + i * 45}
+                        stroke="#f0f0f0"
+                        strokeWidth="1"
+                      />
+                      <text
+                        x="65"
+                        y={25 + i * 45}
+                        textAnchor="end"
+                        style={{ fontSize: "12px", fill: "#888" }}
+                      >
+                        {formatYAxisValue(tick.value)}
+                      </text>
+                    </g>
                   ))}
                   {/* Value line */}
                   {chartPoints.length > 0 && (
@@ -686,7 +780,79 @@ export default function BullionTrackerWeb() {
                       strokeLinejoin="round"
                     />
                   )}
+                  {/* Hover targets - invisible circles for each data point */}
+                  {chartPoints.map((point, i) => {
+                    const { x, y } = getPointCoords(i);
+                    return (
+                      <circle
+                        key={i}
+                        cx={x}
+                        cy={y}
+                        r="15"
+                        fill="transparent"
+                        style={{ cursor: "crosshair" }}
+                        onMouseEnter={() => setHoveredPointIndex(i)}
+                      />
+                    );
+                  })}
+                  {/* Highlighted point on hover */}
+                  {hoveredPointIndex !== null && chartPoints.length > 0 && (() => {
+                    const { x, y } = getPointCoords(hoveredPointIndex);
+                    return (
+                      <g>
+                        {/* Vertical line */}
+                        <line
+                          x1={x}
+                          y1={20}
+                          x2={x}
+                          y2={200}
+                          stroke="#D4AF37"
+                          strokeWidth="1"
+                          strokeDasharray="4 4"
+                          opacity="0.5"
+                        />
+                        {/* Dot */}
+                        <circle
+                          cx={x}
+                          cy={y}
+                          r="6"
+                          fill="#D4AF37"
+                          stroke="white"
+                          strokeWidth="2"
+                        />
+                      </g>
+                    );
+                  })()}
                 </svg>
+
+                {/* Tooltip */}
+                {hoveredPointIndex !== null && chartPoints.length > 0 && (() => {
+                  const point = chartPoints[hoveredPointIndex];
+                  const { x, value } = getPointCoords(hoveredPointIndex);
+                  const tooltipX = (x / 1000) * 100; // Convert to percentage
+                  return (
+                    <div style={{
+                      position: "absolute",
+                      left: `${tooltipX}%`,
+                      top: "0",
+                      transform: "translateX(-50%)",
+                      background: "white",
+                      border: "1px solid #e0e0e0",
+                      borderRadius: "8px",
+                      padding: "8px 12px",
+                      boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+                      pointerEvents: "none",
+                      zIndex: 10,
+                    }}>
+                      <div style={{ fontSize: "11px", color: "#888", marginBottom: "2px" }}>
+                        {point.date}
+                      </div>
+                      <div style={{ fontSize: "14px", fontWeight: "600", color: "#1a1a1a" }}>
+                        ${value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      </div>
+                    </div>
+                  );
+                })()}
 
                 {/* Legend */}
                 <div style={{
@@ -694,11 +860,11 @@ export default function BullionTrackerWeb() {
                   gap: "24px",
                   fontSize: "12px",
                   color: "#666",
-                  marginTop: "16px",
+                  marginTop: "8px",
                 }}>
                   <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                     <span style={{ width: "20px", height: "3px", background: "#D4AF37", borderRadius: "2px" }} />
-                    {valuationMode === "spot" ? "Melt Value" : "Book Value"}
+                    {getCategoryLabel()} Value
                   </span>
                 </div>
               </div>
@@ -723,36 +889,6 @@ export default function BullionTrackerWeb() {
         {/* Collection Tab */}
         {activeTab === "collection" && (
           <CollectionGrid onAddItem={() => setIsAddModalOpen(true)} />
-        )}
-
-        {/* Collage Tab */}
-        {activeTab === "collage" && (
-          <div style={{
-            background: "white",
-            borderRadius: "20px",
-            padding: "48px",
-            boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
-            textAlign: "center",
-          }}>
-            <h2 style={{
-              fontSize: "24px",
-              fontWeight: "600",
-              color: "#1a1a1a",
-              marginBottom: "16px",
-            }}>
-              Photo Collage
-            </h2>
-            <p style={{
-              fontSize: "14px",
-              color: "#666",
-              marginBottom: "24px",
-            }}>
-              View all your bullion photos in a beautiful collage format
-            </p>
-            <Link href="/collage">
-              <ActionButton label="Open Photo Collage" primary onClick={() => {}} />
-            </Link>
-          </div>
         )}
       </div>
 

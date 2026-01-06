@@ -4,6 +4,16 @@ export type TimeRange = '24H' | '1W' | '1M' | '1Y' | '5Y';
 
 export type ValuationMethod = 'spot' | 'book';
 
+export type ItemCategory = 'BULLION' | 'NUMISMATIC';
+
+export type GradingService = 'PCGS' | 'NGC' | 'RAW';
+
+export type ProblemType = 'cleaned' | 'damaged' | 'holed' | 'repaired';
+
+export type BookValueType = 'spot' | 'custom' | 'numismatic';
+
+export type ConfidenceLevel = 'high' | 'medium' | 'low';
+
 // Note: CollectionItem is now imported from api.ts to match backend schema
 export { CollectionItem } from '../lib/api';
 
@@ -49,4 +59,50 @@ export interface HistoricalPriceData {
     unit: string;
   };
   prices: HistoricalPriceEntry[];
+}
+
+// ===== NUMISMATIC TYPES =====
+
+export interface CoinReference {
+  id: string;
+  pcgsNumber: string;
+  fullName: string;
+  series: string;
+  year: number;
+  mintMark: string | null;
+  denomination: string;
+  metal: string;
+  weightOz: number | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface ValidGrade {
+  gradeCode: string;
+  numericValue: number;
+  gradeCategory: string;
+  displayOrder: number;
+}
+
+export interface PriceGuideData {
+  price: number | null;
+  priceDate: string;
+  confidenceLevel: ConfidenceLevel;
+  isStale?: boolean;
+}
+
+export interface CollectionSummary {
+  totalValue: number;
+  bullionValue: number;
+  numismaticValue: number;
+  totalItems: number;
+  bullionItems: number;
+  numismaticItems: number;
+  byMetal: {
+    [metal: string]: {
+      weightOz: number;
+      value: number;
+      items: number;
+    };
+  };
 }

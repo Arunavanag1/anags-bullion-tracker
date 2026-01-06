@@ -1,4 +1,7 @@
 import * as SecureStore from 'expo-secure-store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Fuse from 'fuse.js';
+import type { CoinReference, ValidGrade, PriceGuideData, CollectionSummary, ItemCategory, GradingService, ProblemType, BookValueType } from '../types';
 
 // IMPORTANT: Change this to your computer's IP address for physical devices
 // For iOS simulator: use localhost
@@ -34,7 +37,7 @@ async function makeRequest(
 
   // Create abort controller for timeout
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 second timeout
+  const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
 
   try {
     const response = await fetch(`${API_URL}${endpoint}`, {
@@ -51,25 +54,259 @@ async function makeRequest(
   }
 }
 
+// ===== COLLECTION ITEM INTERFACE =====
+
 export interface CollectionItem {
   id: string;
   userId: string;
-  type: 'itemized' | 'bulk';
-  title?: string;
-  metal: 'gold' | 'silver' | 'platinum';
-  quantity: number;
-  weightOz: number;
-  grade?: string;
-  gradingService?: string;
+  category: ItemCategory;
+
+  // Common fields
+  purchaseDate: string;
   notes?: string;
   images?: string[];
-  bookValueType: 'custom' | 'spot';
-  customBookValue?: number;
-  spotPriceAtCreation: number;
-  purchaseDate?: string;
   createdAt: string;
   updatedAt: string;
+
+  // Bullion fields
+  type?: 'itemized' | 'bulk';
+  title?: string;
+  metal?: string;
+  quantity?: number;
+  weightOz?: number;
+  bookValueType?: BookValueType;
+  customBookValue?: number;
+  spotPriceAtCreation?: number;
+
+  // Numismatic fields
+  coinReferenceId?: string;
+  coinReference?: CoinReference;
+  grade?: string;
+  gradingService?: GradingService;
+  certificationNumber?: string;
+  isGradeEstimated?: boolean;
+  isProblemCoin?: boolean;
+  problemType?: ProblemType;
+  numismaticValue?: number;
 }
+
+// ===== COIN SEARCH =====
+
+/**
+ * Search coin references by query string
+ * Caches results for offline access
+ */
+export async function searchCoins(query: string): Promise<CoinReference[]> {
+  try {
+    const response = await makeRequest(`/api/coins/search?q=${encodeURIComponent(query)}&limit=10`);
+
+    if (!response.ok) {
+      throw new Error('Failed to search coins');
+    }
+
+    const data = await response.json();
+    return data.data || [];
+  } catch (error) {
+    console.error('API search failed, trying cache:', error);
+    // Fallback to cached results if offline
+    const cached = await getCachedCoins();
+    if (cached) {
+      return fuzzySearchCoins(cached, query);
+    }
+    throw error;
+  }
+}
+
+/**
+ * Get all coins and cache locally
+ * Call on app startup for offline capability
+ */
+export async function syncCoinsCache(): Promise<void> {
+  try {
+    const response = await makeRequest('/api/coins/search?q=&limit=1000');
+
+    if (!response.ok) {
+      console.warn('Failed to sync coins cache');
+      return;
+    }
+
+    const data = await response.json();
+    const coins = data.data || [];
+
+    await AsyncStorage.setItem('coins_cache', JSON.stringify(coins));
+    await AsyncStorage.setItem('coins_cache_timestamp', Date.now().toString());
+
+    console.log(`Synced ${coins.length} coins to cache`);
+  } catch (error) {
+    console.error('Failed to sync coins cache:', error);
+  }
+}
+
+async function getCachedCoins(): Promise<CoinReference[] | null> {
+  try {
+    const cached = await AsyncStorage.getItem('coins_cache');
+    return cached ? JSON.parse(cached) : null;
+  } catch {
+    return null;
+  }
+}
+
+function fuzzySearchCoins(coins: CoinReference[], query: string): CoinReference[] {
+  const fuse = new Fuse(coins, {
+    keys: ['fullName', 'series', 'year', 'pcgsNumber'],
+    threshold: 0.3,
+  });
+  return fuse.search(query).map((result: any) => result.item).slice(0, 10);
+}
+
+// ===== PRICE GUIDE =====
+
+/**
+ * Fetch price guide data for coin + grade
+ * Caches results for 1 hour
+ */
+export async function getPriceGuide(
+  coinReferenceId: string,
+  grade: string
+): Promise<PriceGuideData | null> {
+  const cacheKey = `price_${coinReferenceId}_${grade}`;
+
+  try {
+    // Check cache first
+    const cached = await AsyncStorage.getItem(cacheKey);
+    if (cached) {
+      const { data, timestamp } = JSON.parse(cached);
+      const age = Date.now() - timestamp;
+      if (age < 3600000) {  // 1 hour
+        return data;
+      }
+    }
+
+    // Fetch from API
+    const response = await makeRequest(
+      `/api/coins/price-guide?coinReferenceId=${encodeURIComponent(coinReferenceId)}&grade=${encodeURIComponent(grade)}`
+    );
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch price guide');
+    }
+
+    const json = await response.json();
+    const data = json.data;
+
+    // Cache result
+    await AsyncStorage.setItem(cacheKey, JSON.stringify({
+      data,
+      timestamp: Date.now(),
+    }));
+
+    return data;
+  } catch (error) {
+    console.error('Failed to fetch price guide:', error);
+
+    // Return stale cache if available
+    const cached = await AsyncStorage.getItem(cacheKey);
+    if (cached) {
+      const { data } = JSON.parse(cached);
+      return { ...data, isStale: true };
+    }
+
+    return null;
+  }
+}
+
+// ===== GRADES =====
+
+/**
+ * Get all valid grades
+ * Caches indefinitely (rarely changes)
+ */
+export async function getGrades(): Promise<ValidGrade[]> {
+  const cacheKey = 'grades_cache';
+
+  try {
+    // Check cache first
+    const cached = await AsyncStorage.getItem(cacheKey);
+    if (cached) {
+      return JSON.parse(cached);
+    }
+
+    // Fetch from API
+    const response = await makeRequest('/api/grades');
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch grades');
+    }
+
+    const data = await response.json();
+    const grades = data.data || [];
+
+    // Cache indefinitely
+    await AsyncStorage.setItem(cacheKey, JSON.stringify(grades));
+
+    return grades;
+  } catch (error) {
+    console.error('Failed to fetch grades:', error);
+    return [];
+  }
+}
+
+// ===== COLLECTION SUMMARY =====
+
+/**
+ * Get collection summary with category breakdown
+ */
+export async function getCollectionSummary(): Promise<CollectionSummary> {
+  try {
+    const response = await makeRequest('/api/collection/summary');
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch collection summary');
+    }
+
+    const data = await response.json();
+    return data.data;
+  } catch (error) {
+    console.error('Failed to fetch collection summary:', error);
+    // Return default summary on error
+    return {
+      totalValue: 0,
+      bullionValue: 0,
+      numismaticValue: 0,
+      totalItems: 0,
+      bullionItems: 0,
+      numismaticItems: 0,
+      byMetal: {},
+    };
+  }
+}
+
+// ===== CACHE MANAGEMENT =====
+
+/**
+ * Clear old price caches (run on app start)
+ */
+export async function clearOldPriceCaches(): Promise<void> {
+  try {
+    const keys = await AsyncStorage.getAllKeys();
+    const priceKeys = keys.filter(k => k.startsWith('price_'));
+
+    for (const key of priceKeys) {
+      const item = await AsyncStorage.getItem(key);
+      if (item) {
+        const { timestamp } = JSON.parse(item);
+        const age = Date.now() - timestamp;
+        if (age > 86400000) {  // 24 hours
+          await AsyncStorage.removeItem(key);
+        }
+      }
+    }
+  } catch (error) {
+    console.error('Failed to clear old caches:', error);
+  }
+}
+
+// ===== COLLECTION API (UPDATED) =====
 
 export const api = {
   // Collection Items
@@ -85,7 +322,7 @@ export const api = {
     // Transform API response to match mobile app format
     return data.data.map((item: any) => ({
       ...item,
-      images: item.images?.map((img: any) => img.url) || [],
+      images: item.images?.map((img: any) => typeof img === 'string' ? img : img.url) || [],
     }));
   },
 
@@ -100,7 +337,7 @@ export const api = {
 
     return {
       ...data.data,
-      images: data.data.images?.map((img: any) => img.url) || [],
+      images: data.data.images?.map((img: any) => typeof img === 'string' ? img : img.url) || [],
     };
   },
 
@@ -119,7 +356,7 @@ export const api = {
 
     return {
       ...data.data,
-      images: data.data.images?.map((img: any) => img.url) || [],
+      images: data.data.images?.map((img: any) => typeof img === 'string' ? img : img.url) || [],
     };
   },
 
@@ -138,7 +375,7 @@ export const api = {
 
     return {
       ...data.data,
-      images: data.data.images?.map((img: any) => img.url) || [],
+      images: data.data.images?.map((img: any) => typeof img === 'string' ? img : img.url) || [],
     };
   },
 
@@ -152,4 +389,12 @@ export const api = {
       throw new Error(error.error || 'Failed to delete collection item');
     }
   },
+
+  // Coins
+  searchCoins,
+  getPriceGuide,
+  getGrades,
+  getCollectionSummary,
+  syncCoinsCache,
+  clearOldPriceCaches,
 };
