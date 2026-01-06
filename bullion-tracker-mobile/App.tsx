@@ -10,6 +10,7 @@ import { CollectionScreen } from './src/screens/CollectionScreen';
 import { AddItemScreen } from './src/screens/AddItemScreen';
 import { CollageScreen } from './src/screens/CollageScreen';
 import { ActivityIndicator, View, Text } from 'react-native';
+import { api } from './src/lib/api';
 
 export type AuthStackParamList = {
   Login: undefined;
@@ -111,6 +112,12 @@ function AppNavigator() {
 }
 
 export default function App() {
+  // Sync coin reference data on app startup for offline use
+  useEffect(() => {
+    api.syncCoinsCache().catch(err => {
+      console.warn('Failed to sync coins cache on startup:', err);
+    });
+  }, []);
 
   return (
     <AuthProvider>

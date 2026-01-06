@@ -7,9 +7,11 @@ import { api } from '../lib/api';
 import type { CollectionItem } from '../lib/api';
 import { fetchSpotPrices } from '../lib/prices';
 import { formatCurrency, formatPercentage, formatWeight } from '../lib/calculations';
-import type { SpotPrices } from '../types';
+import type { SpotPrices, ItemCategory } from '../types';
 import Constants from 'expo-constants';
 import { Colors } from '../lib/colors';
+import { CategoryBadge } from '../components/numismatic/CategoryBadge';
+import { ProblemCoinBadge } from '../components/numismatic/ProblemCoinBadge';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Collection'>;
 
@@ -18,6 +20,7 @@ export function CollectionScreen({ navigation }: Props) {
   const [spotPrices, setSpotPrices] = useState<SpotPrices | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [categoryFilter, setCategoryFilter] = useState<ItemCategory | 'ALL'>('ALL');
 
   const loadData = async () => {
     try {
@@ -136,6 +139,28 @@ export function CollectionScreen({ navigation }: Props) {
             </TouchableOpacity>
           </View>
 
+          {/* Category Filter Chips */}
+          <View style={styles.filterContainer}>
+            <FilterChip
+              label="All"
+              active={categoryFilter === 'ALL'}
+              onPress={() => setCategoryFilter('ALL')}
+              count={items.length}
+            />
+            <FilterChip
+              label="Bullion"
+              active={categoryFilter === 'BULLION'}
+              onPress={() => setCategoryFilter('BULLION')}
+              count={items.filter(i => (i.category || 'BULLION') === 'BULLION').length}
+            />
+            <FilterChip
+              label="Numismatic"
+              active={categoryFilter === 'NUMISMATIC'}
+              onPress={() => setCategoryFilter('NUMISMATIC')}
+              count={items.filter(i => i.category === 'NUMISMATIC').length}
+            />
+          </View>
+
           <ScrollView
             style={styles.scrollView}
             contentContainerStyle={styles.scrollContent}
@@ -143,13 +168,18 @@ export function CollectionScreen({ navigation }: Props) {
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={Colors.accentDark} />
             }
           >
-          {items.map((item) => {
+          {items
+            .filter(item => categoryFilter === 'ALL' || (item.category || 'BULLION') === categoryFilter)
+            .map((item) => {
             const itemName = item.type === 'itemized' && item.title ? item.title : `${item.metal} (Bulk)`;
             const spotPrice = spotPrices?.[item.metal as keyof SpotPrices] || 0;
-            const pureWeight = item.weightOz * item.quantity;
+            const pureWeight = (item.weightOz || 0) * (item.quantity || 1);
             const meltValue = pureWeight * (typeof spotPrice === 'number' ? spotPrice : 0);
 
-            const purchaseValue = item.customBookValue || (item.weightOz * item.quantity * item.spotPriceAtCreation);
+            // Use numismatic value if available, otherwise use purchase value
+            const purchaseValue = item.category === 'NUMISMATIC' && item.numismaticValue
+              ? item.numismaticValue * (item.quantity || 1)
+              : (item.customBookValue || ((item.weightOz || 0) * (item.quantity || 1) * (item.spotPriceAtCreation || 0)));
             const gain = meltValue - purchaseValue;
             const gainPercent = purchaseValue > 0 ? (gain / purchaseValue) * 100 : 0;
 
@@ -166,7 +196,7 @@ export function CollectionScreen({ navigation }: Props) {
                       />
                     ) : (
                       <View style={styles.imagePlaceholder}>
-                        <Text style={styles.placeholderEmoji}>{getMetalEmoji(item.metal)}</Text>
+                        <Text style={styles.placeholderEmoji}>{getMetalEmoji(item.metal || 'gold')}</Text>
                       </View>
                     )}
                   </View>
@@ -175,13 +205,20 @@ export function CollectionScreen({ navigation }: Props) {
                   <View style={styles.itemContent}>
                     <Text style={styles.itemName}>{itemName}</Text>
                     <View style={styles.metalBadgeRow}>
-                      <View style={[styles.metalBadge, { backgroundColor: getMetalColor(item.metal) }]}>
-                        <Text style={styles.metalBadgeText}>{item.metal}</Text>
+                      <View style={[styles.metalBadge, { backgroundColor: getMetalColor(item.metal || 'gold') }]}>
+                        <Text style={styles.metalBadgeText}>{item.metal || 'GOLD'}</Text>
                       </View>
-                      <Text style={styles.itemMeta}>
-                        Qty: {item.quantity} × {formatWeight(item.weightOz)}
-                      </Text>
+                      <CategoryBadge category={item.category || 'BULLION'} />
+                      {item.isProblemCoin && item.problemType && (
+                        <ProblemCoinBadge isProblem={item.isProblemCoin} problemType={item.problemType} />
+                      )}
                     </View>
+                    <Text style={styles.itemMeta}>
+                      Qty: {item.quantity || 1} × {formatWeight(item.weightOz || 0)}
+                      {item.category === 'NUMISMATIC' && item.gradingService && (
+                        <Text> • {item.gradingService} {item.grade}</Text>
+                      )}
+                    </Text>
 
                     <View style={styles.valueRow}>
                       <Text style={styles.valueLabel}>Melt Value:</Text>
@@ -273,6 +310,22 @@ const TabButton = ({ icon, label, active, onPress, badge }: {
         <Text style={styles.tabBadgeText}>{badge}</Text>
       </View>
     )}
+  </TouchableOpacity>
+);
+
+const FilterChip = ({ label, active, onPress, count }: {
+  label: string;
+  active: boolean;
+  onPress: () => void;
+  count: number;
+}) => (
+  <TouchableOpacity
+    onPress={onPress}
+    style={[styles.filterChip, active && styles.filterChipActive]}
+  >
+    <Text style={[styles.filterChipText, active && styles.filterChipTextActive]}>
+      {label} ({count})
+    </Text>
   </TouchableOpacity>
 );
 
@@ -380,6 +433,32 @@ const styles = StyleSheet.create({
   addButtonHeaderText: {
     fontSize: 14,
     fontWeight: '500',
+    color: 'white',
+  },
+  filterContainer: {
+    flexDirection: 'row',
+    paddingHorizontal: 20,
+    paddingBottom: 12,
+    gap: 8,
+  },
+  filterChip: {
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    borderRadius: 20,
+    backgroundColor: Colors.bgSecondary,
+    borderWidth: 1,
+    borderColor: Colors.border,
+  },
+  filterChipActive: {
+    backgroundColor: Colors.accentDark,
+    borderColor: Colors.accentDark,
+  },
+  filterChipText: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: Colors.textSecondary,
+  },
+  filterChipTextActive: {
     color: 'white',
   },
   scrollView: {

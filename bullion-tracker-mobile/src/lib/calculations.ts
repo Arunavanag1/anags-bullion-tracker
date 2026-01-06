@@ -5,7 +5,7 @@ import type { CollectionItem, PortfolioSummary, SpotPrices } from '../types';
  */
 export function calculateMeltValue(item: CollectionItem, spotPrice: number): number {
   // weightOz is already pure weight, no purity calculation needed
-  return item.weightOz * spotPrice * item.quantity;
+  return (item.weightOz || 0) * spotPrice * (item.quantity || 1);
 }
 
 /**
@@ -19,8 +19,8 @@ export function calculateMeltValue(item: CollectionItem, spotPrice: number): num
  *   - If NO (bullion): book value = current melt + original premium (tracks spot)
  */
 export function calculateBookValue(item: CollectionItem, currentSpotPrice: number): number {
-  const totalWeight = item.weightOz * item.quantity;
-  const originalMelt = totalWeight * item.spotPriceAtCreation;
+  const totalWeight = (item.weightOz || 0) * (item.quantity || 1);
+  const originalMelt = totalWeight * (item.spotPriceAtCreation || 0);
 
   // If using spot value, just return current melt value
   if (item.bookValueType === 'spot') {
@@ -33,7 +33,7 @@ export function calculateBookValue(item: CollectionItem, currentSpotPrice: numbe
 
   // Within 30% threshold - track with spot price movement proportionally
   if (percentDiff <= 0.30) {
-    const priceRatio = currentSpotPrice / item.spotPriceAtCreation;
+    const priceRatio = currentSpotPrice / (item.spotPriceAtCreation || 1);
     return customValue * priceRatio;
   }
 
@@ -92,7 +92,7 @@ export function calculatePortfolioSummary(
     totalMeltValue += calculateMeltValue(item, spotPrice);
     totalBookValue += calculateBookValue(item, spotPrice);
     // weightOz is already pure weight
-    totalWeight[metalKey] += item.weightOz * item.quantity;
+    totalWeight[metalKey] += (item.weightOz || 0) * (item.quantity || 1);
   });
 
   const totalGain = totalMeltValue - totalBookValue;

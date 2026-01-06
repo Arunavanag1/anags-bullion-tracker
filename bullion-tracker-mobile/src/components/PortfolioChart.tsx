@@ -55,7 +55,9 @@ export function PortfolioChart({ items }: PortfolioChartProps) {
         let bookValue = 0;
 
         items.forEach((item) => {
-          const spotPrice = pricePoint[item.metal];
+          const metalKey = item.metal as 'gold' | 'silver' | 'platinum';
+          if (!metalKey) return;
+          const spotPrice = pricePoint[metalKey];
           meltValue += calculateMeltValue(item, spotPrice);
           bookValue += calculateBookValue(item, spotPrice);
         });

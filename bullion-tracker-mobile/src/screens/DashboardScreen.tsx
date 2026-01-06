@@ -13,6 +13,7 @@ import type { SpotPrices, ValuationMethod } from '../types';
 import type { CollectionItem } from '../lib/api';
 import Constants from 'expo-constants';
 import { Colors } from '../lib/colors';
+import { useCollectionSummary } from '../hooks/useCoins';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Dashboard'>;
 
@@ -26,6 +27,7 @@ export function DashboardScreen({ navigation }: Props) {
   const [dailyGain, setDailyGain] = useState<number | null>(null);
   const [yesterdayValue, setYesterdayValue] = useState<number | null>(null);
   const [gainDisplayFormat, setGainDisplayFormatState] = useState<GainDisplayFormat>('dollar');
+  const { data: categorySummary, isLoading: summaryLoading } = useCollectionSummary();
 
   const handleSignOut = () => {
     Alert.alert(
@@ -313,6 +315,29 @@ export function DashboardScreen({ navigation }: Props) {
                   </Text>
                 </View>
               )}
+            </View>
+          </View>
+        )}
+
+        {/* Category Breakdown Card */}
+        {categorySummary && !summaryLoading && (categorySummary.bullionCount > 0 || categorySummary.numismaticCount > 0) && (
+          <View style={styles.categoryCard}>
+            <Text style={styles.categoryLabel}>CATEGORY BREAKDOWN</Text>
+
+            <View style={styles.categoryRow}>
+              <View style={styles.categoryItem}>
+                <Text style={styles.categoryTitle}>Bullion</Text>
+                <Text style={styles.categoryValue}>{formatCurrency(categorySummary.bullionValue)}</Text>
+                <Text style={styles.categoryCount}>{categorySummary.bullionCount} items</Text>
+              </View>
+
+              <View style={styles.categoryDivider} />
+
+              <View style={styles.categoryItem}>
+                <Text style={styles.categoryTitle}>Numismatic</Text>
+                <Text style={styles.categoryValue}>{formatCurrency(categorySummary.numismaticValue)}</Text>
+                <Text style={styles.categoryCount}>{categorySummary.numismaticCount} items</Text>
+              </View>
             </View>
           </View>
         )}
@@ -625,6 +650,51 @@ const styles = StyleSheet.create({
   },
   legendPct: {
     color: '#aaa',
+  },
+  categoryCard: {
+    backgroundColor: Colors.bgCard,
+    borderRadius: 24,
+    padding: 24,
+    marginTop: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 20,
+    elevation: 2,
+  },
+  categoryLabel: {
+    fontSize: 13,
+    color: Colors.textSecondary,
+    marginBottom: 16,
+    letterSpacing: 0.5,
+  },
+  categoryRow: {
+    flexDirection: 'row',
+    gap: 16,
+  },
+  categoryItem: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  categoryDivider: {
+    width: 1,
+    backgroundColor: Colors.border,
+  },
+  categoryTitle: {
+    fontSize: 13,
+    color: Colors.textSecondary,
+    marginBottom: 8,
+  },
+  categoryValue: {
+    fontSize: 24,
+    fontWeight: '600',
+    color: Colors.textPrimary,
+    marginBottom: 4,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+  },
+  categoryCount: {
+    fontSize: 12,
+    color: Colors.textTertiary,
   },
   tabBar: {
     position: 'absolute',
