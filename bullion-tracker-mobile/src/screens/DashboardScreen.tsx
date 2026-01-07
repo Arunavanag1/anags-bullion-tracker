@@ -14,6 +14,7 @@ import type { CollectionItem } from '../lib/api';
 import Constants from 'expo-constants';
 import { Colors } from '../lib/colors';
 import { useCollectionSummary } from '../hooks/useCoins';
+import { TopPerformers } from '../components/TopPerformers';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Dashboard'>;
 
@@ -341,6 +342,9 @@ export function DashboardScreen({ navigation }: Props) {
             </View>
           </View>
         )}
+
+        {/* Top Performers */}
+        <TopPerformers />
       </ScrollView>
 
       {/* Bottom Tab Bar */}

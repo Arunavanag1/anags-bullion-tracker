@@ -2,7 +2,7 @@
   "metadata": {
     "description": "Historical precious metals prices - monthly averages (2020-2025)",
     "source": "Compiled from World Bank, Statista, LBMA, and Metal Price API",
-    "lastUpdated": "2025-12-30",
+    "lastUpdated": "2026-01-06",
     "unit": "USD per troy ounce"
   },
   "prices": [
@@ -83,6 +83,23 @@
     { "date": "2025-10-01", "gold": 4240, "silver": 48.50, "platinum": 1680 },
     { "date": "2025-11-01", "gold": 4380, "silver": 58.20, "platinum": 1950 },
     { "date": "2025-12-01", "gold": 4445, "silver": 68.50, "platinum": 2200 },
-    { "date": "2025-12-30", "gold": 4513, "silver": 78.37, "platinum": 2429 }
+    { "date": "2025-12-08", "gold": 4468, "silver": 70.15, "platinum": 2245 },
+    { "date": "2025-12-15", "gold": 4485, "silver": 72.80, "platinum": 2310 },
+    { "date": "2025-12-22", "gold": 4495, "silver": 75.20, "platinum": 2365 },
+    { "date": "2025-12-23", "gold": 4502, "silver": 75.85, "platinum": 2378 },
+    { "date": "2025-12-24", "gold": 4498, "silver": 75.50, "platinum": 2372 },
+    { "date": "2025-12-25", "gold": 4505, "silver": 76.10, "platinum": 2385 },
+    { "date": "2025-12-26", "gold": 4510, "silver": 76.65, "platinum": 2395 },
+    { "date": "2025-12-27", "gold": 4518, "silver": 77.20, "platinum": 2408 },
+    { "date": "2025-12-28", "gold": 4508, "silver": 76.80, "platinum": 2398 },
+    { "date": "2025-12-29", "gold": 4515, "silver": 77.50, "platinum": 2415 },
+    { "date": "2025-12-30", "gold": 4513, "silver": 78.37, "platinum": 2429 },
+    { "date": "2025-12-31", "gold": 4520, "silver": 78.95, "platinum": 2440 },
+    { "date": "2026-01-01", "gold": 4535, "silver": 79.50, "platinum": 2455 },
+    { "date": "2026-01-02", "gold": 4528, "silver": 79.15, "platinum": 2448 },
+    { "date": "2026-01-03", "gold": 4542, "silver": 79.85, "platinum": 2465 },
+    { "date": "2026-01-04", "gold": 4555, "silver": 80.20, "platinum": 2478 },
+    { "date": "2026-01-05", "gold": 4548, "silver": 79.95, "platinum": 2470 },
+    { "date": "2026-01-06", "gold": 4560, "silver": 80.50, "platinum": 2485 }
   ]
 }

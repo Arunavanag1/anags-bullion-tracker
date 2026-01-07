@@ -237,6 +237,8 @@ model CoinPriceGuide {
   gradeCode       String   @db.VarChar(10)
   grade           ValidGrade @relation(fields: [gradeCode], references: [gradeCode])
   pcgsPrice       Decimal? @db.Decimal(12, 2)
+  greysheetPrice  Decimal? @db.Decimal(12, 2)  // Dealer bid price from Greysheet
+  priceSource     String   @default("pcgs") @db.VarChar(20)  // "pcgs" | "greysheet" | "both"
   priceDate       DateTime @db.Date
   createdAt       DateTime @default(now())
 

@@ -1,6 +1,6 @@
 import { SpotPrice, SpotPricesResponse } from '@/types';
 
-const CACHE_DURATION_MS = 12 * 60 * 60 * 1000; // 12 hours (twice daily updates)
+const CACHE_DURATION_MS = 8 * 60 * 60 * 1000; // 8 hours (three times daily updates)
 
 interface MetalPriceAPIResponse {
   success: boolean;

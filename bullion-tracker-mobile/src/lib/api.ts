@@ -7,7 +7,7 @@ import type { CoinReference, ValidGrade, PriceGuideData, CollectionSummary, Item
 // For iOS simulator: use localhost
 // For Android emulator: use 10.0.2.2
 // For physical device: use your computer's IP (e.g., 192.168.104.235)
-export const API_URL = 'http://10.11.2.10:3000';
+export const API_URL = 'http://192.168.101.39:3000';
 
 const TOKEN_KEY = 'auth_token';
 
@@ -397,4 +397,27 @@ export const api = {
   getCollectionSummary,
   syncCoinsCache,
   clearOldPriceCaches,
+
+  // Performance
+  async getMetalPerformance(): Promise<any> {
+    const response = await makeRequest('/api/prices/performance');
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch metal performance');
+    }
+
+    const data = await response.json();
+    return data.data;
+  },
+
+  async getCoinPerformance(): Promise<any> {
+    const response = await makeRequest('/api/coins/performance');
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch coin performance');
+    }
+
+    const data = await response.json();
+    return data.data;
+  },
 };

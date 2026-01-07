@@ -51,16 +51,6 @@ export default function CollagePage() {
       backgroundColor: "#F8F7F4",
       fontFamily: "'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif",
     }}>
-      {/* Auth Button - Fixed at top right */}
-      <div style={{
-        position: "fixed",
-        top: "16px",
-        right: "16px",
-        zIndex: 1000,
-      }}>
-        <AuthButton />
-      </div>
-
       {/* Header Section */}
       <div style={{
         background: "white",
@@ -71,45 +61,55 @@ export default function CollagePage() {
           maxWidth: "1280px",
           margin: "0 auto",
         }}>
+          {/* Top row with Back button and AuthButton */}
           <div style={{
             display: "flex",
-            justifyContent: "space-between",
-            alignItems: "flex-start",
+            justifyContent: "flex-end",
+            alignItems: "center",
+            gap: "12px",
             marginBottom: "24px",
           }}>
-            <div>
-              <h1 style={{
-                fontSize: "32px",
-                fontWeight: "700",
-                color: "#1a1a1a",
-                margin: 0,
-                marginBottom: "8px",
-              }}>
-                Collection Collage
-              </h1>
-              <p style={{
-                fontSize: "15px",
-                color: "#666",
-                margin: 0,
-              }}>
-                {filteredImages.length} image{filteredImages.length !== 1 ? 's' : ''} in your collection
-              </p>
-            </div>
             <Link href="/" style={{ textDecoration: "none" }}>
               <button style={{
-                background: "white",
+                background: "#E8E8E8",
                 color: "#1a1a1a",
-                border: "1px solid #E0E0E0",
-                borderRadius: "12px",
-                padding: "12px 24px",
+                border: "none",
+                borderRadius: "10px",
+                padding: "10px 18px",
                 fontSize: "14px",
                 fontWeight: "500",
                 cursor: "pointer",
                 transition: "all 0.2s ease",
-              }}>
+                fontFamily: "'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif",
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.background = '#DEDEDE'}
+              onMouseLeave={(e) => e.currentTarget.style.background = '#E8E8E8'}
+              >
                 ← Back to Dashboard
               </button>
             </Link>
+            <AuthButton />
+          </div>
+
+          <div style={{
+            marginBottom: "24px",
+          }}>
+            <h1 style={{
+              fontSize: "32px",
+              fontWeight: "700",
+              color: "#1a1a1a",
+              margin: 0,
+              marginBottom: "8px",
+            }}>
+              Collection Collage
+            </h1>
+            <p style={{
+              fontSize: "15px",
+              color: "#666",
+              margin: 0,
+            }}>
+              A compilation of pieces you've compiled
+            </p>
           </div>
 
           {/* Filters */}

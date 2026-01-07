@@ -31,16 +31,50 @@ export function AuthButton() {
       <div className="relative" ref={menuRef}>
         <button
           onClick={() => setShowMenu(!showMenu)}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-background-secondary hover:bg-border transition-colors"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '8px 14px',
+            borderRadius: '10px',
+            background: '#E8E8E8',
+            border: 'none',
+            cursor: 'pointer',
+            fontFamily: "'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif",
+            transition: 'background 0.2s ease',
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.background = '#DEDEDE'}
+          onMouseLeave={(e) => e.currentTarget.style.background = '#E8E8E8'}
         >
-          <div className="w-8 h-8 rounded-full bg-accent-primary flex items-center justify-center text-white font-semibold">
+          <div style={{
+            width: '28px',
+            height: '28px',
+            borderRadius: '50%',
+            background: '#1a1a1a',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: 'white',
+            fontSize: '12px',
+            fontWeight: '600',
+          }}>
             {session.user.name?.[0]?.toUpperCase() || session.user.email?.[0]?.toUpperCase() || 'U'}
           </div>
-          <span className="text-text-primary font-medium hidden sm:inline">
+          <span style={{
+            color: '#1a1a1a',
+            fontWeight: '500',
+            fontSize: '14px',
+          }}>
             {session.user.name || session.user.email}
           </span>
           <svg
-            className={`w-4 h-4 text-text-secondary transition-transform ${showMenu ? 'rotate-180' : ''}`}
+            style={{
+              width: '14px',
+              height: '14px',
+              color: '#666',
+              transition: 'transform 0.2s ease',
+              transform: showMenu ? 'rotate(180deg)' : 'rotate(0deg)',
+            }}
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"

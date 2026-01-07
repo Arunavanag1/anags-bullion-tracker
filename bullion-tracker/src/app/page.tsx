@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 import { useSpotPrices } from '@/hooks/useSpotPrices';
 import { usePortfolioSummary } from '@/hooks/usePortfolioSummary';
 import { useCollection, usePortfolioHistory } from '@/hooks/useCollection';
@@ -9,6 +10,7 @@ import { useCollectionSummary } from '@/hooks/useCollectionSummary';
 import { AddItemModal } from '@/components/collection/AddItemModal';
 import { CollectionGrid } from '@/components/collection/CollectionGrid';
 import { AuthButton } from '@/components/auth/AuthButton';
+import { TopPerformers } from '@/components/TopPerformers';
 import type { TimeRange } from '@/types';
 
 export default function BullionTrackerWeb() {
@@ -19,6 +21,10 @@ export default function BullionTrackerWeb() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [expandedItemId, setExpandedItemId] = useState<string | null>(null);
   const [hoveredPointIndex, setHoveredPointIndex] = useState<number | null>(null);
+
+  // Auth session for user name
+  const { data: session } = useSession();
+  const firstName = session?.user?.name?.split(' ')[0] || 'Your';
 
   // Fetch real data
   const { data: spotPricesData } = useSpotPrices();
@@ -158,16 +164,6 @@ export default function BullionTrackerWeb() {
       backgroundColor: "#F8F7F4",
       fontFamily: "'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif",
     }}>
-      {/* Auth Button - Fixed at top right */}
-      <div style={{
-        position: "fixed",
-        top: "16px",
-        right: "16px",
-        zIndex: 1000,
-      }}>
-        <AuthButton />
-      </div>
-
       {/* Spot Price Banner */}
       <div style={{
         background: "#1a1a1a",
@@ -229,7 +225,7 @@ export default function BullionTrackerWeb() {
               color: "#1a1a1a",
               margin: 0,
             }}>
-              Bullion Collection Tracker
+              {firstName}'s Stack
             </h1>
             <p style={{
               fontSize: "14px",
@@ -241,24 +237,28 @@ export default function BullionTrackerWeb() {
           </div>
           <div style={{
             display: "flex",
-            gap: "8px",
+            alignItems: "center",
+            gap: "12px",
           }}>
-            {["Dashboard", "Collection"].map(tab => (
-              <TabButton
-                key={tab}
-                label={tab}
-                active={activeTab === tab.toLowerCase()}
-                onClick={() => setActiveTab(tab.toLowerCase())}
-                badge={tab === "Collection" ? String(totalItems) : null}
-              />
-            ))}
-            <Link href="/collage">
-              <TabButton
-                label="Collage"
-                active={false}
-                onClick={() => {}}
-              />
-            </Link>
+            <div style={{ display: "flex", gap: "8px" }}>
+              {["Dashboard", "Collection"].map(tab => (
+                <TabButton
+                  key={tab}
+                  label={tab}
+                  active={activeTab === tab.toLowerCase()}
+                  onClick={() => setActiveTab(tab.toLowerCase())}
+                  badge={tab === "Collection" ? String(totalItems) : null}
+                />
+              ))}
+              <Link href="/collage">
+                <TabButton
+                  label="Collage"
+                  active={false}
+                  onClick={() => {}}
+                />
+              </Link>
+            </div>
+            <AuthButton />
           </div>
         </div>
 
@@ -460,6 +460,9 @@ export default function BullionTrackerWeb() {
               </div>
             </div>
 
+            {/* Top Performers Section */}
+            <TopPerformers />
+
             {/* Collection Items Section */}
             <div style={{
               background: "white",
@@ -506,7 +509,7 @@ export default function BullionTrackerWeb() {
               {/* Items List */}
               <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                 {collectionData && collectionData.length > 0 ? (
-                  collectionData.slice(0, 5).map((item) => {
+                  collectionData.slice(0, 5).map((item: any) => {
                     const isExpanded = expandedItemId === item.id;
                     return (
                       <div
@@ -694,7 +697,7 @@ export default function BullionTrackerWeb() {
                   textTransform: "uppercase",
                   letterSpacing: "0.5px",
                 }}>
-                  Value Over Time
+                  Track Collection Value Over Time
                 </span>
                 <div style={{ display: "flex", gap: "8px" }}>
                   {(["24H", "1W", "1M", "1Y", "5Y"] as TimeRange[]).map(range => (
@@ -870,19 +873,6 @@ export default function BullionTrackerWeb() {
               </div>
             </div>
 
-            {/* Quick Actions */}
-            <div style={{
-              display: "flex",
-              justifyContent: "center",
-              gap: "16px",
-              paddingTop: "8px",
-            }}>
-              <ActionButton label="Add Piece" primary onClick={() => setIsAddModalOpen(true)} />
-              <ActionButton label="Export" onClick={() => {}} />
-              <Link href="/collage">
-                <ActionButton label="View Collage" onClick={() => {}} />
-              </Link>
-            </div>
           </>
         )}
 
