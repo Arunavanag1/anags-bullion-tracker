@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { auth } from '@/auth';
 import { prisma } from '@/lib/db';
 import { fetchSpotPrices } from '@/lib/prices';
 import { generateDailyPrices } from '@/lib/historical-data';
@@ -24,6 +25,12 @@ interface HistoricalPoint {
  */
 export async function GET(request: NextRequest) {
   try {
+    const session = await auth();
+
+    if (!session?.user?.id) {
+      return NextResponse.json({ data: [] });
+    }
+
     const searchParams = request.nextUrl.searchParams;
     const days = parseInt(searchParams.get('days') || '30');
 
@@ -32,8 +39,11 @@ export async function GET(request: NextRequest) {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
 
-    // Fetch collection items
+    // Fetch collection items for authenticated user only
     const items = await prisma.collectionItem.findMany({
+      where: {
+        userId: session.user.id,
+      },
       include: {
         images: true,
       },

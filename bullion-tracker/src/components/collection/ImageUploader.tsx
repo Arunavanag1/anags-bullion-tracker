@@ -4,7 +4,21 @@ import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import imageCompression from 'browser-image-compression';
 import { Button } from '@/components/ui/Button';
-import { isValidImage, isValidFileSize } from '@/lib/utils';
+
+// Check if file is a valid image type (including HEIC)
+function isValidImageType(file: File): boolean {
+  const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/heic', 'image/heif'];
+  const validExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.heic', '.heif'];
+  const hasValidType = validTypes.includes(file.type.toLowerCase());
+  const hasValidExtension = validExtensions.some(ext => file.name.toLowerCase().endsWith(ext));
+  return hasValidType || hasValidExtension;
+}
+
+// Check file size
+function isValidFileSize(file: File, maxSizeMB: number = 20): boolean {
+  const maxSizeBytes = maxSizeMB * 1024 * 1024;
+  return file.size <= maxSizeBytes;
+}
 
 interface ImageUploaderProps {
   images: string[];
@@ -18,19 +32,21 @@ export function ImageUploader({ images, onChange, maxImages = 5 }: ImageUploader
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
+      if (!acceptedFiles || acceptedFiles.length === 0) return;
+
       setError(null);
       setUploading(true);
 
       try {
         // Validate files
         for (const file of acceptedFiles) {
-          if (!isValidImage(file)) {
-            setError('Only JPG, PNG, and WebP images are allowed');
+          if (!isValidImageType(file)) {
+            setError('Only JPG, PNG, WebP, and HEIC images are allowed');
             setUploading(false);
             return;
           }
           if (!isValidFileSize(file)) {
-            setError('File size must be less than 10MB');
+            setError('File size must be less than 20MB');
             setUploading(false);
             return;
           }
@@ -48,18 +64,49 @@ export function ImageUploader({ images, onChange, maxImages = 5 }: ImageUploader
 
         for (const file of acceptedFiles) {
           try {
-            // Compress image
-            const compressed = await imageCompression(file, {
-              maxSizeMB: 1,
-              maxWidthOrHeight: 1920,
-              useWebWorker: true,
-            });
+            let processedFile: Blob = file;
+
+            // Convert HEIC/HEIF to JPEG
+            const isHeic = file.type.toLowerCase().includes('heic') ||
+                          file.type.toLowerCase().includes('heif') ||
+                          file.name.toLowerCase().endsWith('.heic') ||
+                          file.name.toLowerCase().endsWith('.heif');
+
+            if (isHeic) {
+              try {
+                // Dynamic import to avoid SSR issues
+                const heic2any = (await import('heic2any')).default;
+                const convertedBlob = await heic2any({
+                  blob: file,
+                  toType: 'image/jpeg',
+                  quality: 0.8,
+                });
+                processedFile = Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob;
+              } catch (heicError) {
+                console.error('HEIC conversion failed:', heicError);
+                setError('Failed to convert HEIC image. Please use JPG or PNG.');
+                continue;
+              }
+            }
+
+            // Compress image with error handling
+            let compressed: Blob;
+            try {
+              compressed = await imageCompression(processedFile as File, {
+                maxSizeMB: 0.5,
+                maxWidthOrHeight: 1280,
+                useWebWorker: false,
+              });
+            } catch (compressionError) {
+              console.warn('Compression failed, using converted file:', compressionError);
+              compressed = processedFile;
+            }
 
             // Convert to base64 for temporary storage
-            const reader = new FileReader();
             const base64 = await new Promise<string>((resolve, reject) => {
+              const reader = new FileReader();
               reader.onload = () => resolve(reader.result as string);
-              reader.onerror = reject;
+              reader.onerror = () => reject(new Error('Failed to read file'));
               reader.readAsDataURL(compressed);
             });
 
@@ -70,7 +117,9 @@ export function ImageUploader({ images, onChange, maxImages = 5 }: ImageUploader
           }
         }
 
-        onChange([...images, ...newImages]);
+        if (newImages.length > 0) {
+          onChange([...images, ...newImages]);
+        }
       } catch (err) {
         console.error('Error uploading images:', err);
         setError('Failed to upload images');
@@ -84,7 +133,7 @@ export function ImageUploader({ images, onChange, maxImages = 5 }: ImageUploader
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      'image/*': ['.jpeg', '.jpg', '.png', '.webp'],
+      'image/*': ['.jpeg', '.jpg', '.png', '.webp', '.heic', '.heif'],
     },
     maxFiles: maxImages - images.length,
     disabled: uploading || images.length >= maxImages,
@@ -177,7 +226,7 @@ export function ImageUploader({ images, onChange, maxImages = 5 }: ImageUploader
             ) : (
               <>
                 <p className="font-medium">Drag and drop images here, or click to select</p>
-                <p className="text-sm mt-2">JPG, PNG, or WebP (max 10MB per image)</p>
+                <p className="text-sm mt-2">JPG, PNG, WebP, or HEIC (max 20MB per image)</p>
               </>
             )}
           </div>

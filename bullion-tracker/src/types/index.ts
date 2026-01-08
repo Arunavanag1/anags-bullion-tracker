@@ -41,6 +41,7 @@ export interface ItemizedPiece {
   numismaticValue?: number;
   confidenceLevel?: string;
   purchaseDate?: Date;
+  purchasePrice?: number;
 }
 
 export interface BulkWeight {
@@ -69,6 +70,7 @@ export interface BulkWeight {
   numismaticValue?: number;
   confidenceLevel?: string;
   purchaseDate?: Date;
+  purchasePrice?: number;
 }
 
 export type CollectionItem = ItemizedPiece | BulkWeight;

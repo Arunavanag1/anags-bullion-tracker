@@ -232,7 +232,7 @@ export default function BullionTrackerWeb() {
               color: "#666",
               margin: "6px 0 0 0",
             }}>
-              {totalItems} {totalItems === 1 ? 'piece' : 'pieces'} · {(portfolioData?.goldOz || 0).toFixed(2)} ozt gold
+              {totalItems} {totalItems === 1 ? 'item' : 'items'}
             </p>
           </div>
           <div style={{

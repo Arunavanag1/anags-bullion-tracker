@@ -99,6 +99,7 @@ model CollectionItem {
   confidenceLevel     String?  // 'high' | 'medium' | 'low' | 'user'
   spotPriceAtCreation Float?
   purchaseDate        DateTime?
+  purchasePrice       Float?   // What user paid for the item
 
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt

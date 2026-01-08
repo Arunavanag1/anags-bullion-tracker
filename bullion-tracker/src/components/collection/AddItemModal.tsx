@@ -39,6 +39,7 @@ export function AddItemModal({ isOpen, onClose }: AddItemModalProps) {
   const [customBookValue, setCustomBookValue] = useState('');
   const [images, setImages] = useState<string[]>([]);
   const [purchaseDate, setPurchaseDate] = useState(new Date().toISOString().split('T')[0]);
+  const [purchasePrice, setPurchasePrice] = useState('');
 
   // Numismatic state
   const [certNumber, setCertNumber] = useState('');
@@ -76,6 +77,7 @@ export function AddItemModal({ isOpen, onClose }: AddItemModalProps) {
     setCustomBookValue('');
     setImages([]);
     setPurchaseDate(new Date().toISOString().split('T')[0]);
+    setPurchasePrice('');
     setCertNumber('');
     setCoinSearch('');
     setSelectedCoin(null);
@@ -95,6 +97,7 @@ export function AddItemModal({ isOpen, onClose }: AddItemModalProps) {
     const baseData = {
       category: itemCategory,
       purchaseDate,
+      purchasePrice: purchasePrice ? parseFloat(purchasePrice) : undefined,
       notes: notes || undefined,
       images,
     };
@@ -390,6 +393,29 @@ export function AddItemModal({ isOpen, onClose }: AddItemModalProps) {
                 )}
                 <div>
                   <label style={{ fontSize: '12px', fontWeight: '600', color: '#888', textTransform: 'uppercase', display: 'block', marginBottom: '8px' }}>
+                    Purchase Price ($)
+                  </label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    value={purchasePrice}
+                    onChange={(e) => setPurchasePrice(e.target.value)}
+                    placeholder="What you paid"
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      fontSize: '14px',
+                      border: '1px solid #E0E0E0',
+                      borderRadius: '10px',
+                      boxSizing: 'border-box',
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div>
+                  <label style={{ fontSize: '12px', fontWeight: '600', color: '#888', textTransform: 'uppercase', display: 'block', marginBottom: '8px' }}>
                     Purchase Date
                   </label>
                   <input
@@ -434,7 +460,7 @@ export function AddItemModal({ isOpen, onClose }: AddItemModalProps) {
                 <label style={{ fontSize: '12px', fontWeight: '600', color: '#888', textTransform: 'uppercase', display: 'block', marginBottom: '8px' }}>
                   Photos (Optional)
                 </label>
-                <ImageUploader images={images} onImagesChange={setImages} />
+                <ImageUploader images={images} onChange={setImages} />
               </div>
             </div>
 
@@ -828,9 +854,9 @@ export function AddItemModal({ isOpen, onClose }: AddItemModalProps) {
                 <input
                   type="number"
                   step="0.01"
-                  value={customBookValue}
-                  onChange={(e) => setCustomBookValue(e.target.value)}
-                  placeholder="Optional"
+                  value={purchasePrice}
+                  onChange={(e) => setPurchasePrice(e.target.value)}
+                  placeholder="What you paid"
                   style={{
                     width: '100%',
                     padding: '12px 16px',
@@ -887,7 +913,7 @@ export function AddItemModal({ isOpen, onClose }: AddItemModalProps) {
               <label style={{ fontSize: '12px', fontWeight: '600', color: '#888', textTransform: 'uppercase', display: 'block', marginBottom: '8px' }}>
                 Photos (Optional)
               </label>
-              <ImageUploader images={images} onImagesChange={setImages} />
+              <ImageUploader images={images} onChange={setImages} />
             </div>
 
             <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>
@@ -1199,9 +1225,9 @@ export function AddItemModal({ isOpen, onClose }: AddItemModalProps) {
                 <input
                   type="number"
                   step="0.01"
-                  value={customBookValue}
-                  onChange={(e) => setCustomBookValue(e.target.value)}
-                  placeholder="Optional"
+                  value={purchasePrice}
+                  onChange={(e) => setPurchasePrice(e.target.value)}
+                  placeholder="What you paid"
                   style={{
                     width: '100%',
                     padding: '12px 16px',
@@ -1258,7 +1284,7 @@ export function AddItemModal({ isOpen, onClose }: AddItemModalProps) {
               <label style={{ fontSize: '12px', fontWeight: '600', color: '#888', textTransform: 'uppercase', display: 'block', marginBottom: '8px' }}>
                 Photos (Optional)
               </label>
-              <ImageUploader images={images} onImagesChange={setImages} />
+              <ImageUploader images={images} onChange={setImages} />
             </div>
 
             <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>

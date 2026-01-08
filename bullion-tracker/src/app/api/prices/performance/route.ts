@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getPriceForDate } from '@/lib/historical-data';
+import { fetchSpotPrices } from '@/lib/prices';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,12 +25,18 @@ interface PerformanceResponse {
  */
 export async function GET() {
   try {
-    const today = new Date();
-    const oneMonthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+    const oneMonthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 
-    // Get prices for both dates
-    const currentPrices = getPriceForDate(today);
+    // Get live current prices and historical prices from 30 days ago
+    const liveSpotPrices = await fetchSpotPrices();
     const historicalPrices = getPriceForDate(oneMonthAgo);
+
+    // Use live prices for current
+    const currentPrices = {
+      gold: liveSpotPrices.gold.pricePerOz,
+      silver: liveSpotPrices.silver.pricePerOz,
+      platinum: liveSpotPrices.platinum.pricePerOz,
+    };
 
     // Calculate performance for each metal
     const metals: MetalPerformance[] = (['gold', 'silver', 'platinum'] as const).map((metal) => {

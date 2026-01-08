@@ -153,6 +153,7 @@ export function AddItemScreen({ navigation }: Props) {
           customBookValue: Number(purchasePrice),
           spotPriceAtCreation: currentSpotPrice,
           purchaseDate,
+          purchasePrice: Number(purchasePrice),
           notes: notes.trim() || undefined,
           images: [],
         };
@@ -172,6 +173,7 @@ export function AddItemScreen({ navigation }: Props) {
           numismaticValue: Number(numismaticValue),
           metal: numismaticMetal,
           purchaseDate,
+          purchasePrice: purchasePrice ? Number(purchasePrice) : undefined,
           notes: notes.trim() || undefined,
           images: [],
         };
@@ -430,6 +432,14 @@ export function AddItemScreen({ navigation }: Props) {
       />
 
       <Input
+        label="Purchase Price ($)"
+        value={purchasePrice}
+        onChangeText={setPurchasePrice}
+        keyboardType="decimal-pad"
+        placeholder="What you paid"
+      />
+
+      <Input
         label="Purchase Date"
         value={purchaseDate}
         onChangeText={setPurchaseDate}
@@ -525,6 +535,14 @@ export function AddItemScreen({ navigation }: Props) {
         onChange={setNumismaticValue}
         useCustom={useCustomValue}
         onToggleCustom={setUseCustomValue}
+      />
+
+      <Input
+        label="Purchase Price ($)"
+        value={purchasePrice}
+        onChangeText={setPurchasePrice}
+        keyboardType="decimal-pad"
+        placeholder="What you paid"
       />
 
       <Input

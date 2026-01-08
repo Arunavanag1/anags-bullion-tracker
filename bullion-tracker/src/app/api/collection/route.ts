@@ -161,6 +161,7 @@ export async function POST(request: NextRequest) {
     // Add common optional fields
     if (body.notes !== undefined) createData.notes = body.notes;
     if (body.purchaseDate) createData.purchaseDate = new Date(body.purchaseDate);
+    if (body.purchasePrice !== undefined) createData.purchasePrice = body.purchasePrice;
     if (body.images && body.images.length > 0) {
       createData.images = {
         create: body.images.map((url: string, index: number) => ({

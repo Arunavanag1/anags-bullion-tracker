@@ -7,7 +7,7 @@ import type { CoinReference, ValidGrade, PriceGuideData, CollectionSummary, Item
 // For iOS simulator: use localhost
 // For Android emulator: use 10.0.2.2
 // For physical device: use your computer's IP (e.g., 192.168.104.235)
-export const API_URL = 'http://192.168.101.39:3000';
+export const API_URL = 'http://192.168.100.102:3001';
 
 const TOKEN_KEY = 'auth_token';
 
@@ -63,6 +63,7 @@ export interface CollectionItem {
 
   // Common fields
   purchaseDate: string;
+  purchasePrice?: number;
   notes?: string;
   images?: string[];
   createdAt: string;

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { auth } from '@/auth';
 import { prisma } from '@/lib/db';
 import { fetchSpotPrices } from '@/lib/prices';
 import { calculateCollectionSummary } from '@/lib/calculations';
@@ -6,17 +7,31 @@ import type { CollectionItem } from '@/types';
 
 export const dynamic = 'force-dynamic';
 
-const DEFAULT_USER_ID = 'default-user';
-
 /**
  * GET /api/portfolio/summary
  * Returns portfolio summary with totals and breakdown
  */
 export async function GET() {
   try {
+    const session = await auth();
+
+    if (!session?.user?.id) {
+      return NextResponse.json({
+        success: true,
+        data: {
+          totalItems: 0,
+          goldOz: 0,
+          silverOz: 0,
+          platinumOz: 0,
+          totalMeltValue: 0,
+          totalBookValue: 0,
+        },
+      });
+    }
+
     const items = await prisma.collectionItem.findMany({
       where: {
-        userId: DEFAULT_USER_ID,
+        userId: session.user.id,
       },
       include: {
         images: true,
