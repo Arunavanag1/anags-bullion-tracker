@@ -44,10 +44,11 @@ Plans:
 **Depends on**: Phase 2 (Filter Pills)
 **Research**: Likely (upstash/ratelimit integration)
 **Research topics**: Rate limiting libraries, secure credential management
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 03-01: TBD (run /gsd:plan-phase 3 to break down)
+- [ ] 03-01: Fix JWT secrets, password requirements, protect seed endpoint
+- [ ] 03-02: Add rate limiting to auth endpoints
 
 **Scope:**
 - Rotate exposed credentials, add .env to gitignore
@@ -139,7 +140,7 @@ Plans:
 |-------|-----------|----------------|--------|-----------|
 | 1. Radial Gallery | v1.0 | 1/1 | Complete | 2026-01-09 |
 | 2. Filter Pills | v1.1 | 0/? | Not started | - |
-| 3. Security Hardening | v1.2 | 0/? | Not started | - |
+| 3. Security Hardening | v1.2 | 0/2 | Not started | - |
 | 4. Environment Configuration | v1.2 | 0/? | Not started | - |
 | 5. Image Storage Migration | v1.2 | 0/? | Not started | - |
 | 6. Test Foundation | v1.2 | 0/? | Not started | - |
