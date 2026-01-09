@@ -2,6 +2,23 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import bcrypt from 'bcryptjs';
 
+// Password strength validation
+function validatePassword(password: string): { valid: boolean; reason?: string } {
+  if (password.length < 8) {
+    return { valid: false, reason: 'Password must be at least 8 characters' };
+  }
+  if (!/[A-Z]/.test(password)) {
+    return { valid: false, reason: 'Password must contain at least one uppercase letter' };
+  }
+  if (!/[a-z]/.test(password)) {
+    return { valid: false, reason: 'Password must contain at least one lowercase letter' };
+  }
+  if (!/[0-9]/.test(password)) {
+    return { valid: false, reason: 'Password must contain at least one number' };
+  }
+  return { valid: true };
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { name, email, password } = await request.json();
@@ -14,9 +31,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (password.length < 6) {
+    const passwordCheck = validatePassword(password);
+    if (!passwordCheck.valid) {
       return NextResponse.json(
-        { error: 'Password must be at least 6 characters' },
+        { error: passwordCheck.reason },
         { status: 400 }
       );
     }
