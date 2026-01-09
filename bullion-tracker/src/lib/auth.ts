@@ -2,7 +2,11 @@ import { auth } from '@/auth';
 import { headers } from 'next/headers';
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.NEXTAUTH_SECRET || 'your-secret-key';
+// Fail hard if JWT secret is not configured - never use a fallback
+const JWT_SECRET = process.env.NEXTAUTH_SECRET;
+if (!JWT_SECRET) {
+  throw new Error('NEXTAUTH_SECRET environment variable is required');
+}
 
 interface JWTPayload {
   userId: string;
