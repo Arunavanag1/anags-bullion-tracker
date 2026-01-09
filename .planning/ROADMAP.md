@@ -78,10 +78,10 @@ Plans:
 **Depends on**: Phase 4
 **Research**: Likely (cloud storage API integration)
 **Research topics**: AWS S3 vs Cloudinary, presigned URLs, migration strategy
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 05-01: TBD (run /gsd:plan-phase 5 to break down)
+- [ ] 05-01: Cloudinary integration, ImageUploader update, migration script
 
 **Scope:**
 - Set up cloud storage (S3 or Cloudinary)
