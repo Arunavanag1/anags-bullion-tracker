@@ -137,11 +137,12 @@ export function calculateCollectionSummary(
     platinumOz: 0,
     totalMeltValue: 0,
     totalBookValue: 0,
+    totalCostBasis: 0,
   };
 
   items.forEach((item) => {
     const quantity = 'quantity' in item ? item.quantity : 1;
-    const totalWeight = item.weightOz * quantity;
+    const totalWeight = (item.weightOz || 0) * quantity;
     const spotPrice = spotPrices[item.metal];
 
     // Add to metal totals
@@ -152,6 +153,7 @@ export function calculateCollectionSummary(
     // Add to value totals
     summary.totalMeltValue += calculateCurrentMeltValue(item, spotPrice);
     summary.totalBookValue += calculateCurrentBookValue(item, spotPrice);
+    summary.totalCostBasis += getPurchasePrice(item);
   });
 
   return summary;

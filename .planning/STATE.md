@@ -65,13 +65,14 @@ None yet.
 
 ### Roadmap Evolution
 
-- Milestone v1.2 created: Security & Stability, 6 phases (Phase 3-8)
+- Milestone v1.2 created: Security & Stability, 7 phases (Phase 3-9)
   - Phase 3: Security Hardening (critical vulnerabilities)
   - Phase 4: Environment Configuration
   - Phase 5: Image Storage Migration (base64 → cloud)
   - Phase 6: Test Foundation
   - Phase 7: Auth Enhancements (email verification, password reset)
   - Phase 8: Performance Fixes
+  - Phase 9: Radial Collage Scroll Persistence (fix disappearing after full rotation)
 
 ## Session Continuity
 

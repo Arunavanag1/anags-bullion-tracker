@@ -334,19 +334,25 @@ export default function CollagePage() {
         baseRadius={450}
         mobileRadius={200}
         visiblePercentage={45}
-        scrollDuration={galleryItems.length > 8 ? 3500 : 2500}
+        scrollDuration={1600}
       >
-        {(hoveredIndex: number | null) =>
-          galleryItems.map((galleryItem: { item: CollectionItem; imageUrl: string; imageIndex: number; key: string }, index: number) => (
+        {(hoveredIndex: number | null) => {
+          // Calculate size based on number of items - larger when fewer items
+          const cardSize = galleryItems.length <= 3 ? 'lg' : galleryItems.length <= 6 ? 'md' : 'sm';
+          return galleryItems.map((galleryItem: { item: CollectionItem; imageUrl: string; imageIndex: number; key: string }, index: number) => (
             <CollectionPhotoCard
               key={galleryItem.key}
               item={galleryItem.item}
               imageUrl={galleryItem.imageUrl}
               isHovered={hoveredIndex === index}
+              size={cardSize}
             />
-          ))
-        }
+          ));
+        }}
       </RadialScrollGallery>
+
+      {/* Spacer to keep gallery visible after animation */}
+      <div style={{ height: '100vh' }} />
 
       {/* Scroll hint at the bottom */}
       <div

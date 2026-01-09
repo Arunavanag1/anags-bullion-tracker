@@ -4,7 +4,7 @@
 
 - ✅ [v1.0 Radial Photo Gallery](milestones/v1.0-ROADMAP.md) (Phase 1) — SHIPPED 2026-01-09
 - 🚧 **v1.1 Filter Pills** — Phase 2 (in progress)
-- 📋 **v1.2 Security & Stability** — Phases 3-8 (planned)
+- 📋 **v1.2 Security & Stability** — Phases 3-9 (planned)
 
 ## Overview
 
@@ -134,6 +134,21 @@ Plans:
 - Fix race condition on price updates
 - Add pagination to mobile sync
 
+#### Phase 9: Radial Collage Scroll Persistence
+
+**Goal**: Ensure radial collage doesn't disappear after completing clockwise and counter-clockwise rotation
+**Depends on**: Phase 8
+**Research**: Unlikely (internal GSAP/ScrollTrigger patterns)
+**Plans**: TBD
+
+Plans:
+- [ ] 09-01: TBD (run /gsd:plan-phase 9 to break down)
+
+**Scope:**
+- Fix scroll animation end state behavior
+- Ensure items remain visible after full scroll cycle
+- Handle ScrollTrigger unpin gracefully
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -146,6 +161,7 @@ Plans:
 | 6. Test Foundation | v1.2 | 0/? | Not started | - |
 | 7. Auth Enhancements | v1.2 | 0/? | Not started | - |
 | 8. Performance Fixes | v1.2 | 0/? | Not started | - |
+| 9. Radial Collage Scroll Persistence | v1.2 | 0/? | Not started | - |
 
 ---
 *Updated: 2026-01-09 after Phase 5 complete*

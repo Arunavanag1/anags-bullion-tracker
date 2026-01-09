@@ -25,6 +25,7 @@ export async function GET() {
           platinumOz: 0,
           totalMeltValue: 0,
           totalBookValue: 0,
+          totalCostBasis: 0,
         },
       });
     }

@@ -58,8 +58,9 @@ export default function BullionTrackerWeb() {
   // Calculate total values
   const totalMeltValue = portfolioData?.totalMeltValue || 0;
   const totalBookValue = portfolioData?.totalBookValue || 0;
+  const totalCostBasis = portfolioData?.totalCostBasis || 0;
   const currentValue = valuationMode === "spot" ? totalMeltValue : totalBookValue;
-  const costBasis = totalBookValue;
+  const costBasis = totalCostBasis;
   const gain = currentValue - costBasis;
   const returnPct = costBasis > 0 ? (gain / costBasis) * 100 : 0;
 

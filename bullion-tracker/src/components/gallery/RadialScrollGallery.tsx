@@ -44,6 +44,7 @@ export function RadialScrollGallery({
   const [radius, setRadius] = useState(baseRadius);
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const innerContainerRef = useRef<HTMLDivElement>(null);
   const rotationRef = useRef({ value: 0 });
   const itemsRef = useRef<(HTMLDivElement | null)[]>([]);
   const prefersReducedMotion = useRef(false);
@@ -52,11 +53,28 @@ export function RadialScrollGallery({
   const itemCount = items.length;
 
   // Calculate angle for visible arc
-  // Start at 270° (top of circle) and spread items evenly across the visible arc
-  const visibleArcAngle = (visiblePercentage / 100) * 360;
-  const startAngle = 270 - visibleArcAngle / 2;
+  // Allow items to overlap by using a fixed arc that doesn't grow too large
+  const baseArc = (visiblePercentage / 100) * 360;
+  // Arc determines how spread out items are - smaller = more overlap
+  const maxArc = 70;
+  const visibleArcAngle = Math.min(baseArc, maxArc);
+
+  // Position items centered at the top of the wheel (270° is straight up)
+  const startAngle = 270 - visibleArcAngle / 2; // Center the arc around 270° (top)
+  const endAngle = startAngle + visibleArcAngle;
+  // For many items, they will naturally overlap since arc is capped
   const anglePerItem = itemCount > 1 ? visibleArcAngle / (itemCount - 1) : 0;
-  const totalRotation = direction === 'ltr' ? visibleArcAngle : -visibleArcAngle;
+
+  // Two-phase rotation:
+  // Phase 1: Rotate clockwise until rightmost item (at endAngle) is 90% off right edge
+  //          Right edge is at ~0° (or 360°), so we need to rotate from endAngle to ~350°
+  // Phase 2: Rotate counter-clockwise back to center so items remain visible at the end
+  //          This brings items back into view after sweeping right
+
+  // Calculate rotation needed for each phase
+  const phase1Rotation = (360 - endAngle) + 20; // Clockwise to push right item off right edge
+  // Phase 2 brings items back to center (rotation returns to 0), so items end up visible
+  const phase2Rotation = phase1Rotation; // Return to starting position
 
   // Handle responsive radius
   useEffect(() => {
@@ -106,7 +124,7 @@ export function RadialScrollGallery({
     });
   }, [radius, itemCount, startAngle, anglePerItem, disabled]);
 
-  // Scroll-driven rotation animation
+  // Scroll-driven rotation animation with two phases
   useGSAP(
     () => {
       if (
@@ -126,15 +144,38 @@ export function RadialScrollGallery({
         scrub: 1,
         pin: true,
         anticipatePin: 1,
+        pinSpacing: true,
         onUpdate: (self) => {
-          const newRotation = self.progress * totalRotation;
+          let newRotation: number;
+
+          const progress = self.progress;
+
+          if (progress <= 0.5) {
+            // Phase 1 (0-50% scroll): Full clockwise rotation
+            const phase1Progress = progress / 0.5;
+            newRotation = phase1Progress * phase1Rotation;
+          } else {
+            // Phase 2 (50-100% scroll): Full counter-clockwise back to start
+            const phase2Progress = (progress - 0.5) / 0.5;
+            newRotation = phase1Rotation - (phase2Progress * phase1Rotation);
+          }
+
           rotationRef.current.value = newRotation;
 
           if (containerRef.current) {
             gsap.set(containerRef.current, { rotation: newRotation });
           }
-
-          // Items rotate with the wheel (no counter-rotation)
+        },
+        onLeave: () => {
+          // Just reset rotation, let coins scroll naturally
+          if (containerRef.current) {
+            gsap.set(containerRef.current, { rotation: 0 });
+          }
+        },
+        onEnterBack: () => {
+          if (containerRef.current) {
+            gsap.set(containerRef.current, { rotation: 0 });
+          }
         },
       });
 
@@ -146,7 +187,8 @@ export function RadialScrollGallery({
       dependencies: [
         itemCount,
         scrollDuration,
-        totalRotation,
+        phase1Rotation,
+        phase2Rotation,
         startTrigger,
         startAngle,
         anglePerItem,
@@ -175,42 +217,69 @@ export function RadialScrollGallery({
     <div
       ref={scrollContainerRef}
       className={cn('relative w-full', className)}
-      style={{ height: `${scrollDuration}px` }}
+      style={{ height: `${scrollDuration}px`, overflow: 'visible' }}
       {...props}
     >
-      <div className="sticky top-0 h-screen w-full overflow-hidden">
+      {/*
+        IMPORTANT: No sticky here! ScrollTrigger's pin handles keeping content visible.
+        Using sticky + pin causes conflicts where content disappears after unpin.
+        This div is just a positioning container for the wheel.
+      */}
+      <div
+        ref={innerContainerRef}
+        className="relative w-full h-screen"
+        style={{ zIndex: 30, overflow: 'visible' }}
+      >
         <div
           ref={containerRef}
-          className="absolute left-1/2 top-1/2"
+          className="absolute left-1/2"
           style={{
             width: radius * 2,
             height: radius * 2,
             marginLeft: -radius,
+            // Center the wheel so items appear in middle of screen
+            top: '80%',
             marginTop: -radius,
           }}
         >
-          {items.map((item, index) => (
-            <div
-              key={index}
-              ref={(el) => {
-                itemsRef.current[index] = el;
-              }}
-              className="absolute left-1/2 top-1/2 cursor-pointer"
-              style={{
-                marginLeft: '-100px',
-                marginTop: '-140px',
-              }}
-              onClick={() => handleItemClick(index)}
-              onKeyDown={(e) => handleKeyDown(index, e)}
-              onMouseEnter={() => setHoveredIndex(index)}
-              onMouseLeave={() => setHoveredIndex(null)}
-              tabIndex={0}
-              role="button"
-              aria-label={`Gallery item ${index + 1}`}
-            >
-              {item}
-            </div>
-          ))}
+          {items.map((item, index) => {
+            const isHovered = hoveredIndex === index;
+            // Base z-index increases with index so later items are on top
+            // Hovered items get a much higher z-index to always be on top
+            const zIndex = isHovered ? 1000 : index + 1;
+
+            return (
+              <div
+                key={index}
+                ref={(el) => {
+                  itemsRef.current[index] = el;
+                }}
+                className="absolute left-1/2 top-1/2 cursor-pointer"
+                style={{
+                  marginLeft: '-100px',
+                  marginTop: '-140px',
+                  zIndex,
+                }}
+                onClick={() => handleItemClick(index)}
+                onKeyDown={(e) => handleKeyDown(index, e)}
+                onMouseEnter={() => setHoveredIndex(index)}
+                onMouseLeave={() => setHoveredIndex(null)}
+                tabIndex={0}
+                role="button"
+                aria-label={`Gallery item ${index + 1}`}
+              >
+                {/* Inner wrapper for hover scale - doesn't conflict with GSAP transforms on parent */}
+                <div
+                  style={{
+                    transform: isHovered ? 'scale(1.08)' : 'scale(1)',
+                    transition: 'transform 0.2s ease-out',
+                  }}
+                >
+                  {item}
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
     </div>

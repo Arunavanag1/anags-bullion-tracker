@@ -117,6 +117,7 @@ export interface CollectionSummary {
   platinumOz: number;
   totalMeltValue: number;
   totalBookValue: number;
+  totalCostBasis: number;
 }
 
 // Calculated Value Interface

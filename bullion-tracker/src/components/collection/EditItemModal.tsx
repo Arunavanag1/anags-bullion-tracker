@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Modal } from '@/components/ui/Modal';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
+import { ImageUploader } from './ImageUploader';
 import { useUpdateItem } from '@/hooks/useCollection';
 import { useSpotPrices } from '@/hooks/useSpotPrices';
 import type { CollectionItem, Metal, BookValueType } from '@/types';
@@ -19,42 +20,66 @@ export function EditItemModal({ isOpen, onClose, item }: EditItemModalProps) {
   const updateItem = useUpdateItem();
   const { data: prices } = useSpotPrices();
 
+  const isNumismatic = item.category === 'NUMISMATIC';
+
+  // Helper to safely access itemized properties
+  const getItemProp = <T,>(prop: string, defaultVal: T): T => {
+    if ('title' in item) {
+      return (item as unknown as Record<string, unknown>)[prop] as T ?? defaultVal;
+    }
+    return defaultVal;
+  };
+
   // Initialize form state from item
-  const [title, setTitle] = useState(item.type === 'itemized' ? item.title : '');
+  const [title, setTitle] = useState(getItemProp('title', ''));
   const [metal, setMetal] = useState<Metal>(item.metal);
   const [quantity, setQuantity] = useState('quantity' in item ? item.quantity : 1);
-  const [weightOz, setWeightOz] = useState(item.weightOz);
-  const [grade, setGrade] = useState(item.type === 'itemized' && item.grade ? item.grade : '');
-  const [gradingService, setGradingService] = useState(
-    item.type === 'itemized' && item.gradingService ? item.gradingService : ''
-  );
+  const [weightOz, setWeightOz] = useState(item.weightOz || 0);
+
+  // Numismatic-specific fields
+  const [grade, setGrade] = useState(getItemProp('grade', ''));
+  const [gradingService, setGradingService] = useState(getItemProp('gradingService', ''));
+  const [certNumber, setCertNumber] = useState(getItemProp('certNumber', ''));
+  const [numismaticValue, setNumismaticValue] = useState(getItemProp<number | undefined>('numismaticValue', undefined)?.toString() || '');
+
+  // Common fields
   const [notes, setNotes] = useState(item.notes || '');
   const [bookValueType, setBookValueType] = useState<BookValueType>(item.bookValueType);
   const [customBookValue, setCustomBookValue] = useState(
     item.customBookValue?.toString() || ''
   );
-  const [purchaseDate, setPurchaseDate] = useState(
-    item.purchaseDate
-      ? (item.purchaseDate instanceof Date ? item.purchaseDate.toISOString() : item.purchaseDate).split('T')[0]
-      : new Date().toISOString().split('T')[0]
+  const [purchasePrice, setPurchasePrice] = useState(
+    getItemProp<number | undefined>('purchasePrice', undefined)?.toString() || ''
   );
+  const [purchaseDate, setPurchaseDate] = useState(() => {
+    const pd = getItemProp<Date | string | undefined>('purchaseDate', undefined);
+    if (!pd) return new Date().toISOString().split('T')[0];
+    return (pd instanceof Date ? pd.toISOString() : pd).split('T')[0];
+  });
+  const [images, setImages] = useState<string[]>(item.images || []);
 
   // Reset form when item changes
   useEffect(() => {
     if (item) {
-      setTitle(item.type === 'itemized' ? item.title : '');
+      setTitle(getItemProp('title', ''));
       setMetal(item.metal);
       setQuantity('quantity' in item ? item.quantity : 1);
-      setWeightOz(item.weightOz);
-      setGrade(item.type === 'itemized' && item.grade ? item.grade : '');
-      setGradingService(item.type === 'itemized' && item.gradingService ? item.gradingService : '');
+      setWeightOz(item.weightOz || 0);
+      setGrade(getItemProp('grade', ''));
+      setGradingService(getItemProp('gradingService', ''));
+      setCertNumber(getItemProp('certNumber', ''));
+      setNumismaticValue(getItemProp<number | undefined>('numismaticValue', undefined)?.toString() || '');
       setNotes(item.notes || '');
       setBookValueType(item.bookValueType);
       setCustomBookValue(item.customBookValue?.toString() || '');
-      setPurchaseDate(item.purchaseDate
-        ? (item.purchaseDate instanceof Date ? item.purchaseDate.toISOString() : item.purchaseDate).split('T')[0]
+      setPurchasePrice(getItemProp<number | undefined>('purchasePrice', undefined)?.toString() || '');
+      const pd = getItemProp<Date | string | undefined>('purchaseDate', undefined);
+      setPurchaseDate(pd
+        ? (pd instanceof Date ? pd.toISOString() : pd).split('T')[0]
         : new Date().toISOString().split('T')[0]);
+      setImages(item.images || []);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [item]);
 
   const currentSpotPrice = prices?.[metal]?.pricePerOz || 0;
@@ -65,19 +90,28 @@ export function EditItemModal({ isOpen, onClose, item }: EditItemModalProps) {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const data: any = {
+      title,
       metal,
       weightOz,
-      bookValueType,
-      customBookValue: bookValueType === 'custom' ? parseFloat(customBookValue) : undefined,
+      quantity,
       purchaseDate: new Date(purchaseDate),
-      ...(item.type === 'itemized' && {
-        title,
-        quantity,
-        grade: grade || undefined,
-        gradingService: gradingService || undefined,
-      }),
+      purchasePrice: purchasePrice ? parseFloat(purchasePrice) : undefined,
       notes: notes || undefined,
+      images,
     };
+
+    if (isNumismatic) {
+      // Numismatic items use numismaticValue
+      data.grade = grade || undefined;
+      data.gradingService = gradingService || undefined;
+      data.certNumber = certNumber || undefined;
+      data.numismaticValue = numismaticValue ? parseFloat(numismaticValue) : undefined;
+      data.bookValueType = 'numismatic';
+    } else {
+      // Bullion items use spot or custom book value
+      data.bookValueType = bookValueType;
+      data.customBookValue = bookValueType === 'custom' ? parseFloat(customBookValue) : undefined;
+    }
 
     try {
       await updateItem.mutateAsync({ id: item.id, data });
@@ -88,8 +122,19 @@ export function EditItemModal({ isOpen, onClose, item }: EditItemModalProps) {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Edit Item">
+    <Modal isOpen={isOpen} onClose={onClose} title={`Edit ${isNumismatic ? 'Numismatic' : 'Bullion'} Item`}>
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Category indicator */}
+        <div className="flex items-center gap-2">
+          <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+            isNumismatic
+              ? 'bg-blue-100 text-blue-700'
+              : 'bg-amber-100 text-amber-700'
+          }`}>
+            {isNumismatic ? 'NUMISMATIC' : 'BULLION'}
+          </span>
+        </div>
+
         {/* Metal Selection */}
         <div>
           <label className="block text-sm font-medium text-text-primary mb-2">Metal *</label>
@@ -111,16 +156,14 @@ export function EditItemModal({ isOpen, onClose, item }: EditItemModalProps) {
           </div>
         </div>
 
-        {/* Title (Itemized only) */}
-        {item.type === 'itemized' && (
-          <Input
-            label="Title *"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="e.g., 2021 Silver Eagle MS70"
-            required
-          />
-        )}
+        {/* Title */}
+        <Input
+          label="Title *"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder={isNumismatic ? "e.g., 1909-S VDB Lincoln Cent" : "e.g., 2021 Silver Eagle"}
+          required
+        />
 
         {/* Weight and Quantity */}
         <div className="grid grid-cols-2 gap-4">
@@ -132,85 +175,112 @@ export function EditItemModal({ isOpen, onClose, item }: EditItemModalProps) {
             onChange={(e) => setWeightOz(parseFloat(e.target.value) || 0)}
             required
           />
-          {item.type === 'itemized' && (
-            <Input
-              label="Quantity *"
-              type="number"
-              min="1"
-              value={quantity}
-              onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
-              required
-            />
-          )}
+          <Input
+            label="Quantity *"
+            type="number"
+            min="1"
+            value={quantity}
+            onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
+            required
+          />
         </div>
 
-        {/* Grade and Service (Itemized only) */}
-        {item.type === 'itemized' && (
-          <div className="grid grid-cols-2 gap-4">
+        {/* Numismatic-specific fields */}
+        {isNumismatic && (
+          <>
+            <div className="grid grid-cols-2 gap-4">
+              <Input
+                label="Grade"
+                value={grade}
+                onChange={(e) => setGrade(e.target.value)}
+                placeholder="e.g., MS65, VF30"
+              />
+              <Input
+                label="Grading Service"
+                value={gradingService}
+                onChange={(e) => setGradingService(e.target.value)}
+                placeholder="e.g., PCGS, NGC"
+              />
+            </div>
             <Input
-              label="Grade"
-              value={grade}
-              onChange={(e) => setGrade(e.target.value)}
-              placeholder="e.g., MS70"
+              label="Cert Number"
+              value={certNumber}
+              onChange={(e) => setCertNumber(e.target.value)}
+              placeholder="Certification number"
             />
             <Input
-              label="Grading Service"
-              value={gradingService}
-              onChange={(e) => setGradingService(e.target.value)}
-              placeholder="e.g., PCGS, NGC"
+              label="Numismatic Value *"
+              type="number"
+              step="0.01"
+              value={numismaticValue}
+              onChange={(e) => setNumismaticValue(e.target.value)}
+              placeholder="Current market value"
+              required
             />
+          </>
+        )}
+
+        {/* Bullion Book Value - only for non-numismatic */}
+        {!isNumismatic && (
+          <div>
+            <label className="block text-sm font-medium text-text-primary mb-2">
+              Book Value *
+            </label>
+            <div className="space-y-3">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  value="spot"
+                  checked={bookValueType === 'spot'}
+                  onChange={() => setBookValueType('spot')}
+                  className="text-accent-primary focus:ring-accent-primary"
+                />
+                <span className="text-text-primary">
+                  Use Spot Value{' '}
+                  <span className="font-mono text-sm">({formatCurrency(spotValue)})</span>
+                </span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  value="custom"
+                  checked={bookValueType === 'custom'}
+                  onChange={() => setBookValueType('custom')}
+                  className="text-accent-primary focus:ring-accent-primary"
+                />
+                <span className="text-text-primary">Custom Value</span>
+              </label>
+              {bookValueType === 'custom' && (
+                <Input
+                  type="number"
+                  step="0.01"
+                  value={customBookValue}
+                  onChange={(e) => setCustomBookValue(e.target.value)}
+                  placeholder="Enter custom book value"
+                  required
+                />
+              )}
+            </div>
           </div>
         )}
 
-        {/* Book Value */}
-        <div>
-          <label className="block text-sm font-medium text-text-primary mb-2">
-            Book Value *
-          </label>
-          <div className="space-y-3">
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="radio"
-                value="spot"
-                checked={bookValueType === 'spot'}
-                onChange={() => setBookValueType('spot')}
-                className="text-accent-primary focus:ring-accent-primary"
-              />
-              <span className="text-text-primary">
-                Use Spot Value{' '}
-                <span className="font-mono text-sm">({formatCurrency(spotValue)})</span>
-              </span>
-            </label>
-            <label className="flex items-center gap-2 cursor-pointer">
-              <input
-                type="radio"
-                value="custom"
-                checked={bookValueType === 'custom'}
-                onChange={() => setBookValueType('custom')}
-                className="text-accent-primary focus:ring-accent-primary"
-              />
-              <span className="text-text-primary">Custom Value</span>
-            </label>
-            {bookValueType === 'custom' && (
-              <Input
-                type="number"
-                step="0.01"
-                value={customBookValue}
-                onChange={(e) => setCustomBookValue(e.target.value)}
-                placeholder="Enter custom book value"
-                required
-              />
-            )}
-          </div>
+        {/* Purchase Price and Date */}
+        <div className="grid grid-cols-2 gap-4">
+          <Input
+            label="Purchase Price"
+            type="number"
+            step="0.01"
+            value={purchasePrice}
+            onChange={(e) => setPurchasePrice(e.target.value)}
+            placeholder="What you paid"
+          />
+          <Input
+            label="Purchase Date"
+            type="date"
+            value={purchaseDate}
+            onChange={(e) => setPurchaseDate(e.target.value)}
+          />
         </div>
-
-        {/* Purchase Date */}
-        <Input
-          label="Purchase Date"
-          type="date"
-          value={purchaseDate}
-          onChange={(e) => setPurchaseDate(e.target.value)}
-        />
 
         {/* Notes */}
         <div>
@@ -224,6 +294,12 @@ export function EditItemModal({ isOpen, onClose, item }: EditItemModalProps) {
           />
         </div>
 
+        {/* Photos */}
+        <div>
+          <label className="block text-sm font-medium text-text-primary mb-1.5">Photos</label>
+          <ImageUploader images={images} onChange={setImages} />
+        </div>
+
         {/* Submit */}
         <div className="flex gap-3">
           <Button type="button" variant="secondary" onClick={onClose} className="flex-1">
@@ -231,7 +307,7 @@ export function EditItemModal({ isOpen, onClose, item }: EditItemModalProps) {
           </Button>
           <Button
             type="submit"
-            disabled={updateItem.isPending || !currentSpotPrice}
+            disabled={updateItem.isPending || (!isNumismatic && !currentSpotPrice)}
             className="flex-1"
           >
             {updateItem.isPending ? 'Saving...' : 'Save Changes'}

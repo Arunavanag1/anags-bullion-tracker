@@ -103,9 +103,12 @@ export async function PUT(
     if (body.weightOz !== undefined) updateData.weightOz = body.weightOz;
     if (body.grade !== undefined) updateData.grade = body.grade;
     if (body.gradingService !== undefined) updateData.gradingService = body.gradingService;
+    if (body.certNumber !== undefined) updateData.certNumber = body.certNumber;
     if (body.notes !== undefined) updateData.notes = body.notes;
     if (body.bookValueType !== undefined) updateData.bookValueType = body.bookValueType;
     if (body.customBookValue !== undefined) updateData.customBookValue = body.customBookValue;
+    if (body.numismaticValue !== undefined) updateData.numismaticValue = body.numismaticValue;
+    if (body.purchasePrice !== undefined) updateData.purchasePrice = body.purchasePrice;
     if (body.purchaseDate) updateData.purchaseDate = new Date(body.purchaseDate);
 
     // Handle images: delete all existing and create new ones
