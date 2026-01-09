@@ -102,7 +102,8 @@ export function AddItemModal({ isOpen, onClose }: AddItemModalProps) {
       images,
     };
 
-    let data;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let data: any;
     if (itemCategory === 'BULLION') {
       data = {
         ...baseData,

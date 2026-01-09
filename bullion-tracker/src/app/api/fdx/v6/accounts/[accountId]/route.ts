@@ -10,9 +10,11 @@ import { fetchSpotPrices } from '@/lib/prices';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { accountId: string } }
+  { params }: { params: Promise<{ accountId: string }> }
 ) {
   try {
+    const { accountId } = await params;
+
     // Verify access token
     const authHeader = request.headers.get('Authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -27,7 +29,7 @@ export async function GET(
     const userId = payload.sub;
 
     // Verify account belongs to user
-    if (!params.accountId.endsWith(userId)) {
+    if (!accountId.endsWith(userId)) {
       return NextResponse.json(
         { error: 'not_found' },
         { status: 404 }
@@ -50,9 +52,10 @@ export async function GET(
         metalGroups[item.metal] = { oz: 0, value: 0 };
       }
       const price = spotPrices[item.metal as keyof typeof spotPrices]?.pricePerOz || 0;
-      const value = item.weightOz * price;
+      const weightOz = item.weightOz || 0;
+      const value = weightOz * price;
 
-      metalGroups[item.metal].oz += item.weightOz;
+      metalGroups[item.metal].oz += weightOz;
       metalGroups[item.metal].value += value;
     }
 
@@ -89,7 +92,7 @@ export async function GET(
     }
 
     return NextResponse.json({
-      accountId: params.accountId,
+      accountId: accountId,
       accountType: 'OTHERINVESTMENT',
       accountNumberDisplay: `****${userId.slice(-4)}`,
       productName: 'Precious Metals Portfolio',

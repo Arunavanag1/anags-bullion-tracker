@@ -9,9 +9,11 @@ import { prisma } from '@/lib/db';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { accountId: string } }
+  { params }: { params: Promise<{ accountId: string }> }
 ) {
   try {
+    const { accountId } = await params;
+
     // Verify access token
     const authHeader = request.headers.get('Authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -26,7 +28,7 @@ export async function GET(
     const userId = payload.sub;
 
     // Verify account belongs to user
-    if (!params.accountId.endsWith(userId)) {
+    if (!accountId.endsWith(userId)) {
       return NextResponse.json(
         { error: 'not_found' },
         { status: 404 }
@@ -62,17 +64,19 @@ export async function GET(
 
     // Build transactions
     const transactions = items.map((item) => {
-      const bookValue = item.customBookValue || (item.weightOz * item.spotPriceAtCreation);
+      const weightOz = item.weightOz || 0;
+      const spotPrice = item.spotPriceAtCreation || 0;
+      const bookValue = item.customBookValue || (weightOz * spotPrice);
 
       return {
         investmentTransaction: {
           transactionId: item.id,
           transactionType: 'PURCHASED',
           postedTimestamp: item.createdAt.toISOString(),
-          description: item.title || `Purchased ${item.weightOz} oz ${item.metal}`,
+          description: item.title || `Purchased ${weightOz} oz ${item.metal}`,
           amount: bookValue,
-          units: item.weightOz,
-          unitPrice: item.spotPriceAtCreation,
+          units: weightOz,
+          unitPrice: spotPrice,
           securityType: 'OTHER',
         },
       };

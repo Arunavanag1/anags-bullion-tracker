@@ -34,7 +34,9 @@ export function EditItemModal({ isOpen, onClose, item }: EditItemModalProps) {
     item.customBookValue?.toString() || ''
   );
   const [purchaseDate, setPurchaseDate] = useState(
-    item.purchaseDate ? item.purchaseDate.split('T')[0] : new Date().toISOString().split('T')[0]
+    item.purchaseDate
+      ? (item.purchaseDate instanceof Date ? item.purchaseDate.toISOString() : item.purchaseDate).split('T')[0]
+      : new Date().toISOString().split('T')[0]
   );
 
   // Reset form when item changes
@@ -49,7 +51,9 @@ export function EditItemModal({ isOpen, onClose, item }: EditItemModalProps) {
       setNotes(item.notes || '');
       setBookValueType(item.bookValueType);
       setCustomBookValue(item.customBookValue?.toString() || '');
-      setPurchaseDate(item.purchaseDate ? item.purchaseDate.split('T')[0] : new Date().toISOString().split('T')[0]);
+      setPurchaseDate(item.purchaseDate
+        ? (item.purchaseDate instanceof Date ? item.purchaseDate.toISOString() : item.purchaseDate).split('T')[0]
+        : new Date().toISOString().split('T')[0]);
     }
   }, [item]);
 
@@ -59,12 +63,13 @@ export function EditItemModal({ isOpen, onClose, item }: EditItemModalProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const data = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const data: any = {
       metal,
       weightOz,
       bookValueType,
       customBookValue: bookValueType === 'custom' ? parseFloat(customBookValue) : undefined,
-      purchaseDate,
+      purchaseDate: new Date(purchaseDate),
       ...(item.type === 'itemized' && {
         title,
         quantity,

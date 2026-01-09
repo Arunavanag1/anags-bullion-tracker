@@ -31,14 +31,11 @@ export async function GET() {
     const today = new Date();
     const oneMonthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
 
-    // Get all numismatic collection items with their coin references
+    // Get all numismatic collection items
     const numismaticItems = await prisma.collectionItem.findMany({
       where: {
         category: 'NUMISMATIC',
         coinReferenceId: { not: null },
-      },
-      include: {
-        coinReference: true,
       },
     });
 
@@ -88,9 +85,18 @@ export async function GET() {
         const change = currentPrice - priceOneMonthAgo;
         const changePercent = priceOneMonthAgo > 0 ? (change / priceOneMonthAgo) * 100 : 0;
 
+        // Look up coin reference for the title if not set
+        let coinTitle = item.title || 'Unknown Coin';
+        if (!item.title && item.coinReferenceId) {
+          const coinRef = await prisma.coinReference.findUnique({
+            where: { id: item.coinReferenceId },
+          });
+          coinTitle = coinRef?.fullName || 'Unknown Coin';
+        }
+
         coinPerformances.push({
           id: item.id,
-          title: item.title || item.coinReference?.fullName || 'Unknown Coin',
+          title: coinTitle,
           grade: item.grade,
           coinReferenceId: item.coinReferenceId,
           currentPrice: Math.round(currentPrice * 100) / 100,

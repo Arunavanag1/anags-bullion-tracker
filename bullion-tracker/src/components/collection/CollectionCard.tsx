@@ -41,7 +41,7 @@ export function CollectionCard({ item }: CollectionCardProps) {
   const totalWeight = (item.weightOz || 0) * quantity;
   const hasImage = item.images && item.images.length > 0;
   const displayTitle = item.category === 'NUMISMATIC'
-    ? item.title || 'Numismatic Coin'
+    ? ('title' in item ? item.title : null) || 'Numismatic Coin'
     : (item.type === 'itemized' && 'title' in item ? item.title : `${item.metal.toUpperCase()} (Bulk)`);
 
   const handleDelete = async () => {

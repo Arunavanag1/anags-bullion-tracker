@@ -14,7 +14,8 @@ export function calculateCurrentBookValue(
 ): number {
   // Handle numismatic items
   if (item.category === 'NUMISMATIC') {
-    if (item.bookValueType === 'numismatic' && item.numismaticValue !== undefined) {
+    // Check for numismatic value (bookValueType may be 'numismatic' string from DB)
+    if ((item.bookValueType as string) === 'numismatic' && item.numismaticValue !== undefined) {
       return item.numismaticValue;
     }
     if (item.customBookValue !== undefined) {
