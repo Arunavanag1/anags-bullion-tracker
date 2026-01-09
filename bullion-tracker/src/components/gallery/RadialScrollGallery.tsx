@@ -52,8 +52,9 @@ export function RadialScrollGallery({
   const itemCount = items.length;
 
   // Calculate angle for visible arc
+  // Start at 270° (top of circle) and spread items evenly across the visible arc
   const visibleArcAngle = (visiblePercentage / 100) * 360;
-  const startAngle = 180 - visibleArcAngle / 2;
+  const startAngle = 270 - visibleArcAngle / 2;
   const anglePerItem = itemCount > 1 ? visibleArcAngle / (itemCount - 1) : 0;
   const totalRotation = direction === 'ltr' ? visibleArcAngle : -visibleArcAngle;
 
@@ -98,7 +99,8 @@ export function RadialScrollGallery({
       gsap.set(item, {
         x,
         y,
-        rotation: itemAngle + 90,
+        // Keep items upright (rotation: 0) instead of pointing outward from center
+        rotation: 0,
         transformOrigin: 'center center',
       });
     });
@@ -132,11 +134,10 @@ export function RadialScrollGallery({
             gsap.set(containerRef.current, { rotation: newRotation });
           }
 
-          // Counter-rotate items to keep them upright
-          itemsRef.current.forEach((item, index) => {
+          // Counter-rotate items to keep them upright (cancel out wheel rotation)
+          itemsRef.current.forEach((item) => {
             if (!item) return;
-            const itemAngle = startAngle + index * anglePerItem;
-            gsap.set(item, { rotation: itemAngle + 90 - newRotation });
+            gsap.set(item, { rotation: -newRotation });
           });
         },
       });

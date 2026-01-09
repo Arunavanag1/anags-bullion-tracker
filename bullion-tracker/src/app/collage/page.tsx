@@ -9,13 +9,15 @@ import {
   RadialScrollGallery,
   CollectionPhotoCard,
   ItemLightbox,
+  FilterPills,
 } from '@/components/gallery';
-import type { CollectionItem } from '@/types';
+import type { CollectionItem, Metal } from '@/types';
 
 export default function CollagePage() {
   const { data: items, isLoading } = useCollection();
   const { data: spotPrices } = useSpotPrices();
   const [selectedItem, setSelectedItem] = useState<CollectionItem | null>(null);
+  const [activeFilters, setActiveFilters] = useState<Set<Metal>>(new Set());
 
   // Get items with images
   const itemsWithImages = useMemo(() => {
@@ -25,9 +27,26 @@ export default function CollagePage() {
     );
   }, [items]);
 
-  // Flatten to create gallery items (one per image)
+  // Calculate item counts per metal type
+  const itemCounts = useMemo(() => {
+    const counts = { gold: 0, silver: 0, platinum: 0, all: 0 };
+    itemsWithImages.forEach((item: CollectionItem) => {
+      const imageCount = item.images?.length || 0;
+      counts[item.metal as Metal] += imageCount;
+      counts.all += imageCount;
+    });
+    return counts;
+  }, [itemsWithImages]);
+
+  // Flatten to create gallery items (one per image), applying filter
   const galleryItems = useMemo(() => {
-    return itemsWithImages.flatMap((item: CollectionItem) =>
+    const filtered = activeFilters.size === 0
+      ? itemsWithImages
+      : itemsWithImages.filter((item: CollectionItem) =>
+          activeFilters.has(item.metal as Metal)
+        );
+
+    return filtered.flatMap((item: CollectionItem) =>
       (item.images || []).map((imageUrl: string, imageIndex: number) => ({
         item,
         imageUrl,
@@ -35,7 +54,7 @@ export default function CollagePage() {
         key: `${item.id}-${imageIndex}`,
       }))
     );
-  }, [itemsWithImages]);
+  }, [itemsWithImages, activeFilters]);
 
   const handleItemSelect = (index: number) => {
     const galleryItem = galleryItems[index];
@@ -71,7 +90,11 @@ export default function CollagePage() {
     );
   }
 
-  // Empty state
+  // Check if we have any photos at all (before filtering)
+  const hasAnyPhotos = itemCounts.all > 0;
+  const isFiltered = activeFilters.size > 0;
+
+  // Empty state - no photos matching current filter OR no photos at all
   if (galleryItems.length === 0) {
     return (
       <div
@@ -93,31 +116,39 @@ export default function CollagePage() {
             <div
               style={{
                 display: 'flex',
-                justifyContent: 'flex-end',
+                justifyContent: 'space-between',
                 alignItems: 'center',
-                gap: '12px',
                 marginBottom: '24px',
               }}
             >
-              <Link href="/" style={{ textDecoration: 'none' }}>
-                <button
-                  style={{
-                    background: '#E8E8E8',
-                    color: '#1a1a1a',
-                    border: 'none',
-                    borderRadius: '10px',
-                    padding: '10px 18px',
-                    fontSize: '14px',
-                    fontWeight: '500',
-                    cursor: 'pointer',
-                    fontFamily:
-                      "'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif",
-                  }}
-                >
-                  Back to Dashboard
-                </button>
-              </Link>
-              <AuthButton />
+              {hasAnyPhotos && (
+                <FilterPills
+                  activeFilters={activeFilters}
+                  onFilterChange={setActiveFilters}
+                  itemCounts={itemCounts}
+                />
+              )}
+              <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginLeft: 'auto' }}>
+                <Link href="/" style={{ textDecoration: 'none' }}>
+                  <button
+                    style={{
+                      background: '#E8E8E8',
+                      color: '#1a1a1a',
+                      border: 'none',
+                      borderRadius: '10px',
+                      padding: '10px 18px',
+                      fontSize: '14px',
+                      fontWeight: '500',
+                      cursor: 'pointer',
+                      fontFamily:
+                        "'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif",
+                    }}
+                  >
+                    Back to Dashboard
+                  </button>
+                </Link>
+                <AuthButton />
+              </div>
             </div>
             <h1
               style={{
@@ -131,7 +162,7 @@ export default function CollagePage() {
               Photo Gallery
             </h1>
             <p style={{ fontSize: '15px', color: '#666', margin: 0 }}>
-              Scroll through your collection
+              {isFiltered ? 'No photos match your filter' : 'Scroll through your collection'}
             </p>
           </div>
         </div>
@@ -154,7 +185,7 @@ export default function CollagePage() {
                 opacity: 0.5,
               }}
             >
-              📸
+              {isFiltered ? '🔍' : '📸'}
             </div>
             <div
               style={{
@@ -164,7 +195,9 @@ export default function CollagePage() {
                 fontWeight: '600',
               }}
             >
-              No photos in your collection yet
+              {isFiltered
+                ? 'No photos match your filter'
+                : 'No photos in your collection yet'}
             </div>
             <div
               style={{
@@ -173,10 +206,13 @@ export default function CollagePage() {
                 marginBottom: '32px',
               }}
             >
-              Add images to your bullion pieces to see them here
+              {isFiltered
+                ? 'Try selecting different metal types or click "All" to see everything'
+                : 'Add images to your bullion pieces to see them here'}
             </div>
-            <Link href="/" style={{ textDecoration: 'none' }}>
+            {isFiltered ? (
               <button
+                onClick={() => setActiveFilters(new Set())}
                 style={{
                   background: '#1a1a1a',
                   color: 'white',
@@ -188,9 +224,26 @@ export default function CollagePage() {
                   cursor: 'pointer',
                 }}
               >
-                Add Items with Images
+                Show All Photos
               </button>
-            </Link>
+            ) : (
+              <Link href="/" style={{ textDecoration: 'none' }}>
+                <button
+                  style={{
+                    background: '#1a1a1a',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '12px',
+                    padding: '14px 28px',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Add Items with Images
+                </button>
+              </Link>
+            )}
           </div>
         </div>
       </div>
@@ -240,10 +293,15 @@ export default function CollagePage() {
               Photo Gallery
             </h1>
             <p style={{ fontSize: '13px', color: '#666', margin: 0 }}>
-              {galleryItems.length} photo{galleryItems.length !== 1 ? 's' : ''} · Scroll to explore
+              {galleryItems.length} photo{galleryItems.length !== 1 ? 's' : ''}{activeFilters.size > 0 ? ` · Filtered` : ''} · Scroll to explore
             </p>
           </div>
-          <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+            <FilterPills
+              activeFilters={activeFilters}
+              onFilterChange={setActiveFilters}
+              itemCounts={itemCounts}
+            />
             <Link href="/" style={{ textDecoration: 'none' }}>
               <button
                 style={{
