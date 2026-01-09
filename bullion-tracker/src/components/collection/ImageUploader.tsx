@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import imageCompression from 'browser-image-compression';
 import { Button } from '@/components/ui/Button';
+import { uploadImage, isCloudinaryConfigured } from '@/lib/cloudinary';
 
 // Check if file is a valid image type (including HEIC)
 function isValidImageType(file: File): boolean {
@@ -102,7 +103,7 @@ export function ImageUploader({ images, onChange, maxImages = 5 }: ImageUploader
               compressed = processedFile;
             }
 
-            // Convert to base64 for temporary storage
+            // Convert to base64 first
             const base64 = await new Promise<string>((resolve, reject) => {
               const reader = new FileReader();
               reader.onload = () => resolve(reader.result as string);
@@ -110,7 +111,9 @@ export function ImageUploader({ images, onChange, maxImages = 5 }: ImageUploader
               reader.readAsDataURL(compressed);
             });
 
-            newImages.push(base64);
+            // Upload to Cloudinary (falls back to base64 if not configured)
+            const imageUrl = await uploadImage(base64);
+            newImages.push(imageUrl);
           } catch (err) {
             console.error('Error processing image:', err);
             setError('Failed to process image');
@@ -242,7 +245,11 @@ export function ImageUploader({ images, onChange, maxImages = 5 }: ImageUploader
 
       {/* Note */}
       <div className="text-xs text-text-secondary">
-        <strong>Note:</strong> Images are stored as base64 temporarily. Configure cloud storage (Cloudinary/S3) in .env for production use.
+        {isCloudinaryConfigured() ? (
+          <><strong>Note:</strong> Images are uploaded to Cloudinary cloud storage.</>
+        ) : (
+          <><strong>Note:</strong> Images stored as base64. Configure NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME and NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET for cloud storage.</>
+        )}
       </div>
     </div>
   );
