@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
@@ -39,8 +39,26 @@ function generateHistoricalPrices(metal: string, basePrice: number, days = 5) {
 /**
  * POST /api/prices/seed
  * Seeds historical price data for the last 5 days
+ * Protected: Only available in development mode
  */
-export async function POST() {
+export async function POST(request: NextRequest) {
+  // Security: Block in production
+  if (process.env.NODE_ENV === 'production') {
+    return NextResponse.json(
+      { error: 'Seed endpoint is disabled in production' },
+      { status: 403 }
+    );
+  }
+
+  // Optional admin key check for dev environments
+  const adminKey = request.headers.get('x-admin-key');
+  if (process.env.ADMIN_SEED_KEY && adminKey !== process.env.ADMIN_SEED_KEY) {
+    return NextResponse.json(
+      { error: 'Invalid admin key' },
+      { status: 403 }
+    );
+  }
+
   try {
     console.log('🌱 Seeding historical price data for the last 5 days...');
 

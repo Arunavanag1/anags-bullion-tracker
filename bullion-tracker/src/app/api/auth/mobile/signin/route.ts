@@ -4,10 +4,14 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
 // Fail hard if JWT secret is not configured - never use a fallback
-const JWT_SECRET = process.env.NEXTAUTH_SECRET;
-if (!JWT_SECRET) {
-  throw new Error('NEXTAUTH_SECRET environment variable is required');
+function getJwtSecret(): string {
+  const secret = process.env.NEXTAUTH_SECRET;
+  if (!secret) {
+    throw new Error('NEXTAUTH_SECRET environment variable is required');
+  }
+  return secret;
 }
+const JWT_SECRET = getJwtSecret();
 
 export async function POST(request: NextRequest) {
   try {
