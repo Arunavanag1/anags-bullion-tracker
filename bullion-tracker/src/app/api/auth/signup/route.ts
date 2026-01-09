@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import bcrypt from 'bcryptjs';
+import { checkRateLimit, getClientIp } from '@/lib/ratelimit';
 
 // Password strength validation
 function validatePassword(password: string): { valid: boolean; reason?: string } {
@@ -21,6 +22,23 @@ function validatePassword(password: string): { valid: boolean; reason?: string }
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limit check
+    const clientIp = getClientIp(request);
+    const { success, reset } = await checkRateLimit(clientIp);
+
+    if (!success) {
+      return NextResponse.json(
+        { error: 'Too many requests. Please try again later.' },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': String(Math.ceil((reset || Date.now() + 60000 - Date.now()) / 1000)),
+            'X-RateLimit-Remaining': '0',
+          },
+        }
+      );
+    }
+
     const { name, email, password } = await request.json();
 
     // Validation

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { checkRateLimit, getClientIp } from '@/lib/ratelimit';
 
 // Fail hard if JWT secret is not configured - never use a fallback
 function getJwtSecret(): string {
@@ -15,6 +16,23 @@ const JWT_SECRET = getJwtSecret();
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limit check
+    const clientIp = getClientIp(request);
+    const { success, reset } = await checkRateLimit(clientIp);
+
+    if (!success) {
+      return NextResponse.json(
+        { error: 'Too many requests. Please try again later.' },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': String(Math.ceil((reset || Date.now() + 60000 - Date.now()) / 1000)),
+            'X-RateLimit-Remaining': '0',
+          },
+        }
+      );
+    }
+
     const { email, password } = await request.json();
 
     if (!email || !password) {
