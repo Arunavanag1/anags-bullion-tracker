@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-01-09)
 
 **Core value:** Showcase coin photography beautifully
-**Current focus:** Complete — Radial Photo Gallery shipped
+**Current focus:** v1.0 Complete — Planning next milestone
 
 ## Current Position
 
-Phase: 1 of 1 (Radial Gallery)
-Plan: 1 of 1 — Complete
-Status: Milestone complete
-Last activity: 2026-01-09 — Feature shipped to GitHub
+Phase: 1 of 1 (Radial Gallery) — COMPLETE
+Plan: All complete
+Status: v1.0 Milestone archived
+Last activity: 2026-01-09 — v1.0 milestone completed and tagged
 
 Progress: ██████████ 100%
 
