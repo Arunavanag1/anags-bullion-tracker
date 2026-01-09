@@ -29,6 +29,7 @@
       "favicon": "./assets/favicon.png"
     },
     "extra": {
+      "apiUrl": "http://localhost:3001",
       "metalPriceApiKey": "de370593eb772aeca103b27bb7c8c226"
     },
     "plugins": [

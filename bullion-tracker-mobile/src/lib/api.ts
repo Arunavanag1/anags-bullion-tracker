@@ -1,13 +1,23 @@
 import * as SecureStore from 'expo-secure-store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Fuse from 'fuse.js';
+import Constants from 'expo-constants';
 import type { CoinReference, ValidGrade, PriceGuideData, CollectionSummary, ItemCategory, GradingService, ProblemType, BookValueType } from '../types';
 
-// IMPORTANT: Change this to your computer's IP address for physical devices
-// For iOS simulator: use localhost
-// For Android emulator: use 10.0.2.2
-// For physical device: use your computer's IP (e.g., 192.168.104.235)
-export const API_URL = 'http://192.168.100.102:3001';
+// Get API URL from environment with development fallback
+function getApiUrl(): string {
+  const envUrl = Constants.expoConfig?.extra?.apiUrl;
+  if (envUrl) {
+    return envUrl;
+  }
+  // Development fallback - warn in console
+  if (__DEV__) {
+    console.warn('API_URL not configured in app.json extra.apiUrl, using localhost:3001');
+  }
+  return 'http://localhost:3001';
+}
+
+export const API_URL = getApiUrl();
 
 const TOKEN_KEY = 'auth_token';
 
