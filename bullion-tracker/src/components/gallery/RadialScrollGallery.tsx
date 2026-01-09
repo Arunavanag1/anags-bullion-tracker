@@ -99,8 +99,8 @@ export function RadialScrollGallery({
       gsap.set(item, {
         x,
         y,
-        // Keep items upright (rotation: 0) instead of pointing outward from center
-        rotation: 0,
+        // Items rotate with their position on the wheel (pointing outward from center)
+        rotation: itemAngle + 90,
         transformOrigin: 'center center',
       });
     });
@@ -134,11 +134,7 @@ export function RadialScrollGallery({
             gsap.set(containerRef.current, { rotation: newRotation });
           }
 
-          // Counter-rotate items to keep them upright (cancel out wheel rotation)
-          itemsRef.current.forEach((item) => {
-            if (!item) return;
-            gsap.set(item, { rotation: -newRotation });
-          });
+          // Items rotate with the wheel (no counter-rotation)
         },
       });
 

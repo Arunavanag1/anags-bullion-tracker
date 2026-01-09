@@ -1,0 +1,47 @@
+import { Ratelimit } from '@upstash/ratelimit';
+import { Redis } from '@upstash/redis';
+
+// Use in-memory store for development (no Upstash account needed)
+// In production, configure UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN
+const redis = process.env.UPSTASH_REDIS_REST_URL
+  ? new Redis({
+      url: process.env.UPSTASH_REDIS_REST_URL,
+      token: process.env.UPSTASH_REDIS_REST_TOKEN!,
+    })
+  : null;
+
+// Auth rate limiter: 5 requests per 60 seconds per IP
+export const authRateLimiter = redis
+  ? new Ratelimit({
+      redis,
+      limiter: Ratelimit.slidingWindow(5, '60 s'),
+      analytics: true,
+      prefix: 'ratelimit:auth',
+    })
+  : null;
+
+// Helper to get client IP
+export function getClientIp(request: Request): string {
+  const forwarded = request.headers.get('x-forwarded-for');
+  if (forwarded) {
+    return forwarded.split(',')[0].trim();
+  }
+  return request.headers.get('x-real-ip') || 'unknown';
+}
+
+// Rate limit check helper
+export async function checkRateLimit(
+  identifier: string
+): Promise<{ success: boolean; remaining?: number; reset?: number }> {
+  if (!authRateLimiter) {
+    // No rate limiting in development without Upstash
+    return { success: true };
+  }
+
+  const result = await authRateLimiter.limit(identifier);
+  return {
+    success: result.success,
+    remaining: result.remaining,
+    reset: result.reset,
+  };
+}
