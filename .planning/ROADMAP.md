@@ -47,7 +47,7 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 03-01: Fix JWT secrets, password requirements, protect seed endpoint
+- [x] 03-01: Fix JWT secrets, password requirements, protect seed endpoint
 - [ ] 03-02: Add rate limiting to auth endpoints
 
 **Scope:**
@@ -140,7 +140,7 @@ Plans:
 |-------|-----------|----------------|--------|-----------|
 | 1. Radial Gallery | v1.0 | 1/1 | Complete | 2026-01-09 |
 | 2. Filter Pills | v1.1 | 0/? | Not started | - |
-| 3. Security Hardening | v1.2 | 0/2 | Not started | - |
+| 3. Security Hardening | v1.2 | 1/2 | In progress | - |
 | 4. Environment Configuration | v1.2 | 0/? | Not started | - |
 | 5. Image Storage Migration | v1.2 | 0/? | Not started | - |
 | 6. Test Foundation | v1.2 | 0/? | Not started | - |
