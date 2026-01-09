@@ -21,12 +21,16 @@ Showcase coin photography beautifully. The radial wheel animation is a means to 
 
 ### Active
 
-- [ ] RadialScrollGallery component with GSAP scroll-driven animation
-- [ ] CollectionPhotoCard component with metal badge, image, title, grade, weight
-- [ ] Photos page integrating gallery with collection data
-- [ ] Lightbox modal for item detail view (multi-image swipe + metadata)
-- [ ] Empty state for collections without photos
-- [ ] Mobile-responsive radius and touch interactions
+(None — feature shipped)
+
+### Shipped
+
+- ✓ RadialScrollGallery component with GSAP scroll-driven animation — shipped
+- ✓ CollectionPhotoCard component with metal badge, image, title, grade, weight — shipped
+- ✓ Photos page integrating gallery with collection data — shipped
+- ✓ Lightbox modal for item detail view (multi-image swipe + metadata) — shipped
+- ✓ Empty state for collections without photos — shipped
+- ✓ Mobile-responsive radius and touch interactions — shipped
 
 ### Out of Scope
 
@@ -62,10 +66,10 @@ Showcase coin photography beautifully. The radial wheel animation is a means to 
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Replace collage page, not add new route | User wants upgraded experience, not separate feature | — Pending |
-| GSAP over Framer Motion for scroll animation | ScrollTrigger provides precise scrubbing; existing Framer Motion is for simpler animations | — Pending |
-| Skip filter pills in v1 | Focus on core gallery experience first | — Pending |
-| Include lightbox in v1 | Essential for viewing item details and multiple images | — Pending |
+| Replace collage page, not add new route | User wants upgraded experience, not separate feature | ✓ Good |
+| GSAP over Framer Motion for scroll animation | ScrollTrigger provides precise scrubbing; existing Framer Motion is for simpler animations | ✓ Good |
+| Skip filter pills in v1 | Focus on core gallery experience first | ✓ Good |
+| Include lightbox in v1 | Essential for viewing item details and multiple images | ✓ Good |
 
 ---
-*Last updated: 2026-01-09 after initialization*
+*Last updated: 2026-01-09 after feature shipped*
