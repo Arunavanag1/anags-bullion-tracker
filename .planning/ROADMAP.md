@@ -81,7 +81,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 05-01: Cloudinary integration, ImageUploader update, migration script
+- [x] 05-01: Cloudinary integration, ImageUploader update, migration script
 
 **Scope:**
 - Set up cloud storage (S3 or Cloudinary)
@@ -142,10 +142,10 @@ Plans:
 | 2. Filter Pills | v1.1 | 0/? | Not started | - |
 | 3. Security Hardening | v1.2 | 2/2 | Complete | 2026-01-09 |
 | 4. Environment Configuration | v1.2 | 1/1 | Complete | 2026-01-09 |
-| 5. Image Storage Migration | v1.2 | 0/? | Not started | - |
+| 5. Image Storage Migration | v1.2 | 1/1 | Complete | 2026-01-09 |
 | 6. Test Foundation | v1.2 | 0/? | Not started | - |
 | 7. Auth Enhancements | v1.2 | 0/? | Not started | - |
 | 8. Performance Fixes | v1.2 | 0/? | Not started | - |
 
 ---
-*Updated: 2026-01-09 after v1.2 milestone created*
+*Updated: 2026-01-09 after Phase 5 complete*

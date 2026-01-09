@@ -5,24 +5,24 @@
 See: .planning/PROJECT.md (updated 2026-01-09)
 
 **Core value:** Showcase coin photography beautifully
-**Current focus:** v1.2 Security & Stability — Phase 5 next
+**Current focus:** v1.2 Security & Stability — Phase 6 next
 **Next milestone:** After v1.2 phases complete
 
 ## Current Position
 
-Phase: 4 of 8 (Environment Configuration) — COMPLETE
+Phase: 5 of 8 (Image Storage Migration) — COMPLETE
 Plan: 1 of 1 in current phase (all complete)
-Status: Phase 4 complete, ready for Phase 5
-Last activity: 2026-01-09 — Completed 04-01-PLAN.md (environment config)
+Status: Phase 5 complete, ready for Phase 6
+Last activity: 2026-01-09 — Completed 05-01-PLAN.md (Cloudinary integration)
 
-Progress: ███░░░░░░░ 37.5% (3 of 8 phases complete)
+Progress: █████░░░░░ 50% (4 of 8 phases complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4
-- Average duration: ~8 min
-- Total execution time: 0.5 hours
+- Total plans completed: 5
+- Average duration: ~30 min
+- Total execution time: 2.5 hours
 
 **By Phase:**
 
@@ -31,10 +31,11 @@ Progress: ███░░░░░░░ 37.5% (3 of 8 phases complete)
 | 1 | 1 | 15m | 15m |
 | 3 | 2 | 11m | 5.5m |
 | 4 | 1 | 4m | 4m |
+| 5 | 1 | 115m | 115m |
 
 **Recent Trend:**
-- Last 5 plans: 15m, 6m, 5m, 4m
-- Trend: Improving (config plans fastest)
+- Last 5 plans: 15m, 6m, 5m, 4m, 115m
+- Trend: Phase 5 longer due to external service integration
 
 ## Accumulated Context
 
@@ -51,6 +52,8 @@ Recent decisions affecting current work:
 - Phase 3: Seed endpoint uses NODE_ENV + optional ADMIN_SEED_KEY
 - Phase 3: Sliding window rate limit (5 req/60s) with graceful dev fallback
 - Phase 4: Use expo-constants for mobile config (app.json extra, not .env)
+- Phase 5: Cloudinary over S3 for unsigned uploads (no server roundtrip)
+- Phase 5: Fallback to base64 when Cloudinary not configured (dev-friendly)
 
 ### Deferred Issues
 
@@ -73,5 +76,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-09
-Stopped at: Completed Phase 4, ready for Phase 5
+Stopped at: Completed Phase 5, ready for Phase 6
 Resume file: None
