@@ -70,6 +70,27 @@ export function calculateCurrentMeltValue(
 }
 
 /**
+ * Get the purchase price for an item
+ * Uses purchasePrice if available, otherwise falls back to original book value
+ */
+export function getPurchasePrice(item: CollectionItem): number {
+  // Use explicit purchase price if available
+  if (item.purchasePrice !== undefined && item.purchasePrice !== null) {
+    return item.purchasePrice;
+  }
+
+  // Fall back to custom book value (what they paid)
+  if (item.customBookValue !== undefined && item.customBookValue !== null) {
+    return item.customBookValue;
+  }
+
+  // Fall back to original melt value at creation
+  const quantity = 'quantity' in item ? item.quantity : 1;
+  const totalWeight = (item.weightOz || 0) * quantity;
+  return totalWeight * (item.spotPriceAtCreation || 0);
+}
+
+/**
  * Get all calculated values for an item
  */
 export function getCalculatedValues(
@@ -78,16 +99,20 @@ export function getCalculatedValues(
 ): CalculatedValues {
   const currentMeltValue = calculateCurrentMeltValue(item, currentSpotPrice);
   const currentBookValue = calculateCurrentBookValue(item, currentSpotPrice);
+  const purchasePrice = getPurchasePrice(item);
 
-  // Calculate percent change between book and melt
-  const percentChange = ((currentBookValue - currentMeltValue) / currentMeltValue) * 100;
+  // Calculate percent change: (Current Value - Purchase Price) / Purchase Price
+  // Current Value uses the valuation methodology (book value)
+  const percentChange = purchasePrice > 0
+    ? ((currentBookValue - purchasePrice) / purchasePrice) * 100
+    : 0;
 
   // Determine if book value is tracking spot
   const quantity = 'quantity' in item ? item.quantity : 1;
-  const totalWeight = item.weightOz * quantity;
-  const originalMelt = totalWeight * item.spotPriceAtCreation;
+  const totalWeight = (item.weightOz || 0) * quantity;
+  const originalMelt = totalWeight * (item.spotPriceAtCreation || currentSpotPrice);
   const customValue = item.customBookValue || 0;
-  const percentDiff = Math.abs((customValue - originalMelt) / originalMelt);
+  const percentDiff = originalMelt > 0 ? Math.abs((customValue - originalMelt) / originalMelt) : 0;
   const isTracking = item.bookValueType === 'spot' || percentDiff <= 0.30;
 
   return {
