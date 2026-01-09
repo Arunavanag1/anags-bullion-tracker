@@ -5,24 +5,24 @@
 See: .planning/PROJECT.md (updated 2026-01-09)
 
 **Core value:** Showcase coin photography beautifully
-**Current focus:** v1.2 Security & Stability — Phase 4 next
+**Current focus:** v1.2 Security & Stability — Phase 5 next
 **Next milestone:** After v1.2 phases complete
 
 ## Current Position
 
-Phase: 3 of 8 (Security Hardening) — COMPLETE
-Plan: 2 of 2 in current phase (all complete)
-Status: Phase 3 complete, ready for Phase 4
-Last activity: 2026-01-09 — Completed 03-02-PLAN.md (rate limiting)
+Phase: 4 of 8 (Environment Configuration) — COMPLETE
+Plan: 1 of 1 in current phase (all complete)
+Status: Phase 4 complete, ready for Phase 5
+Last activity: 2026-01-09 — Completed 04-01-PLAN.md (environment config)
 
-Progress: ██░░░░░░░░ 25% (2 of 8 phases complete)
+Progress: ███░░░░░░░ 37.5% (3 of 8 phases complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
-- Average duration: ~9 min
-- Total execution time: 0.43 hours
+- Total plans completed: 4
+- Average duration: ~8 min
+- Total execution time: 0.5 hours
 
 **By Phase:**
 
@@ -30,10 +30,11 @@ Progress: ██░░░░░░░░ 25% (2 of 8 phases complete)
 |-------|-------|-------|----------|
 | 1 | 1 | 15m | 15m |
 | 3 | 2 | 11m | 5.5m |
+| 4 | 1 | 4m | 4m |
 
 **Recent Trend:**
-- Last 5 plans: 15m, 6m, 5m
-- Trend: Improving (security plans faster than UI work)
+- Last 5 plans: 15m, 6m, 5m, 4m
+- Trend: Improving (config plans fastest)
 
 ## Accumulated Context
 
@@ -49,6 +50,7 @@ Recent decisions affecting current work:
 - Phase 3: Password requires 8+ chars, uppercase, lowercase, number (no special chars)
 - Phase 3: Seed endpoint uses NODE_ENV + optional ADMIN_SEED_KEY
 - Phase 3: Sliding window rate limit (5 req/60s) with graceful dev fallback
+- Phase 4: Use expo-constants for mobile config (app.json extra, not .env)
 
 ### Deferred Issues
 
@@ -71,5 +73,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-09
-Stopped at: Completed Phase 3, ready for Phase 4
+Stopped at: Completed Phase 4, ready for Phase 5
 Resume file: None

@@ -65,7 +65,7 @@ Plans:
 **Plans**: TBD
 
 Plans:
-- [ ] 04-01: TBD (run /gsd:plan-phase 4 to break down)
+- [x] 04-01: Fix hardcoded mobile API URL, create comprehensive .env.example files
 
 **Scope:**
 - Fix hardcoded mobile API URL
@@ -141,7 +141,7 @@ Plans:
 | 1. Radial Gallery | v1.0 | 1/1 | Complete | 2026-01-09 |
 | 2. Filter Pills | v1.1 | 0/? | Not started | - |
 | 3. Security Hardening | v1.2 | 2/2 | Complete | 2026-01-09 |
-| 4. Environment Configuration | v1.2 | 0/? | Not started | - |
+| 4. Environment Configuration | v1.2 | 1/1 | Complete | 2026-01-09 |
 | 5. Image Storage Migration | v1.2 | 0/? | Not started | - |
 | 6. Test Foundation | v1.2 | 0/? | Not started | - |
 | 7. Auth Enhancements | v1.2 | 0/? | Not started | - |
