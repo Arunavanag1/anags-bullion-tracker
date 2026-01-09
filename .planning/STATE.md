@@ -5,35 +5,35 @@
 See: .planning/PROJECT.md (updated 2026-01-09)
 
 **Core value:** Showcase coin photography beautifully
-**Current focus:** v1.2 Security & Stability — Phase 3 in progress
+**Current focus:** v1.2 Security & Stability — Phase 4 next
 **Next milestone:** After v1.2 phases complete
 
 ## Current Position
 
-Phase: 3 of 8 (Security Hardening) — IN PROGRESS
-Plan: 1 of 2 in current phase
-Status: Completed 03-01, ready for 03-02
-Last activity: 2026-01-09 — Completed 03-01-PLAN.md (security hardening)
+Phase: 3 of 8 (Security Hardening) — COMPLETE
+Plan: 2 of 2 in current phase (all complete)
+Status: Phase 3 complete, ready for Phase 4
+Last activity: 2026-01-09 — Completed 03-02-PLAN.md (rate limiting)
 
-Progress: █░░░░░░░░░ 12.5% (1 of 8 phases complete)
+Progress: ██░░░░░░░░ 25% (2 of 8 phases complete)
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 2
-- Average duration: ~10 min
-- Total execution time: 0.35 hours
+- Total plans completed: 3
+- Average duration: ~9 min
+- Total execution time: 0.43 hours
 
 **By Phase:**
 
 | Phase | Plans | Total | Avg/Plan |
 |-------|-------|-------|----------|
 | 1 | 1 | 15m | 15m |
-| 3 | 1 | 6m | 6m |
+| 3 | 2 | 11m | 5.5m |
 
 **Recent Trend:**
-- Last 5 plans: 15m, 6m
-- Trend: Improving (security hardening faster than radial gallery)
+- Last 5 plans: 15m, 6m, 5m
+- Trend: Improving (security plans faster than UI work)
 
 ## Accumulated Context
 
@@ -48,6 +48,7 @@ Recent decisions affecting current work:
 - Phase 3: Use helper function pattern for JWT_SECRET TypeScript narrowing
 - Phase 3: Password requires 8+ chars, uppercase, lowercase, number (no special chars)
 - Phase 3: Seed endpoint uses NODE_ENV + optional ADMIN_SEED_KEY
+- Phase 3: Sliding window rate limit (5 req/60s) with graceful dev fallback
 
 ### Deferred Issues
 
@@ -70,5 +71,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-09
-Stopped at: Completed 03-01-PLAN.md, ready for 03-02
+Stopped at: Completed Phase 3, ready for Phase 4
 Resume file: None
