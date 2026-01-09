@@ -6,13 +6,14 @@ See: .planning/PROJECT.md (updated 2026-01-09)
 
 **Core value:** Showcase coin photography beautifully
 **Current focus:** v1.1 Filter Pills — Phase 2 ready for planning
+**Next milestone:** v1.2 Security & Stability — Phases 3-8 (planned)
 
 ## Current Position
 
 Phase: 2 of 8 (Filter Pills) — NOT STARTED
 Plan: None yet (run /gsd:plan-phase 2 to create)
-Status: v1.1 Milestone created
-Last activity: 2026-01-09 — v1.1 milestone initialized
+Status: v1.1 in progress, v1.2 planned
+Last activity: 2026-01-09 — v1.2 milestone planned
 
 Progress: █░░░░░░░░░ 12.5% (1 of 8 phases complete)
 
@@ -52,8 +53,18 @@ None yet.
 
 None yet.
 
+### Roadmap Evolution
+
+- Milestone v1.2 created: Security & Stability, 6 phases (Phase 3-8)
+  - Phase 3: Security Hardening (critical vulnerabilities)
+  - Phase 4: Environment Configuration
+  - Phase 5: Image Storage Migration (base64 → cloud)
+  - Phase 6: Test Foundation
+  - Phase 7: Auth Enhancements (email verification, password reset)
+  - Phase 8: Performance Fixes
+
 ## Session Continuity
 
 Last session: 2026-01-09
-Stopped at: v1.1 milestone created, ready for Phase 2 planning
+Stopped at: v1.2 milestone planned with 6 phases
 Resume file: None
