@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useCollection, usePortfolioHistory } from '@/hooks/useCollection';
 import { Card } from '@/components/ui/Card';
+import { exportChartAsPNG, exportDataAsCSV } from '@/lib/exportUtils';
 import type { TimeRange } from '@/types';
 
 const TIME_RANGES: { value: TimeRange; label: string }[] = [
@@ -112,6 +113,7 @@ export function PortfolioChart() {
   const [showScaleOptions, setShowScaleOptions] = useState(false);
   const [customStartDate, setCustomStartDate] = useState<string>(getDefaultDates().start);
   const [customEndDate, setCustomEndDate] = useState<string>(getDefaultDates().end);
+  const chartRef = useRef<HTMLDivElement>(null);
   const { data: collection } = useCollection();
   const { data: chartData, isLoading } = usePortfolioHistory({
     timeRange,
@@ -214,14 +216,59 @@ export function PortfolioChart() {
     }
   };
 
+  const handleExportPNG = async () => {
+    if (chartRef.current) {
+      const timestamp = new Date().toISOString().split('T')[0];
+      await exportChartAsPNG(chartRef.current, `portfolio-chart-${timestamp}`);
+    }
+  };
+
+  const handleExportCSV = () => {
+    if (filteredData && filteredData.length > 0) {
+      const timestamp = new Date().toISOString().split('T')[0];
+      const csvData = filteredData.map((d) => ({
+        Date: d.date,
+        Value: d.displayValue.toFixed(2),
+        Category: getCategoryLabel(),
+      }));
+      exportDataAsCSV(csvData, `portfolio-data-${timestamp}`, ['Date', 'Value', 'Category']);
+    }
+  };
+
   return (
     <Card>
-      <div className="space-y-4">
+      <div ref={chartRef} className="space-y-4">
         {/* Header */}
         <div className="flex flex-col gap-4">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div>
+            <div className="flex items-center gap-3">
               <h3 className="text-xs font-medium text-text-secondary uppercase tracking-wide">VALUE OVER TIME</h3>
+              {/* Export Buttons */}
+              <div className="flex gap-1">
+                <button
+                  onClick={handleExportPNG}
+                  className="p-1.5 text-text-secondary hover:text-text-primary hover:bg-bg-secondary rounded transition-colors"
+                  title="Export as PNG"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21 15 16 10 5 21"/>
+                  </svg>
+                </button>
+                <button
+                  onClick={handleExportCSV}
+                  className="p-1.5 text-text-secondary hover:text-text-primary hover:bg-bg-secondary rounded transition-colors"
+                  title="Export as CSV"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/>
+                    <line x1="16" y1="17" x2="8" y2="17"/>
+                  </svg>
+                </button>
+              </div>
             </div>
 
             {/* Time Range Selector */}
