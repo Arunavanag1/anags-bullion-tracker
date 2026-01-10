@@ -1,10 +1,11 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, ReferenceLine } from 'recharts';
 import { Card } from '@/components/ui/Card';
 import { CollectionItem, SpotPricesResponse } from '@/types';
 import { calculateCurrentBookValue, getPurchasePrice, formatCurrency, formatPercent } from '@/lib/calculations';
+import { exportChartAsPNG, exportDataAsCSV } from '@/lib/exportUtils';
 
 interface GainLossBarChartProps {
   collection: CollectionItem[];
@@ -62,6 +63,8 @@ const CustomTooltip = ({ active, payload }: any) => {
 };
 
 export function GainLossBarChart({ collection, spotPrices }: GainLossBarChartProps) {
+  const chartRef = useRef<HTMLDivElement>(null);
+
   const { chartData, totals } = useMemo(() => {
     if (!collection || collection.length === 0 || !spotPrices) {
       return {
@@ -125,6 +128,27 @@ export function GainLossBarChart({ collection, spotPrices }: GainLossBarChartPro
     };
   }, [collection, spotPrices]);
 
+  const handleExportPNG = async () => {
+    if (chartRef.current) {
+      const timestamp = new Date().toISOString().split('T')[0];
+      await exportChartAsPNG(chartRef.current, `gainloss-chart-${timestamp}`);
+    }
+  };
+
+  const handleExportCSV = () => {
+    if (chartData && chartData.length > 0) {
+      const timestamp = new Date().toISOString().split('T')[0];
+      const csvData = chartData.map((d) => ({
+        Metal: d.name,
+        'Current Value': d.currentValue.toFixed(2),
+        'Cost Basis': d.costBasis.toFixed(2),
+        'Gain/Loss': d.gainLoss.toFixed(2),
+        'Percent Change': d.percentChange.toFixed(2),
+      }));
+      exportDataAsCSV(csvData, `gainloss-data-${timestamp}`, ['Metal', 'Current Value', 'Cost Basis', 'Gain/Loss', 'Percent Change']);
+    }
+  };
+
   if (!collection || collection.length === 0) {
     return (
       <Card>
@@ -139,10 +163,36 @@ export function GainLossBarChart({ collection, spotPrices }: GainLossBarChartPro
 
   return (
     <Card>
-      <div className="space-y-4">
+      <div ref={chartRef} className="space-y-4">
         {/* Header */}
-        <div>
+        <div className="flex items-center gap-3">
           <h3 className="text-xs font-medium text-text-secondary uppercase tracking-wide">GAIN / LOSS BY METAL</h3>
+          {/* Export Buttons */}
+          <div className="flex gap-1">
+            <button
+              onClick={handleExportPNG}
+              className="p-1.5 text-text-secondary hover:text-text-primary hover:bg-bg-secondary rounded transition-colors"
+              title="Export as PNG"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <circle cx="8.5" cy="8.5" r="1.5"/>
+                <polyline points="21 15 16 10 5 21"/>
+              </svg>
+            </button>
+            <button
+              onClick={handleExportCSV}
+              className="p-1.5 text-text-secondary hover:text-text-primary hover:bg-bg-secondary rounded transition-colors"
+              title="Export as CSV"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+              </svg>
+            </button>
+          </div>
         </div>
 
         {/* Chart */}
