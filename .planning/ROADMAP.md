@@ -193,7 +193,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 12-01: Add export utilities and export buttons to all charts
+- [x] 12-01: Add export utilities and export buttons to all charts
 
 **Scope:**
 - Export chart as PNG/JPEG
@@ -215,7 +215,7 @@ Plans:
 | 9. Radial Collage Scroll Persistence | v1.2 | 0/? | Not started | - |
 | 10. Chart Axis Refinements | v1.3 | 1/1 | Complete | 2026-01-10 |
 | 11. Additional Visualizations | v1.3 | 1/1 | Complete | 2026-01-10 |
-| 12. Chart Export | v1.3 | 0/1 | Planned | - |
+| 12. Chart Export | v1.3 | 1/1 | Complete | 2026-01-10 |
 
 ---
-*Updated: 2026-01-10 after Phase 11-01 complete*
+*Updated: 2026-01-10 after Phase 12-01 complete*
