@@ -114,26 +114,6 @@ export function LoginScreen({ navigation }: Props) {
           </Text>
         </Text>
       </View>
-
-      {/* Test Account Info */}
-      <View
-        style={{
-          marginTop: 40,
-          padding: 16,
-          backgroundColor: '#FFE8D6',
-          borderRadius: 12,
-          borderWidth: 1,
-          borderColor: '#E76F51',
-        }}
-      >
-        <Text style={{ fontSize: 12, fontWeight: '600', color: '#2D1B1B', marginBottom: 8 }}>
-          Test Account
-        </Text>
-        <Text style={{ fontSize: 12, color: '#8B6B61' }}>
-          Email: arunavaknag@gmail.com{'\n'}
-          Password: Test123
-        </Text>
-      </View>
     </ScrollView>
   );
 }
