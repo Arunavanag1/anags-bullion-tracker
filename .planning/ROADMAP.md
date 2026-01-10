@@ -159,10 +159,10 @@ Plans:
 **Goal**: Polish Y-axis scale controls, add X-axis date range options
 **Depends on**: Phase 9
 **Research**: Unlikely (internal Recharts patterns)
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 10-01: TBD (run /gsd:plan-phase 10 to break down)
+- [ ] 10-01: Add custom date range picker and improve tick formatting
 
 **Scope:**
 - Refine Y-axis scale controls (auto/fromZero/custom)
@@ -174,10 +174,10 @@ Plans:
 **Goal**: Add pie/bar charts for allocation, gain/loss breakdown
 **Depends on**: Phase 10
 **Research**: Unlikely (Recharts already in use)
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 11-01: TBD (run /gsd:plan-phase 11 to break down)
+- [ ] 11-01: Create AllocationPieChart and GainLossBarChart components
 
 **Scope:**
 - Allocation pie chart by metal type
@@ -190,10 +190,10 @@ Plans:
 **Depends on**: Phase 11
 **Research**: Likely (canvas/image export libraries)
 **Research topics**: html2canvas, chart image export, CSV generation
-**Plans**: TBD
+**Plans**: 1 plan
 
 Plans:
-- [ ] 12-01: TBD (run /gsd:plan-phase 12 to break down)
+- [ ] 12-01: Add export utilities and export buttons to all charts
 
 **Scope:**
 - Export chart as PNG/JPEG
@@ -213,9 +213,9 @@ Plans:
 | 7. Auth Enhancements | v1.2 | 0/? | Not started | - |
 | 8. Performance Fixes | v1.2 | 0/? | Not started | - |
 | 9. Radial Collage Scroll Persistence | v1.2 | 0/? | Not started | - |
-| 10. Chart Axis Refinements | v1.3 | 0/? | Not started | - |
-| 11. Additional Visualizations | v1.3 | 0/? | Not started | - |
-| 12. Chart Export | v1.3 | 0/? | Not started | - |
+| 10. Chart Axis Refinements | v1.3 | 0/1 | Planned | - |
+| 11. Additional Visualizations | v1.3 | 0/1 | Planned | - |
+| 12. Chart Export | v1.3 | 0/1 | Planned | - |
 
 ---
 *Updated: 2026-01-10 after milestone v1.3 created*
