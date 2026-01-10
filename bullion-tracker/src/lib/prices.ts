@@ -92,6 +92,40 @@ export async function fetchSpotPrices(): Promise<SpotPricesResponse> {
 }
 
 /**
+ * Get yesterday's prices from database for change calculation
+ */
+async function getYesterdayPrices(): Promise<{ gold: number | null; silver: number | null; platinum: number | null }> {
+  try {
+    const { prisma } = await import('./db');
+    const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
+    const [goldYesterday, silverYesterday, platinumYesterday] = await Promise.all([
+      prisma.priceHistory.findFirst({
+        where: { metal: 'gold', timestamp: { lte: yesterday } },
+        orderBy: { timestamp: 'desc' },
+      }),
+      prisma.priceHistory.findFirst({
+        where: { metal: 'silver', timestamp: { lte: yesterday } },
+        orderBy: { timestamp: 'desc' },
+      }),
+      prisma.priceHistory.findFirst({
+        where: { metal: 'platinum', timestamp: { lte: yesterday } },
+        orderBy: { timestamp: 'desc' },
+      }),
+    ]);
+
+    return {
+      gold: goldYesterday?.priceOz ?? null,
+      silver: silverYesterday?.priceOz ?? null,
+      platinum: platinumYesterday?.priceOz ?? null,
+    };
+  } catch (error) {
+    console.error('Error fetching yesterday prices from database:', error);
+    return { gold: null, silver: null, platinum: null };
+  }
+}
+
+/**
  * Fetch prices from Metal Price API
  */
 async function fetchFromAPI(apiKey: string): Promise<SpotPricesResponse> {
@@ -124,24 +158,29 @@ async function fetchFromAPI(apiKey: string): Promise<SpotPricesResponse> {
   const silverPrice = 1 / data.rates.XAG;
   const platinumPrice = 1 / data.rates.XPT;
 
-  // Calculate 24h change (if we have previous prices)
-  const goldChange24h = priceCache?.prices.gold.pricePerOz
-    ? goldPrice - priceCache.prices.gold.pricePerOz
-    : 0;
-  const silverChange24h = priceCache?.prices.silver.pricePerOz
-    ? silverPrice - priceCache.prices.silver.pricePerOz
-    : 0;
-  const platinumChange24h = priceCache?.prices.platinum.pricePerOz
-    ? platinumPrice - priceCache.prices.platinum.pricePerOz
-    : 0;
+  // Get yesterday's prices from cache or database
+  let goldYesterday = priceCache?.prices.gold.pricePerOz ?? null;
+  let silverYesterday = priceCache?.prices.silver.pricePerOz ?? null;
+  let platinumYesterday = priceCache?.prices.platinum.pricePerOz ?? null;
+
+  // If cache is empty, try to get yesterday's prices from database
+  if (!goldYesterday || !silverYesterday || !platinumYesterday) {
+    const dbPrices = await getYesterdayPrices();
+    goldYesterday = goldYesterday ?? dbPrices.gold;
+    silverYesterday = silverYesterday ?? dbPrices.silver;
+    platinumYesterday = platinumYesterday ?? dbPrices.platinum;
+  }
+
+  // Calculate 24h change
+  const goldChange24h = goldYesterday ? goldPrice - goldYesterday : 0;
+  const silverChange24h = silverYesterday ? silverPrice - silverYesterday : 0;
+  const platinumChange24h = platinumYesterday ? platinumPrice - platinumYesterday : 0;
 
   const gold: SpotPrice = {
     metal: 'gold',
     pricePerOz: goldPrice,
     change24h: goldChange24h,
-    changePercent24h: priceCache?.prices.gold.pricePerOz
-      ? (goldChange24h / priceCache.prices.gold.pricePerOz) * 100
-      : 0,
+    changePercent24h: goldYesterday ? (goldChange24h / goldYesterday) * 100 : 0,
     lastUpdated: now,
   };
 
@@ -149,9 +188,7 @@ async function fetchFromAPI(apiKey: string): Promise<SpotPricesResponse> {
     metal: 'silver',
     pricePerOz: silverPrice,
     change24h: silverChange24h,
-    changePercent24h: priceCache?.prices.silver.pricePerOz
-      ? (silverChange24h / priceCache.prices.silver.pricePerOz) * 100
-      : 0,
+    changePercent24h: silverYesterday ? (silverChange24h / silverYesterday) * 100 : 0,
     lastUpdated: now,
   };
 
@@ -159,9 +196,7 @@ async function fetchFromAPI(apiKey: string): Promise<SpotPricesResponse> {
     metal: 'platinum',
     pricePerOz: platinumPrice,
     change24h: platinumChange24h,
-    changePercent24h: priceCache?.prices.platinum.pricePerOz
-      ? (platinumChange24h / priceCache.prices.platinum.pricePerOz) * 100
-      : 0,
+    changePercent24h: platinumYesterday ? (platinumChange24h / platinumYesterday) * 100 : 0,
     lastUpdated: now,
   };
 
