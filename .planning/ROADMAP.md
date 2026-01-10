@@ -162,7 +162,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 10-01: Add custom date range picker and improve tick formatting
+- [x] 10-01: Add custom date range picker and improve tick formatting
 
 **Scope:**
 - Refine Y-axis scale controls (auto/fromZero/custom)
@@ -213,9 +213,9 @@ Plans:
 | 7. Auth Enhancements | v1.2 | 0/? | Not started | - |
 | 8. Performance Fixes | v1.2 | 0/? | Not started | - |
 | 9. Radial Collage Scroll Persistence | v1.2 | 0/? | Not started | - |
-| 10. Chart Axis Refinements | v1.3 | 0/1 | Planned | - |
+| 10. Chart Axis Refinements | v1.3 | 1/1 | Complete | 2026-01-10 |
 | 11. Additional Visualizations | v1.3 | 0/1 | Planned | - |
 | 12. Chart Export | v1.3 | 0/1 | Planned | - |
 
 ---
-*Updated: 2026-01-10 after milestone v1.3 created*
+*Updated: 2026-01-10 after Phase 10-01 complete*
