@@ -177,7 +177,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 11-01: Create AllocationPieChart and GainLossBarChart components
+- [x] 11-01: Create AllocationPieChart and GainLossBarChart components
 
 **Scope:**
 - Allocation pie chart by metal type
@@ -214,8 +214,8 @@ Plans:
 | 8. Performance Fixes | v1.2 | 0/? | Not started | - |
 | 9. Radial Collage Scroll Persistence | v1.2 | 0/? | Not started | - |
 | 10. Chart Axis Refinements | v1.3 | 1/1 | Complete | 2026-01-10 |
-| 11. Additional Visualizations | v1.3 | 0/1 | Planned | - |
+| 11. Additional Visualizations | v1.3 | 1/1 | Complete | 2026-01-10 |
 | 12. Chart Export | v1.3 | 0/1 | Planned | - |
 
 ---
-*Updated: 2026-01-10 after Phase 10-01 complete*
+*Updated: 2026-01-10 after Phase 11-01 complete*
