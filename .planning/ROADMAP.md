@@ -5,7 +5,8 @@
 - ✅ [v1.0 Radial Photo Gallery](milestones/v1.0-ROADMAP.md) (Phase 1) — SHIPPED 2026-01-09
 - 🚧 **v1.1 Filter Pills** — Phase 2 (in progress)
 - 📋 **v1.2 Security & Stability** — Phases 3-9 (planned)
-- 📋 **v1.3 Improvements** — Phases 10-12 (planned)
+- 📋 **v1.3 Improvements** — Phases 10-12 (complete)
+- 📋 **v1.4 Auth Deployment** — Phases 13-16 (planned)
 
 ## Overview
 
@@ -200,6 +201,77 @@ Plans:
 - Export underlying data as CSV
 - Share functionality
 
+### 📋 v1.4 Auth Deployment (Planned)
+
+**Milestone Goal:** Fix authentication issues and prepare for production deployment
+
+#### Phase 13: Credential Cleanup
+
+**Goal**: Remove hardcoded credentials and test data, secure environment variables
+**Depends on**: None (can start immediately)
+**Research**: Unlikely (straightforward cleanup)
+**Plans**: TBD
+
+Plans:
+- [ ] 13-01: TBD (run /gsd:plan-phase 13 to break down)
+
+**Scope:**
+- Remove hardcoded test credentials from LoginScreen.tsx
+- Ensure .env is gitignored (verify no secrets committed)
+- Create production .env.example with all required variables
+- Document environment variable requirements
+
+#### Phase 14: Mobile Auth Hardening
+
+**Goal**: Fix mobile authentication for production use
+**Depends on**: Phase 13
+**Research**: Unlikely (internal patterns)
+**Plans**: TBD
+
+Plans:
+- [ ] 14-01: TBD (run /gsd:plan-phase 14 to break down)
+
+**Scope:**
+- Externalize API URL configuration (remove hardcoded localhost)
+- Add token refresh mechanism for mobile
+- Handle expired token errors gracefully
+- Reduce token expiration from 30 days to 7 days
+
+#### Phase 15: Security Headers & CORS
+
+**Goal**: Add production security headers and proper CORS configuration
+**Depends on**: Phase 14
+**Research**: Likely (Next.js security middleware patterns)
+**Research topics**: Next.js security headers, CORS middleware, CSP policies
+**Plans**: TBD
+
+Plans:
+- [ ] 15-01: TBD (run /gsd:plan-phase 15 to break down)
+
+**Scope:**
+- Add security headers middleware (CSP, HSTS, X-Frame-Options)
+- Configure CORS for mobile app origin
+- Ensure HTTPS enforcement in production
+- Add rate limiting persistence with Upstash
+
+#### Phase 16: Deployment Verification
+
+**Goal**: Verify auth works correctly in production-like environment
+**Depends on**: Phase 15
+**Research**: Unlikely (testing and verification)
+**Plans**: TBD
+
+Plans:
+- [ ] 16-01: TBD (run /gsd:plan-phase 16 to break down)
+
+**Scope:**
+- Test web login/signup flow
+- Test mobile login/signup flow
+- Verify OAuth flow (if configured)
+- Test rate limiting works in production
+- Verify token expiration and refresh
+- Document deployment checklist
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -216,6 +288,10 @@ Plans:
 | 10. Chart Axis Refinements | v1.3 | 1/1 | Complete | 2026-01-10 |
 | 11. Additional Visualizations | v1.3 | 1/1 | Complete | 2026-01-10 |
 | 12. Chart Export | v1.3 | 1/1 | Complete | 2026-01-10 |
+| 13. Credential Cleanup | v1.4 | 0/? | Not started | - |
+| 14. Mobile Auth Hardening | v1.4 | 0/? | Not started | - |
+| 15. Security Headers & CORS | v1.4 | 0/? | Not started | - |
+| 16. Deployment Verification | v1.4 | 0/? | Not started | - |
 
 ---
-*Updated: 2026-01-10 after Phase 12-01 complete*
+*Updated: 2026-01-10 after v1.4 Auth Deployment milestone created*

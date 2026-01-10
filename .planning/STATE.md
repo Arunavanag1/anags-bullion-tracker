@@ -5,17 +5,17 @@
 See: .planning/PROJECT.md (updated 2026-01-09)
 
 **Core value:** Showcase coin photography beautifully
-**Current focus:** v1.1 Filter Pills — Phase 2 next
-**Next milestone:** v1.2 Security & Stability after v1.1
+**Current focus:** v1.4 Auth Deployment — Phase 13 next
+**Next milestone:** v1.4 Auth Deployment (ready to start)
 
 ## Current Position
 
-Phase: 12 of 12 (Chart Export) — COMPLETE
+Phase: 12 of 16 (Chart Export) — COMPLETE
 Plan: 1 of 1 in current phase (12-01 complete)
-Status: Phase 12 complete, v1.3 Improvements milestone complete
-Last activity: 2026-01-10 — Completed Phase 12-01 (Chart Export)
+Status: v1.3 complete, v1.4 Auth Deployment milestone created
+Last activity: 2026-01-10 — Created v1.4 Auth Deployment milestone (Phases 13-16)
 
-Progress: ████████░░ 67% (8 of 12 phases complete)
+Progress: ████████░░ 50% (8 of 16 phases complete)
 
 ## Milestones Overview
 
@@ -24,7 +24,8 @@ Progress: ████████░░ 67% (8 of 12 phases complete)
 | v1.0 Radial Photo Gallery | 1 | SHIPPED |
 | v1.1 Filter Pills | 2 | In Progress |
 | v1.2 Security & Stability | 3-9 | Planned |
-| v1.3 Improvements | 10-12 | Planned |
+| v1.3 Improvements | 10-12 | COMPLETE |
+| v1.4 Auth Deployment | 13-16 | Ready to Start |
 
 ## Performance Metrics
 
@@ -91,8 +92,14 @@ None yet.
   - Phase 11: Additional Visualizations (pie/bar charts for allocation)
   - Phase 12: Chart Export (PNG/CSV export, share functionality)
 
+- Milestone v1.4 created: Auth Deployment (production auth fixes), 4 phases (Phase 13-16)
+  - Phase 13: Credential Cleanup (remove hardcoded creds, secure env vars)
+  - Phase 14: Mobile Auth Hardening (token refresh, API URL config)
+  - Phase 15: Security Headers & CORS (CSP, HSTS, CORS middleware)
+  - Phase 16: Deployment Verification (end-to-end auth testing)
+
 ## Session Continuity
 
 Last session: 2026-01-10
-Stopped at: Completed Phase 12-01 (Chart Export) - v1.3 complete
+Stopped at: Created v1.4 Auth Deployment milestone - ready for Phase 13 planning
 Resume file: None
