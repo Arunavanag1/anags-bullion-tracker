@@ -5,17 +5,17 @@
 See: .planning/PROJECT.md (updated 2026-01-09)
 
 **Core value:** Showcase coin photography beautifully
-**Current focus:** v1.4 Auth Deployment — Phase 13 next
-**Next milestone:** v1.4 Auth Deployment (ready to start)
+**Current focus:** v1.4 Auth Deployment — Phase 14 next
+**Next milestone:** v1.4 Auth Deployment (in progress)
 
 ## Current Position
 
-Phase: 12 of 16 (Chart Export) — COMPLETE
-Plan: 1 of 1 in current phase (12-01 complete)
-Status: v1.3 complete, v1.4 Auth Deployment milestone created
-Last activity: 2026-01-10 — Created v1.4 Auth Deployment milestone (Phases 13-16)
+Phase: 13 of 16 (Credential Cleanup) — COMPLETE
+Plan: 1 of 1 in current phase (13-01 complete)
+Status: v1.4 Auth Deployment in progress
+Last activity: 2026-01-10 — Completed 13-01-PLAN.md (Credential Cleanup)
 
-Progress: ████████░░ 50% (8 of 16 phases complete)
+Progress: █████████░ 56% (9 of 16 phases complete)
 
 ## Milestones Overview
 
@@ -25,14 +25,14 @@ Progress: ████████░░ 50% (8 of 16 phases complete)
 | v1.1 Filter Pills | 2 | In Progress |
 | v1.2 Security & Stability | 3-9 | Planned |
 | v1.3 Improvements | 10-12 | COMPLETE |
-| v1.4 Auth Deployment | 13-16 | Ready to Start |
+| v1.4 Auth Deployment | 13-16 | In Progress |
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
-- Average duration: ~30 min
-- Total execution time: 2.5 hours
+- Total plans completed: 6
+- Average duration: ~29 min
+- Total execution time: 2.9 hours
 
 **By Phase:**
 
@@ -45,10 +45,11 @@ Progress: ████████░░ 50% (8 of 16 phases complete)
 | 10 | 1 | 25m | 25m |
 | 11 | 1 | 20m | 20m |
 | 12 | 1 | 18m | 18m |
+| 13 | 1 | 26m | 26m |
 
 **Recent Trend:**
-- Last 5 plans: 115m, 25m, 20m, 18m
-- Trend: Chart phases (10-12) executing efficiently (avg 21m)
+- Last 5 plans: 25m, 20m, 18m, 26m
+- Trend: Auth phases executing efficiently
 
 ## Accumulated Context
 
@@ -67,6 +68,8 @@ Recent decisions affecting current work:
 - Phase 4: Use expo-constants for mobile config (app.json extra, not .env)
 - Phase 5: Cloudinary over S3 for unsigned uploads (no server roundtrip)
 - Phase 5: Fallback to base64 when Cloudinary not configured (dev-friendly)
+- Phase 13: Complete removal of test credentials UI (no development fallback)
+- Phase 13: Security audit sections in .env.example with phase references
 
 ### Deferred Issues
 
@@ -101,5 +104,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-10
-Stopped at: Created v1.4 Auth Deployment milestone - ready for Phase 13 planning
+Stopped at: Completed 13-01-PLAN.md (Phase 13 Credential Cleanup complete)
 Resume file: None
