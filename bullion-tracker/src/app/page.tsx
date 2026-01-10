@@ -11,6 +11,7 @@ import { AddItemModal } from '@/components/collection/AddItemModal';
 import { CollectionGrid } from '@/components/collection/CollectionGrid';
 import { AuthButton } from '@/components/auth/AuthButton';
 import { TopPerformers } from '@/components/TopPerformers';
+import { AllocationPieChart, GainLossBarChart } from '@/components/charts';
 import type { TimeRange } from '@/types';
 
 export default function BullionTrackerWeb() {
@@ -873,6 +874,19 @@ export default function BullionTrackerWeb() {
                 </div>
               </div>
             </div>
+
+            {/* Additional Charts Section */}
+            {collectionData && collectionData.length > 0 && spotPricesData && (
+              <div style={{
+                display: "grid",
+                gridTemplateColumns: "1fr 1fr",
+                gap: "24px",
+                marginBottom: "28px",
+              }}>
+                <AllocationPieChart collection={collectionData} spotPrices={spotPricesData} />
+                <GainLossBarChart collection={collectionData} spotPrices={spotPricesData} />
+              </div>
+            )}
 
           </>
         )}
