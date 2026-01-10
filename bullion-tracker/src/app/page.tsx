@@ -1,10 +1,9 @@
 'use client';
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { useSpotPrices } from '@/hooks/useSpotPrices';
-import { usePortfolioSummary } from '@/hooks/usePortfolioSummary';
 import { useCollection, usePortfolioHistory } from '@/hooks/useCollection';
 import { useCollectionSummary } from '@/hooks/useCollectionSummary';
 import { AddItemModal } from '@/components/collection/AddItemModal';
@@ -12,7 +11,8 @@ import { CollectionGrid } from '@/components/collection/CollectionGrid';
 import { AuthButton } from '@/components/auth/AuthButton';
 import { TopPerformers } from '@/components/TopPerformers';
 import { AllocationPieChart, GainLossBarChart } from '@/components/charts';
-import type { TimeRange } from '@/types';
+import { calculateCurrentBookValue, calculateCurrentMeltValue, getPurchasePrice } from '@/lib/calculations';
+import type { TimeRange, CollectionItem } from '@/types';
 
 export default function BullionTrackerWeb() {
   const [valuationMode, setValuationMode] = useState<"spot" | "book">("spot");
@@ -29,7 +29,6 @@ export default function BullionTrackerWeb() {
 
   // Fetch real data
   const { data: spotPricesData } = useSpotPrices();
-  const { data: portfolioData } = usePortfolioSummary();
   const { data: collectionData } = useCollection();
   const { data: historyData } = usePortfolioHistory({ timeRange });
   const { data: collectionSummary } = useCollectionSummary();
@@ -56,42 +55,79 @@ export default function BullionTrackerWeb() {
     },
   };
 
-  // Calculate total values
-  const totalMeltValue = portfolioData?.totalMeltValue || 0;
-  const totalBookValue = portfolioData?.totalBookValue || 0;
-  const totalCostBasis = portfolioData?.totalCostBasis || 0;
+  // Calculate total values from collection using the same spot prices as charts
+  // This ensures Portfolio Value card and charts always show consistent values
+  const { totalMeltValue, totalBookValue, totalCostBasis } = useMemo(() => {
+    if (!collectionData || collectionData.length === 0 || !spotPricesData) {
+      return { totalMeltValue: 0, totalBookValue: 0, totalCostBasis: 0 };
+    }
+
+    let melt = 0;
+    let book = 0;
+    let cost = 0;
+
+    collectionData.forEach((item: CollectionItem) => {
+      const spotPrice = spotPricesData[item.metal]?.pricePerOz || 0;
+      melt += calculateCurrentMeltValue(item, spotPrice);
+      book += calculateCurrentBookValue(item, spotPrice);
+      cost += getPurchasePrice(item);
+    });
+
+    return { totalMeltValue: melt, totalBookValue: book, totalCostBasis: cost };
+  }, [collectionData, spotPricesData]);
+
   const currentValue = valuationMode === "spot" ? totalMeltValue : totalBookValue;
   const costBasis = totalCostBasis;
   const gain = currentValue - costBasis;
   const returnPct = costBasis > 0 ? (gain / costBasis) * 100 : 0;
 
-  // Calculate holdings
-  const totalOz = (portfolioData?.goldOz || 0) + (portfolioData?.silverOz || 0) + (portfolioData?.platinumOz || 0);
+  // Calculate holdings from collection data for consistency
+  const { goldOz, silverOz, platinumOz } = useMemo(() => {
+    if (!collectionData || collectionData.length === 0) {
+      return { goldOz: 0, silverOz: 0, platinumOz: 0 };
+    }
+
+    let gold = 0;
+    let silver = 0;
+    let platinum = 0;
+
+    collectionData.forEach((item: CollectionItem) => {
+      const quantity = 'quantity' in item ? item.quantity : 1;
+      const totalWeight = (item.weightOz || 0) * quantity;
+      if (item.metal === 'gold') gold += totalWeight;
+      if (item.metal === 'silver') silver += totalWeight;
+      if (item.metal === 'platinum') platinum += totalWeight;
+    });
+
+    return { goldOz: gold, silverOz: silver, platinumOz: platinum };
+  }, [collectionData]);
+
+  const totalOz = goldOz + silverOz + platinumOz;
   const holdings = [
     {
       metal: "Gold",
-      oz: (portfolioData?.goldOz || 0).toFixed(2),
-      value: (portfolioData?.goldOz || 0) * spotPrices.gold,
-      percentage: totalOz > 0 ? Math.round(((portfolioData?.goldOz || 0) / totalOz) * 100) : 0,
+      oz: goldOz.toFixed(2),
+      value: goldOz * spotPrices.gold,
+      percentage: totalOz > 0 ? Math.round((goldOz / totalOz) * 100) : 0,
       color: "#D4AF37",
     },
     {
       metal: "Silver",
-      oz: (portfolioData?.silverOz || 0).toFixed(2),
-      value: (portfolioData?.silverOz || 0) * spotPrices.silver,
-      percentage: totalOz > 0 ? Math.round(((portfolioData?.silverOz || 0) / totalOz) * 100) : 0,
+      oz: silverOz.toFixed(2),
+      value: silverOz * spotPrices.silver,
+      percentage: totalOz > 0 ? Math.round((silverOz / totalOz) * 100) : 0,
       color: "#A8A8A8",
     },
     {
       metal: "Platinum",
-      oz: (portfolioData?.platinumOz || 0).toFixed(2),
-      value: (portfolioData?.platinumOz || 0) * spotPrices.platinum,
-      percentage: totalOz > 0 ? Math.round(((portfolioData?.platinumOz || 0) / totalOz) * 100) : 0,
+      oz: platinumOz.toFixed(2),
+      value: platinumOz * spotPrices.platinum,
+      percentage: totalOz > 0 ? Math.round((platinumOz / totalOz) * 100) : 0,
       color: "#E5E4E2",
     },
   ];
 
-  const totalItems = portfolioData?.totalItems || 0;
+  const totalItems = collectionData?.length || 0;
 
   // Format chart data for rendering
   const chartPoints = historyData || [];
@@ -883,8 +919,8 @@ export default function BullionTrackerWeb() {
                 gap: "24px",
                 marginBottom: "28px",
               }}>
-                <AllocationPieChart collection={collectionData} spotPrices={spotPricesData} />
-                <GainLossBarChart collection={collectionData} spotPrices={spotPricesData} />
+                <AllocationPieChart collection={collectionData} spotPrices={spotPricesData} valuationMode={valuationMode} />
+                <GainLossBarChart collection={collectionData} spotPrices={spotPricesData} valuationMode={valuationMode} />
               </div>
             )}
 

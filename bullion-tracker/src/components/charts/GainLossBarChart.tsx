@@ -4,12 +4,13 @@ import { useMemo, useRef } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, ReferenceLine } from 'recharts';
 import { Card } from '@/components/ui/Card';
 import { CollectionItem, SpotPricesResponse } from '@/types';
-import { calculateCurrentBookValue, getPurchasePrice, formatCurrency, formatPercent } from '@/lib/calculations';
+import { calculateCurrentBookValue, calculateCurrentMeltValue, getPurchasePrice, formatCurrency, formatPercent } from '@/lib/calculations';
 import { exportChartAsPNG, exportDataAsCSV } from '@/lib/exportUtils';
 
 interface GainLossBarChartProps {
   collection: CollectionItem[];
   spotPrices: SpotPricesResponse;
+  valuationMode?: 'spot' | 'book';
 }
 
 interface MetalData {
@@ -62,7 +63,7 @@ const CustomTooltip = ({ active, payload }: any) => {
   return null;
 };
 
-export function GainLossBarChart({ collection, spotPrices }: GainLossBarChartProps) {
+export function GainLossBarChart({ collection, spotPrices, valuationMode = 'spot' }: GainLossBarChartProps) {
   const chartRef = useRef<HTMLDivElement>(null);
 
   const { chartData, totals } = useMemo(() => {
@@ -82,7 +83,10 @@ export function GainLossBarChart({ collection, spotPrices }: GainLossBarChartPro
 
     collection.forEach((item) => {
       const spotPrice = spotPrices[item.metal]?.pricePerOz || 0;
-      const currentValue = calculateCurrentBookValue(item, spotPrice);
+      // Use melt value for "spot" mode, book value for "book" mode
+      const currentValue = valuationMode === 'spot'
+        ? calculateCurrentMeltValue(item, spotPrice)
+        : calculateCurrentBookValue(item, spotPrice);
       const costBasis = getPurchasePrice(item);
 
       metalTotals[item.metal].currentValue += currentValue;
@@ -126,7 +130,7 @@ export function GainLossBarChart({ collection, spotPrices }: GainLossBarChartPro
         costBasis: totalCostBasis,
       },
     };
-  }, [collection, spotPrices]);
+  }, [collection, spotPrices, valuationMode]);
 
   const handleExportPNG = async () => {
     if (chartRef.current) {
