@@ -30,14 +30,67 @@ const SCALE_OPTIONS: { value: ScaleMode; label: string; description: string }[] 
   { value: 'custom', label: 'Custom', description: 'Set custom range' },
 ];
 
+// Improved Y-axis formatting based on value magnitude
 const formatYAxisValue = (value: number) => {
   if (value >= 1000000) {
     return `$${(value / 1000000).toFixed(1)}M`;
   } else if (value >= 1000) {
     return `$${(value / 1000).toFixed(1)}K`;
+  } else if (value >= 100) {
+    return `$${Math.round(value).toLocaleString()}`;
   }
-  return `$${value.toLocaleString()}`;
+  // For values under $100, show cents
+  return `$${value.toFixed(2)}`;
 };
+
+// X-axis formatter based on time range
+const getXAxisFormatter = (timeRange: TimeRange, customDayRange?: number) => {
+  // For custom range, determine appropriate format based on span
+  if (timeRange === 'custom' && customDayRange !== undefined) {
+    if (customDayRange <= 1) return formatXAxisHour;
+    if (customDayRange <= 7) return formatXAxisDayName;
+    if (customDayRange <= 60) return formatXAxisDate;
+    if (customDayRange <= 400) return formatXAxisMonth;
+    return formatXAxisMonthYear;
+  }
+
+  switch (timeRange) {
+    case '24H':
+      return formatXAxisHour;
+    case '1W':
+      return formatXAxisDayName;
+    case '1M':
+      return formatXAxisDate;
+    case '1Y':
+      return formatXAxisMonth;
+    case '5Y':
+      return formatXAxisMonthYear;
+    default:
+      return formatXAxisDate;
+  }
+};
+
+// Recharts tickFormatter type: (value: any, index: number) => string
+type TickFormatter = (value: string, index: number) => string;
+
+// Format for 24H: "12 PM", "3 PM"
+const formatXAxisHour: TickFormatter = (value) => value;
+
+// Format for 1W: "Mon", "Tue"
+const formatXAxisDayName: TickFormatter = (value) => value;
+
+// Format for 1M: "Jan 5", "Jan 10"
+const formatXAxisDate: TickFormatter = (value) => value;
+
+// Format for 1Y: "Jan", "Feb"
+const formatXAxisMonth: TickFormatter = (value) => {
+  // Extract just the month from strings like "Jan 5"
+  const parts = value.split(' ');
+  return parts[0];
+};
+
+// Format for 5Y: "Jan '22"
+const formatXAxisMonthYear: TickFormatter = (value) => value;
 
 // Helper to get default dates (last 30 days)
 const getDefaultDates = () => {
@@ -92,6 +145,19 @@ export function PortfolioChart() {
       };
     });
   }, [chartData, categoryFilter]);
+
+  // Calculate custom day range for X-axis formatting
+  const customDayRange = useMemo(() => {
+    if (timeRange !== 'custom' || !customStartDate || !customEndDate) return undefined;
+    const start = new Date(customStartDate);
+    const end = new Date(customEndDate);
+    return Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+  }, [timeRange, customStartDate, customEndDate]);
+
+  // Get appropriate X-axis tick formatter
+  const xAxisTickFormatter = useMemo(() => {
+    return getXAxisFormatter(timeRange, customDayRange);
+  }, [timeRange, customDayRange]);
 
   // Calculate Y-axis domain based on scale mode
   const yAxisDomain = useMemo(() => {
@@ -290,6 +356,9 @@ export function PortfolioChart() {
                   style={{ fontSize: '11px' }}
                   tickLine={false}
                   axisLine={{ stroke: '#F5E6DC' }}
+                  tickFormatter={xAxisTickFormatter}
+                  interval="preserveStartEnd"
+                  minTickGap={40}
                 />
                 <YAxis
                   stroke="#8B6B61"
