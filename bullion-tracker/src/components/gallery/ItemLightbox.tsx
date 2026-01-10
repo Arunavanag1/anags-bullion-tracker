@@ -60,10 +60,11 @@ export function ItemLightbox({ item, onClose, spotPrices }: ItemLightboxProps) {
 
   if (!item) return null;
 
-  const isItemized = item.type === 'itemized';
-  const title = isItemized
-    ? (item as ItemizedPiece).title
+  // Check for title property directly - works for both itemized bullion and numismatic items
+  const title = 'title' in item && item.title
+    ? item.title
     : `${item.metal.charAt(0).toUpperCase() + item.metal.slice(1)} (Bulk)`;
+  const isItemized = item.type === 'itemized';
   const grade = item.grade;
   const gradingService = item.gradingService;
   const images = item.images || [];

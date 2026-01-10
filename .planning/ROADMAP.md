@@ -5,6 +5,7 @@
 - ✅ [v1.0 Radial Photo Gallery](milestones/v1.0-ROADMAP.md) (Phase 1) — SHIPPED 2026-01-09
 - 🚧 **v1.1 Filter Pills** — Phase 2 (in progress)
 - 📋 **v1.2 Security & Stability** — Phases 3-9 (planned)
+- 📋 **v1.3 Improvements** — Phases 10-12 (planned)
 
 ## Overview
 
@@ -149,6 +150,56 @@ Plans:
 - Ensure items remain visible after full scroll cycle
 - Handle ScrollTrigger unpin gracefully
 
+### 📋 v1.3 Improvements (Planned)
+
+**Milestone Goal:** Enhance chart functionality with better controls, additional visualizations, and export capabilities
+
+#### Phase 10: Chart Axis Refinements
+
+**Goal**: Polish Y-axis scale controls, add X-axis date range options
+**Depends on**: Phase 9
+**Research**: Unlikely (internal Recharts patterns)
+**Plans**: TBD
+
+Plans:
+- [ ] 10-01: TBD (run /gsd:plan-phase 10 to break down)
+
+**Scope:**
+- Refine Y-axis scale controls (auto/fromZero/custom)
+- Add X-axis date range picker
+- Improve tick formatting and intervals
+
+#### Phase 11: Additional Visualizations
+
+**Goal**: Add pie/bar charts for allocation, gain/loss breakdown
+**Depends on**: Phase 10
+**Research**: Unlikely (Recharts already in use)
+**Plans**: TBD
+
+Plans:
+- [ ] 11-01: TBD (run /gsd:plan-phase 11 to break down)
+
+**Scope:**
+- Allocation pie chart by metal type
+- Gain/loss bar chart
+- Performance comparison charts
+
+#### Phase 12: Chart Export
+
+**Goal**: Export charts as images, export data as CSV
+**Depends on**: Phase 11
+**Research**: Likely (canvas/image export libraries)
+**Research topics**: html2canvas, chart image export, CSV generation
+**Plans**: TBD
+
+Plans:
+- [ ] 12-01: TBD (run /gsd:plan-phase 12 to break down)
+
+**Scope:**
+- Export chart as PNG/JPEG
+- Export underlying data as CSV
+- Share functionality
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -162,6 +213,9 @@ Plans:
 | 7. Auth Enhancements | v1.2 | 0/? | Not started | - |
 | 8. Performance Fixes | v1.2 | 0/? | Not started | - |
 | 9. Radial Collage Scroll Persistence | v1.2 | 0/? | Not started | - |
+| 10. Chart Axis Refinements | v1.3 | 0/? | Not started | - |
+| 11. Additional Visualizations | v1.3 | 0/? | Not started | - |
+| 12. Chart Export | v1.3 | 0/? | Not started | - |
 
 ---
-*Updated: 2026-01-09 after Phase 5 complete*
+*Updated: 2026-01-10 after milestone v1.3 created*

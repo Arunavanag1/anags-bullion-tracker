@@ -15,11 +15,18 @@ const TIME_RANGES: { value: TimeRange; label: string }[] = [
 ];
 
 type CategoryFilter = 'all' | 'bullion' | 'numismatic';
+type ScaleMode = 'auto' | 'fromZero' | 'custom';
 
 const CATEGORY_FILTERS: { value: CategoryFilter; label: string }[] = [
   { value: 'all', label: 'All' },
   { value: 'bullion', label: 'Bullion' },
   { value: 'numismatic', label: 'Numismatic' },
+];
+
+const SCALE_OPTIONS: { value: ScaleMode; label: string; description: string }[] = [
+  { value: 'auto', label: 'Auto', description: 'Zoom to fit data' },
+  { value: 'fromZero', label: 'From $0', description: 'Start Y-axis at zero' },
+  { value: 'custom', label: 'Custom', description: 'Set custom range' },
 ];
 
 const formatYAxisValue = (value: number) => {
@@ -34,6 +41,10 @@ const formatYAxisValue = (value: number) => {
 export function PortfolioChart() {
   const [timeRange, setTimeRange] = useState<TimeRange>('1M');
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all');
+  const [scaleMode, setScaleMode] = useState<ScaleMode>('auto');
+  const [customMin, setCustomMin] = useState<string>('');
+  const [customMax, setCustomMax] = useState<string>('');
+  const [showScaleOptions, setShowScaleOptions] = useState(false);
   const { data: collection } = useCollection();
   const { data: chartData, isLoading } = usePortfolioHistory(timeRange);
 
@@ -64,23 +75,39 @@ export function PortfolioChart() {
     });
   }, [chartData, categoryFilter]);
 
-  // Calculate Y-axis domain with proper padding
+  // Calculate Y-axis domain based on scale mode
   const yAxisDomain = useMemo(() => {
     if (!filteredData || filteredData.length === 0) return [0, 100];
 
     const values = filteredData.map((d) => d.displayValue).filter((v) => v > 0);
     if (values.length === 0) return [0, 100];
 
-    const min = Math.min(...values);
-    const max = Math.max(...values);
+    const dataMin = Math.min(...values);
+    const dataMax = Math.max(...values);
 
-    // Add 10% padding on top and bottom
-    const padding = (max - min) * 0.1 || max * 0.1;
-    const domainMin = Math.max(0, min - padding);
-    const domainMax = max + padding;
+    switch (scaleMode) {
+      case 'fromZero':
+        // Start from zero with 10% padding on top
+        return [0, dataMax * 1.1];
 
-    return [domainMin, domainMax];
-  }, [filteredData]);
+      case 'custom':
+        // Use custom values if provided, otherwise fall back to auto
+        const parsedMin = parseFloat(customMin);
+        const parsedMax = parseFloat(customMax);
+        if (!isNaN(parsedMin) && !isNaN(parsedMax) && parsedMax > parsedMin) {
+          return [parsedMin, parsedMax];
+        }
+        // Fall through to auto if custom values are invalid
+
+      case 'auto':
+      default:
+        // Add 10% padding on top and bottom
+        const padding = (dataMax - dataMin) * 0.1 || dataMax * 0.1;
+        const domainMin = Math.max(0, dataMin - padding);
+        const domainMax = dataMax + padding;
+        return [domainMin, domainMax];
+    }
+  }, [filteredData, scaleMode, customMin, customMax]);
 
   if (!collection || collection.length === 0) {
     return (
@@ -150,6 +177,58 @@ export function PortfolioChart() {
               ))}
             </div>
           </div>
+
+          {/* Scale Options */}
+          <div className="flex items-center gap-3">
+            <span className="text-xs text-text-secondary">Scale:</span>
+            <div className="flex gap-1 bg-bg-secondary rounded-lg p-1">
+              {SCALE_OPTIONS.map((option) => (
+                <button
+                  key={option.value}
+                  onClick={() => {
+                    setScaleMode(option.value);
+                    if (option.value === 'custom') {
+                      setShowScaleOptions(true);
+                    } else {
+                      setShowScaleOptions(false);
+                    }
+                  }}
+                  className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all ${
+                    scaleMode === option.value
+                      ? 'bg-white text-text-primary shadow-sm'
+                      : 'text-text-secondary hover:text-text-primary'
+                  }`}
+                  title={option.description}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Custom Scale Inputs */}
+          {scaleMode === 'custom' && (
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-text-secondary">Range:</span>
+              <div className="flex items-center gap-2">
+                <input
+                  type="number"
+                  placeholder="Min"
+                  value={customMin}
+                  onChange={(e) => setCustomMin(e.target.value)}
+                  className="w-24 px-2 py-1.5 text-sm border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent-primary"
+                />
+                <span className="text-text-secondary">-</span>
+                <input
+                  type="number"
+                  placeholder="Max"
+                  value={customMax}
+                  onChange={(e) => setCustomMax(e.target.value)}
+                  className="w-24 px-2 py-1.5 text-sm border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent-primary"
+                />
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Chart */}

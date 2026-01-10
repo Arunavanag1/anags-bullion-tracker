@@ -5,17 +5,26 @@
 See: .planning/PROJECT.md (updated 2026-01-09)
 
 **Core value:** Showcase coin photography beautifully
-**Current focus:** v1.2 Security & Stability — Phase 6 next
-**Next milestone:** After v1.2 phases complete
+**Current focus:** v1.1 Filter Pills — Phase 2 next
+**Next milestone:** v1.2 Security & Stability after v1.1
 
 ## Current Position
 
-Phase: 5 of 8 (Image Storage Migration) — COMPLETE
-Plan: 1 of 1 in current phase (all complete)
-Status: Phase 5 complete, ready for Phase 6
-Last activity: 2026-01-09 — Completed 05-01-PLAN.md (Cloudinary integration)
+Phase: 2 of 12 (Filter Pills) — IN PROGRESS
+Plan: 0 of ? in current phase (not yet planned)
+Status: Phase 1 (v1.0) complete, Phase 2 ready to plan
+Last activity: 2026-01-10 — Created milestone v1.3 Improvements
 
-Progress: █████░░░░░ 50% (4 of 8 phases complete)
+Progress: ████░░░░░░ 42% (5 of 12 phases complete)
+
+## Milestones Overview
+
+| Milestone | Phases | Status |
+|-----------|--------|--------|
+| v1.0 Radial Photo Gallery | 1 | SHIPPED |
+| v1.1 Filter Pills | 2 | In Progress |
+| v1.2 Security & Stability | 3-9 | Planned |
+| v1.3 Improvements | 10-12 | Planned |
 
 ## Performance Metrics
 
@@ -74,8 +83,13 @@ None yet.
   - Phase 8: Performance Fixes
   - Phase 9: Radial Collage Scroll Persistence (fix disappearing after full rotation)
 
+- Milestone v1.3 created: Improvements (Chart Enhancements), 3 phases (Phase 10-12)
+  - Phase 10: Chart Axis Refinements (Y-axis scale controls, X-axis date range)
+  - Phase 11: Additional Visualizations (pie/bar charts for allocation)
+  - Phase 12: Chart Export (PNG/CSV export, share functionality)
+
 ## Session Continuity
 
-Last session: 2026-01-09
-Stopped at: Completed Phase 5, ready for Phase 6
+Last session: 2026-01-10
+Stopped at: Created milestone v1.3 Improvements
 Resume file: None
