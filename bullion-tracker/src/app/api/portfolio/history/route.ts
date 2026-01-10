@@ -22,6 +22,8 @@ interface HistoricalPoint {
  * GET /api/portfolio/history
  * Query params:
  *   - days: number of days to look back (default: 30)
+ *   - startDate: ISO date string (optional, takes precedence over days)
+ *   - endDate: ISO date string (optional, defaults to today)
  */
 export async function GET(request: NextRequest) {
   try {
@@ -32,12 +34,26 @@ export async function GET(request: NextRequest) {
     }
 
     const searchParams = request.nextUrl.searchParams;
-    const days = parseInt(searchParams.get('days') || '30');
+    const startDateParam = searchParams.get('startDate');
+    const endDateParam = searchParams.get('endDate');
 
-    // Calculate date range
-    const endDate = new Date();
-    const startDate = new Date();
-    startDate.setDate(startDate.getDate() - days);
+    let startDate: Date;
+    let endDate: Date;
+    let days: number;
+
+    if (startDateParam) {
+      // Use explicit date range
+      startDate = new Date(startDateParam);
+      endDate = endDateParam ? new Date(endDateParam) : new Date();
+      // Calculate days for interval logic
+      days = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+    } else {
+      // Fall back to days parameter
+      days = parseInt(searchParams.get('days') || '30');
+      endDate = new Date();
+      startDate = new Date();
+      startDate.setDate(startDate.getDate() - days);
+    }
 
     // Fetch collection items for authenticated user only
     const items = await prisma.collectionItem.findMany({

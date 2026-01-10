@@ -149,7 +149,7 @@ export interface SpotPricesResponse {
 }
 
 // Time Range for Charts
-export type TimeRange = '24H' | '1W' | '1M' | '1Y' | '5Y';
+export type TimeRange = '24H' | '1W' | '1M' | '1Y' | '5Y' | 'custom';
 
 // Chart Data Point
 export interface ChartDataPoint {

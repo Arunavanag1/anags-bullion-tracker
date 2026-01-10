@@ -2,6 +2,7 @@
 
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { Suspense } from 'react';
 import { Button } from '@/components/ui/Button';
 
 const errorMessages: Record<string, string> = {
@@ -11,7 +12,7 @@ const errorMessages: Record<string, string> = {
   Default: 'An error occurred while signing in.',
 };
 
-export default function AuthErrorPage() {
+function AuthErrorContent() {
   const searchParams = useSearchParams();
   const error = searchParams.get('error') || 'Default';
   const errorMessage = errorMessages[error] || errorMessages.Default;
@@ -63,5 +64,17 @@ export default function AuthErrorPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function AuthErrorPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-background-primary flex items-center justify-center">
+        <div className="text-text-secondary">Loading...</div>
+      </div>
+    }>
+      <AuthErrorContent />
+    </Suspense>
   );
 }

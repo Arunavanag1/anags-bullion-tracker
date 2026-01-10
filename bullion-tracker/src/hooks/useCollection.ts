@@ -113,21 +113,36 @@ interface HistoricalPoint {
   timestamp: number;
 }
 
-const TIME_RANGE_DAYS: Record<TimeRange, number> = {
+const TIME_RANGE_DAYS: Partial<Record<TimeRange, number>> = {
   '24H': 1,
   '1W': 7,
   '1M': 30,
   '1Y': 365,
   '5Y': 1825,
+  // 'custom' is handled via customStartDate/customEndDate params
 };
 
-export function usePortfolioHistory(timeRange: TimeRange) {
-  const days = TIME_RANGE_DAYS[timeRange];
+interface PortfolioHistoryParams {
+  timeRange: TimeRange;
+  customStartDate?: string;
+  customEndDate?: string;
+}
+
+export function usePortfolioHistory({ timeRange, customStartDate, customEndDate }: PortfolioHistoryParams) {
+  const isCustomRange = timeRange === 'custom' && customStartDate && customEndDate;
 
   return useQuery<HistoricalPoint[]>({
-    queryKey: ['portfolio-history', timeRange],
+    queryKey: ['portfolio-history', timeRange, customStartDate, customEndDate],
     queryFn: async () => {
-      const response = await fetch(`/api/portfolio/history?days=${days}`);
+      let url: string;
+      if (isCustomRange) {
+        url = `/api/portfolio/history?startDate=${customStartDate}&endDate=${customEndDate}`;
+      } else {
+        const days = TIME_RANGE_DAYS[timeRange as keyof typeof TIME_RANGE_DAYS] || 30;
+        url = `/api/portfolio/history?days=${days}`;
+      }
+
+      const response = await fetch(url);
       const result = await response.json();
 
       if (!result.data) {

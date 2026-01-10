@@ -12,6 +12,7 @@ const TIME_RANGES: { value: TimeRange; label: string }[] = [
   { value: '1M', label: '1M' },
   { value: '1Y', label: '1Y' },
   { value: '5Y', label: '5Y' },
+  { value: 'custom', label: 'Custom' },
 ];
 
 type CategoryFilter = 'all' | 'bullion' | 'numismatic';
@@ -38,6 +39,17 @@ const formatYAxisValue = (value: number) => {
   return `$${value.toLocaleString()}`;
 };
 
+// Helper to get default dates (last 30 days)
+const getDefaultDates = () => {
+  const end = new Date();
+  const start = new Date();
+  start.setDate(start.getDate() - 30);
+  return {
+    start: start.toISOString().split('T')[0],
+    end: end.toISOString().split('T')[0],
+  };
+};
+
 export function PortfolioChart() {
   const [timeRange, setTimeRange] = useState<TimeRange>('1M');
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all');
@@ -45,8 +57,14 @@ export function PortfolioChart() {
   const [customMin, setCustomMin] = useState<string>('');
   const [customMax, setCustomMax] = useState<string>('');
   const [showScaleOptions, setShowScaleOptions] = useState(false);
+  const [customStartDate, setCustomStartDate] = useState<string>(getDefaultDates().start);
+  const [customEndDate, setCustomEndDate] = useState<string>(getDefaultDates().end);
   const { data: collection } = useCollection();
-  const { data: chartData, isLoading } = usePortfolioHistory(timeRange);
+  const { data: chartData, isLoading } = usePortfolioHistory({
+    timeRange,
+    customStartDate: timeRange === 'custom' ? customStartDate : undefined,
+    customEndDate: timeRange === 'custom' ? customEndDate : undefined,
+  });
 
   // Filter and transform data based on category selection
   const filteredData = useMemo(() => {
@@ -157,6 +175,28 @@ export function PortfolioChart() {
               ))}
             </div>
           </div>
+
+          {/* Custom Date Range Inputs */}
+          {timeRange === 'custom' && (
+            <div className="flex items-center gap-3">
+              <span className="text-xs text-text-secondary">Range:</span>
+              <div className="flex items-center gap-2">
+                <input
+                  type="date"
+                  value={customStartDate}
+                  onChange={(e) => setCustomStartDate(e.target.value)}
+                  className="w-32 px-2 py-1.5 text-sm border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent-primary"
+                />
+                <span className="text-text-secondary">to</span>
+                <input
+                  type="date"
+                  value={customEndDate}
+                  onChange={(e) => setCustomEndDate(e.target.value)}
+                  className="w-32 px-2 py-1.5 text-sm border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent-primary"
+                />
+              </div>
+            </div>
+          )}
 
           {/* Category Filter */}
           <div className="flex items-center gap-3">

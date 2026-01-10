@@ -30,7 +30,7 @@ export default function BullionTrackerWeb() {
   const { data: spotPricesData } = useSpotPrices();
   const { data: portfolioData } = usePortfolioSummary();
   const { data: collectionData } = useCollection();
-  const { data: historyData } = usePortfolioHistory(timeRange);
+  const { data: historyData } = usePortfolioHistory({ timeRange });
   const { data: collectionSummary } = useCollectionSummary();
 
   // Process spot prices
