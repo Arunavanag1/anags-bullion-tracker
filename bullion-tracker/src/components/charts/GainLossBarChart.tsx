@@ -16,6 +16,7 @@ interface GainLossBarChartProps {
 interface MetalData {
   name: string;
   gainLoss: number;
+  displayGainLoss: number; // For bar rendering with minimum width
   percentChange: number;
   currentValue: number;
   costBasis: number;
@@ -25,6 +26,7 @@ interface MetalData {
 
 const POSITIVE_COLOR = '#22C55E';
 const NEGATIVE_COLOR = '#EF4444';
+const NEUTRAL_COLOR = '#9CA3AF'; // Gray for near-zero values
 
 const formatYAxisValue = (value: number) => {
   if (Math.abs(value) >= 1000000) {
@@ -94,7 +96,7 @@ export function GainLossBarChart({ collection, spotPrices, valuationMode = 'spot
     });
 
     // Build chart data
-    const data: MetalData[] = Object.entries(metalTotals)
+    const rawData = Object.entries(metalTotals)
       .filter(([, values]) => values.currentValue > 0 || values.costBasis > 0)
       .map(([metal, values]) => {
         const gainLoss = values.currentValue - values.costBasis;
@@ -108,10 +110,35 @@ export function GainLossBarChart({ collection, spotPrices, valuationMode = 'spot
           percentChange,
           currentValue: values.currentValue,
           costBasis: values.costBasis,
-          color: gainLoss >= 0 ? POSITIVE_COLOR : NEGATIVE_COLOR,
         };
       })
       .sort((a, b) => b.gainLoss - a.gainLoss);
+
+    // Calculate minimum bar width (3% of the max absolute value)
+    const maxAbsGainLoss = Math.max(...rawData.map(d => Math.abs(d.gainLoss)), 1);
+    const minBarValue = maxAbsGainLoss * 0.03;
+
+    const data: MetalData[] = rawData.map(item => {
+      // Ensure bar is visible by using minimum display value
+      let displayGainLoss = item.gainLoss;
+      if (Math.abs(item.gainLoss) < minBarValue && item.gainLoss !== 0) {
+        displayGainLoss = item.gainLoss >= 0 ? minBarValue : -minBarValue;
+      } else if (item.gainLoss === 0) {
+        // Show a small neutral bar for exactly zero
+        displayGainLoss = minBarValue * 0.5;
+      }
+
+      // Determine color based on actual gain/loss
+      let color = NEUTRAL_COLOR;
+      if (item.gainLoss > 0) color = POSITIVE_COLOR;
+      else if (item.gainLoss < 0) color = NEGATIVE_COLOR;
+
+      return {
+        ...item,
+        displayGainLoss,
+        color,
+      };
+    });
 
     // Calculate totals
     const totalCurrentValue = data.reduce((sum, d) => sum + d.currentValue, 0);
@@ -227,7 +254,7 @@ export function GainLossBarChart({ collection, spotPrices, valuationMode = 'spot
                 />
                 <Tooltip content={<CustomTooltip />} />
                 <ReferenceLine x={0} stroke="#8B6B61" strokeDasharray="3 3" />
-                <Bar dataKey="gainLoss" radius={[0, 4, 4, 0]} barSize={24}>
+                <Bar dataKey="displayGainLoss" radius={[0, 4, 4, 0]} barSize={24}>
                   {chartData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
