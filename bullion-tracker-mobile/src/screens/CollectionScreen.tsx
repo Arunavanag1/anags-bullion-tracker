@@ -13,6 +13,7 @@ import { CategoryBadge } from '../components/numismatic/CategoryBadge';
 import { ProblemCoinBadge } from '../components/numismatic/ProblemCoinBadge';
 import { PricePill } from '../components/ui/PricePill';
 import { TabBar } from '../components/ui/TabBar';
+import { ValueHistoryChart } from '../components/numismatic/ValueHistoryChart';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Collection'>;
 
@@ -22,6 +23,7 @@ export function CollectionScreen({ navigation }: Props) {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [categoryFilter, setCategoryFilter] = useState<ItemCategory | 'ALL'>('ALL');
+  const [expandedHistory, setExpandedHistory] = useState<string | null>(null);
 
   const loadData = async () => {
     try {
@@ -232,6 +234,26 @@ export function CollectionScreen({ navigation }: Props) {
                     </View>
                   </View>
                 </View>
+
+                {/* Price History for numismatic guide_price items */}
+                {item.category === 'NUMISMATIC' && item.bookValueType === 'guide_price' && (
+                  <View style={styles.historySection}>
+                    <TouchableOpacity
+                      onPress={() => setExpandedHistory(expandedHistory === item.id ? null : item.id)}
+                      style={styles.historyToggle}
+                    >
+                      <Text style={styles.historyToggleText}>
+                        {expandedHistory === item.id ? '▼ Hide Price History' : '▶ Show Price History'}
+                      </Text>
+                    </TouchableOpacity>
+                    {expandedHistory === item.id && (
+                      <ValueHistoryChart
+                        itemId={item.id}
+                        currentValue={item.numismaticValue}
+                      />
+                    )}
+                  </View>
+                )}
 
                 {/* Action Buttons */}
                 <View style={styles.actionButtons}>
@@ -544,5 +566,19 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     color: Colors.negative,
+  },
+  historySection: {
+    marginTop: 12,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: Colors.border,
+  },
+  historyToggle: {
+    paddingVertical: 8,
+  },
+  historyToggleText: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: Colors.accentDark,
   },
 });

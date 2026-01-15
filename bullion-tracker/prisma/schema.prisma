@@ -105,6 +105,8 @@ model CollectionItem {
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 
+  valueHistory        ItemValueHistory[]
+
   @@index([userId])
   @@index([category])
   @@index([coinReferenceId])
@@ -246,4 +248,18 @@ model CoinPriceGuide {
 
   @@unique([coinReferenceId, gradeCode, priceDate])
   @@index([coinReferenceId, gradeCode])
+}
+
+model ItemValueHistory {
+  id               String         @id @default(cuid())
+  collectionItemId String
+  collectionItem   CollectionItem @relation(fields: [collectionItemId], references: [id], onDelete: Cascade)
+  valueType        String         // 'guide_price' | 'spot_premium' | 'custom'
+  value            Float
+  priceDate        DateTime       @db.Date
+  source           String?        // 'pcgs' | 'greysheet' | 'manual' | 'spot'
+  createdAt        DateTime       @default(now())
+
+  @@unique([collectionItemId, priceDate])
+  @@index([collectionItemId, priceDate])
 }

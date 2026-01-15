@@ -166,3 +166,10 @@ export interface ChartDataPoint {
   meltValue: number;
   bookValue: number;
 }
+
+// Value History Entry for tracking item value changes over time
+export interface ValueHistoryEntry {
+  priceDate: string;
+  value: number;
+  source: string | null;
+}

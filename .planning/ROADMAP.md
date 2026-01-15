@@ -389,7 +389,7 @@ Plans:
 **Plans**: TBD
 
 Plans:
-- [ ] 23-01: TBD (run /gsd:plan-phase 23 to break down)
+- [x] 23-01: Add ItemValueHistory model, sync endpoint, and mobile history display
 
 **Scope:**
 - Store guide price snapshots with timestamps
@@ -441,8 +441,8 @@ Plans:
 | 20. API & Data Layer Cleanup | v1.5 | 0/? | Not started | - |
 | 21. Bullion Premium Pricing | v1.6 | 1/1 | Complete | 2026-01-15 |
 | 22. Valuation Type System | v1.6 | 1/1 | Complete | 2026-01-15 |
-| 23. Dynamic Guide Price Integration | v1.6 | 0/? | Not started | - |
+| 23. Dynamic Guide Price Integration | v1.6 | 1/1 | Complete | 2026-01-15 |
 | 24. Portfolio Value Dashboard Updates | v1.6 | 0/? | Not started | - |
 
 ---
-*Updated: 2026-01-14 after v1.6 Portfolio Valuation Model milestone created*
+*Updated: 2026-01-15 after Phase 23 completed*

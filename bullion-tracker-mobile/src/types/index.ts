@@ -106,3 +106,10 @@ export interface CollectionSummary {
     };
   };
 }
+
+// Value History Entry for tracking item value changes over time
+export interface ValueHistoryEntry {
+  priceDate: string;
+  value: number;
+  source: string | null;
+}

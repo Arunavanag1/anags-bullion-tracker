@@ -2,7 +2,7 @@ import * as SecureStore from 'expo-secure-store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Fuse from 'fuse.js';
 import Constants from 'expo-constants';
-import type { CoinReference, ValidGrade, PriceGuideData, CollectionSummary, ItemCategory, GradingService, ProblemType, BookValueType } from '../types';
+import type { CoinReference, ValidGrade, PriceGuideData, CollectionSummary, ItemCategory, GradingService, ProblemType, BookValueType, ValueHistoryEntry } from '../types';
 
 // Fuse.js search result interface
 interface FuseResult<T> {
@@ -446,6 +446,41 @@ export const api = {
 
     if (!response.ok) {
       throw new Error('Failed to fetch coin performance');
+    }
+
+    const data = await response.json();
+    return data.data;
+  },
+
+  /**
+   * Get value history for an item
+   * @param itemId - Collection item ID
+   * @param limit - Max entries to return (default 30)
+   */
+  async getItemValueHistory(itemId: string, limit: number = 30): Promise<ValueHistoryEntry[]> {
+    const response = await makeRequest(`/api/collection/${itemId}/history?limit=${limit}`);
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch value history');
+    }
+
+    const data = await response.json();
+    return data.data || [];
+  },
+
+  /**
+   * Sync guide prices for numismatic items
+   * Updates numismaticValue from latest price guide and records value history
+   * @param itemId - Optional single item to sync, otherwise syncs all guide_price items
+   */
+  async syncPrices(itemId?: string): Promise<{ synced: number; updated: number; message: string }> {
+    const response = await makeRequest('/api/collection/sync-prices', {
+      method: 'POST',
+      body: JSON.stringify(itemId ? { itemId } : {}),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to sync prices');
     }
 
     const data = await response.json();
