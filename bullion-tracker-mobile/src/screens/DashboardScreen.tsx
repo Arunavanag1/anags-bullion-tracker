@@ -15,6 +15,8 @@ import Constants from 'expo-constants';
 import { Colors } from '../lib/colors';
 import { useCollectionSummary } from '../hooks/useCoins';
 import { TopPerformers } from '../components/TopPerformers';
+import { PricePill } from '../components/ui/PricePill';
+import { TabButton } from '../components/ui/TabButton';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Dashboard'>;
 
@@ -373,16 +375,6 @@ export function DashboardScreen({ navigation }: Props) {
   );
 }
 
-const PricePill = ({ metal, price, color }: { metal: string; price: number; color: string }) => (
-  <View style={styles.pricePill}>
-    <Text style={[styles.metalSymbol, { color }]}>{metal}</Text>
-    <Text style={styles.priceValue}>
-      ${price.toLocaleString()}
-      <Text style={styles.priceUnit}>/oz</Text>
-    </Text>
-  </View>
-);
-
 const ToggleButton = ({ active, onPress, label }: { active: boolean; onPress: () => void; label: string }) => (
   <TouchableOpacity
     onPress={onPress}
@@ -391,24 +383,6 @@ const ToggleButton = ({ active, onPress, label }: { active: boolean; onPress: ()
     <Text style={[styles.toggleButtonText, active && styles.toggleButtonTextActive]}>
       {label}
     </Text>
-  </TouchableOpacity>
-);
-
-const TabButton = ({ icon, label, active, onPress, badge }: {
-  icon: string;
-  label: string;
-  active: boolean;
-  onPress: () => void;
-  badge?: number;
-}) => (
-  <TouchableOpacity onPress={onPress} style={styles.tabButton}>
-    <Text style={[styles.tabIcon, active && styles.tabIconActive]}>{icon}</Text>
-    <Text style={[styles.tabLabel, active && styles.tabLabelActive]}>{label}</Text>
-    {badge !== undefined && badge > 0 && (
-      <View style={styles.tabBadge}>
-        <Text style={styles.tabBadgeText}>{badge}</Text>
-      </View>
-    )}
   </TouchableOpacity>
 );
 
@@ -437,27 +411,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-  },
-  pricePill: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  metalSymbol: {
-    fontSize: 11,
-    fontWeight: '600',
-    opacity: 0.9,
-  },
-  priceValue: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: 'white',
-    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
-  },
-  priceUnit: {
-    fontSize: 10,
-    color: '#888',
-    marginLeft: 2,
   },
   scrollView: {
     flex: 1,
@@ -712,44 +665,5 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     paddingTop: 12,
     paddingBottom: Platform.OS === 'ios' ? 28 : 12,
-  },
-  tabButton: {
-    alignItems: 'center',
-    paddingVertical: 4,
-    paddingHorizontal: 16,
-    position: 'relative',
-  },
-  tabIcon: {
-    fontSize: 22,
-    color: '#bbb',
-  },
-  tabIconActive: {
-    color: Colors.textPrimary,
-  },
-  tabLabel: {
-    fontSize: 11,
-    fontWeight: '500',
-    color: Colors.textSecondary,
-    marginTop: 4,
-  },
-  tabLabelActive: {
-    color: Colors.textPrimary,
-  },
-  tabBadge: {
-    position: 'absolute',
-    top: 0,
-    right: 8,
-    backgroundColor: Colors.gold,
-    borderRadius: 10,
-    minWidth: 18,
-    height: 18,
-    paddingHorizontal: 6,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  tabBadgeText: {
-    color: 'white',
-    fontSize: 10,
-    fontWeight: '600',
   },
 });
