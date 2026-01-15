@@ -5,8 +5,9 @@
 - ✅ [v1.0 Radial Photo Gallery](milestones/v1.0-ROADMAP.md) (Phase 1) — SHIPPED 2026-01-09
 - 🚧 **v1.1 Filter Pills** — Phase 2 (in progress)
 - 📋 **v1.2 Security & Stability** — Phases 3-9 (planned)
-- 📋 **v1.3 Improvements** — Phases 10-12 (complete)
-- 📋 **v1.4 Auth Deployment** — Phases 13-16 (planned)
+- ✅ **v1.3 Improvements** — Phases 10-12 (complete)
+- 🚧 **v1.4 Auth Deployment** — Phases 13-16 (in progress)
+- 📋 **v1.5 Mobile Refactor** — Phases 17-20 (planned)
 
 ## Overview
 
@@ -272,6 +273,74 @@ Plans:
 - Verify token expiration and refresh
 - Document deployment checklist
 
+### 📋 v1.5 Mobile Refactor (Planned)
+
+**Milestone Goal:** Refactor bullion-tracker-mobile app for stability, efficiency, and documentation while preserving functionality
+
+#### Phase 17: Mobile Code Audit
+
+**Goal**: Review codebase, identify patterns/anti-patterns, document current architecture
+**Depends on**: Phase 16 (Deployment Verification)
+**Research**: Unlikely (internal codebase review)
+**Plans**: TBD
+
+Plans:
+- [ ] 17-01: TBD (run /gsd:plan-phase 17 to break down)
+
+**Scope:**
+- Audit current file structure and organization
+- Document existing patterns and conventions
+- Identify code smells and anti-patterns
+- Create architecture documentation
+
+#### Phase 18: State Management Refactor
+
+**Goal**: Clean up state handling, improve data flow, reduce prop drilling
+**Depends on**: Phase 17
+**Research**: Unlikely (internal React Native patterns)
+**Plans**: TBD
+
+Plans:
+- [ ] 18-01: TBD (run /gsd:plan-phase 18 to break down)
+
+**Scope:**
+- Audit current state management approach
+- Consolidate context providers if fragmented
+- Reduce prop drilling with proper context usage
+- Add TypeScript types for state shapes
+
+#### Phase 19: Component Refactor
+
+**Goal**: Extract reusable components, improve type safety, add JSDoc comments
+**Depends on**: Phase 18
+**Research**: Unlikely (internal component patterns)
+**Plans**: TBD
+
+Plans:
+- [ ] 19-01: TBD (run /gsd:plan-phase 19 to break down)
+
+**Scope:**
+- Extract reusable UI components
+- Improve TypeScript type coverage
+- Add JSDoc documentation to key components
+- Ensure consistent prop interfaces
+
+#### Phase 20: API & Data Layer Cleanup
+
+**Goal**: Consolidate API calls, improve error handling, add caching patterns
+**Depends on**: Phase 19
+**Research**: Unlikely (internal API patterns)
+**Plans**: TBD
+
+Plans:
+- [ ] 20-01: TBD (run /gsd:plan-phase 20 to break down)
+
+**Scope:**
+- Consolidate API client code
+- Improve error handling and user feedback
+- Add request caching where appropriate
+- Document API integration patterns
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -292,6 +361,10 @@ Plans:
 | 14. Mobile Auth Hardening | v1.4 | 0/? | Not started | - |
 | 15. Security Headers & CORS | v1.4 | 0/? | Not started | - |
 | 16. Deployment Verification | v1.4 | 0/? | Not started | - |
+| 17. Mobile Code Audit | v1.5 | 0/? | Not started | - |
+| 18. State Management Refactor | v1.5 | 0/? | Not started | - |
+| 19. Component Refactor | v1.5 | 0/? | Not started | - |
+| 20. API & Data Layer Cleanup | v1.5 | 0/? | Not started | - |
 
 ---
-*Updated: 2026-01-10 after Phase 13 (Credential Cleanup) completed*
+*Updated: 2026-01-14 after v1.5 Mobile Refactor milestone created*

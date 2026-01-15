@@ -15,7 +15,7 @@ Plan: 1 of 1 in current phase (13-01 complete)
 Status: v1.4 Auth Deployment in progress
 Last activity: 2026-01-10 — Completed 13-01-PLAN.md (Credential Cleanup)
 
-Progress: █████████░ 56% (9 of 16 phases complete)
+Progress: █████░░░░░ 45% (9 of 20 phases complete)
 
 ## Milestones Overview
 
@@ -26,6 +26,7 @@ Progress: █████████░ 56% (9 of 16 phases complete)
 | v1.2 Security & Stability | 3-9 | Planned |
 | v1.3 Improvements | 10-12 | COMPLETE |
 | v1.4 Auth Deployment | 13-16 | In Progress |
+| v1.5 Mobile Refactor | 17-20 | Planned |
 
 ## Performance Metrics
 
@@ -101,8 +102,14 @@ None yet.
   - Phase 15: Security Headers & CORS (CSP, HSTS, CORS middleware)
   - Phase 16: Deployment Verification (end-to-end auth testing)
 
+- Milestone v1.5 created: Mobile Refactor (stability, efficiency, documentation), 4 phases (Phase 17-20)
+  - Phase 17: Mobile Code Audit (review, identify patterns, document architecture)
+  - Phase 18: State Management Refactor (clean up state, reduce prop drilling)
+  - Phase 19: Component Refactor (extract reusable components, improve types)
+  - Phase 20: API & Data Layer Cleanup (consolidate API calls, error handling)
+
 ## Session Continuity
 
-Last session: 2026-01-10
-Stopped at: Completed 13-01-PLAN.md (Phase 13 Credential Cleanup complete)
+Last session: 2026-01-14
+Stopped at: Created milestone v1.5 Mobile Refactor (Phases 17-20)
 Resume file: None
