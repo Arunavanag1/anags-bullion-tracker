@@ -4,7 +4,7 @@ import { useState, useMemo, useRef } from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { Card } from '@/components/ui/Card';
 import { CollectionItem, SpotPricesResponse } from '@/types';
-import { calculateCurrentBookValue, calculateCurrentMeltValue, formatCurrency } from '@/lib/calculations';
+import { calculateCurrentBookValue, formatCurrency } from '@/lib/calculations';
 import { exportChartAsPNG, exportDataAsCSV } from '@/lib/exportUtils';
 
 type ViewMode = 'metal' | 'category';
@@ -12,7 +12,6 @@ type ViewMode = 'metal' | 'category';
 interface AllocationPieChartProps {
   collection: CollectionItem[];
   spotPrices: SpotPricesResponse;
-  valuationMode?: 'spot' | 'book';
 }
 
 const METAL_COLORS: Record<string, string> = {
@@ -70,7 +69,7 @@ const renderCustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent
   );
 };
 
-export function AllocationPieChart({ collection, spotPrices, valuationMode = 'spot' }: AllocationPieChartProps) {
+export function AllocationPieChart({ collection, spotPrices }: AllocationPieChartProps) {
   const [viewMode, setViewMode] = useState<ViewMode>('metal');
   const chartRef = useRef<HTMLDivElement>(null);
 
@@ -85,10 +84,8 @@ export function AllocationPieChart({ collection, spotPrices, valuationMode = 'sp
 
     collection.forEach((item) => {
       const spotPrice = spotPrices[item.metal]?.pricePerOz || 0;
-      // Use melt value for "spot" mode, book value for "book" mode
-      const value = valuationMode === 'spot'
-        ? calculateCurrentMeltValue(item, spotPrice)
-        : calculateCurrentBookValue(item, spotPrice);
+      // Always use book value (unified portfolio value)
+      const value = calculateCurrentBookValue(item, spotPrice);
 
       if (viewMode === 'metal') {
         const metalName = item.metal.charAt(0).toUpperCase() + item.metal.slice(1);
@@ -121,7 +118,7 @@ export function AllocationPieChart({ collection, spotPrices, valuationMode = 'sp
       .sort((a, b) => b.value - a.value);
 
     return { chartData: data, totalValue: total };
-  }, [collection, spotPrices, viewMode, valuationMode]);
+  }, [collection, spotPrices, viewMode]);
 
   const handleExportPNG = async () => {
     if (chartRef.current) {
