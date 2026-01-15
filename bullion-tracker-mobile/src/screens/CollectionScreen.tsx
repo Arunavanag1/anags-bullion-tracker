@@ -174,11 +174,15 @@ export function CollectionScreen({ navigation }: Props) {
             const pureWeight = (item.weightOz || 0) * (item.quantity || 1);
             const meltValue = pureWeight * (typeof spotPrice === 'number' ? spotPrice : 0);
 
-            // Use numismatic value if available, otherwise use purchase value
-            const purchaseValue = item.category === 'NUMISMATIC' && item.numismaticValue
-              ? item.numismaticValue * (item.quantity || 1)
-              : (item.customBookValue || ((item.weightOz || 0) * (item.quantity || 1) * (item.spotPriceAtCreation || 0)));
-            const gain = meltValue - purchaseValue;
+            // Calculate current book value based on category
+            const premiumMultiplier = 1 + ((item.premiumPercent || 0) / 100);
+            const currentValue = item.category === 'NUMISMATIC'
+              ? (item.numismaticValue || item.customBookValue || 0)
+              : meltValue * premiumMultiplier;
+
+            // Purchase value for gain/loss calculation
+            const purchaseValue = item.customBookValue || ((item.weightOz || 0) * (item.quantity || 1) * (item.spotPriceAtCreation || 0));
+            const gain = currentValue - purchaseValue;
             const gainPercent = purchaseValue > 0 ? (gain / purchaseValue) * 100 : 0;
 
             return (
@@ -218,18 +222,29 @@ export function CollectionScreen({ navigation }: Props) {
                       )}
                     </Text>
 
+                    {/* Primary Value */}
                     <View style={styles.valueRow}>
-                      <Text style={styles.valueLabel}>Melt Value:</Text>
-                      <Text style={styles.meltValue}>{formatCurrency(meltValue)}</Text>
+                      <Text style={styles.valueLabel}>
+                        {item.category === 'NUMISMATIC' ? 'Guide Value:' : 'Current Value:'}
+                      </Text>
+                      <View style={styles.valueWithChange}>
+                        <Text style={styles.primaryValue}>{formatCurrency(currentValue)}</Text>
+                        <Text style={[
+                          styles.changeValue,
+                          { color: gain >= 0 ? Colors.positive : Colors.negative }
+                        ]}>
+                          {formatPercentage(gainPercent)}
+                        </Text>
+                      </View>
                     </View>
 
-                    <View style={styles.valueRow}>
-                      <Text style={styles.valueLabel}>Gain/Loss:</Text>
-                      <Text style={[
-                        styles.gainValue,
-                        { color: gain >= 0 ? Colors.positive : Colors.negative }
-                      ]}>
-                        {formatCurrency(gain)} ({formatPercentage(gainPercent)})
+                    {/* Secondary Melt Value - indented and informative */}
+                    <View style={styles.meltInfoRow}>
+                      <Text style={styles.meltInfoText}>
+                        Melt: {formatCurrency(meltValue)}
+                        {item.category === 'BULLION' && item.premiumPercent !== undefined && item.premiumPercent !== 0 && (
+                          ` (${item.premiumPercent > 0 ? '+' : ''}${item.premiumPercent}% premium)`
+                        )}
                       </Text>
                     </View>
                   </View>
@@ -526,16 +541,30 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: Colors.textSecondary,
   },
-  meltValue: {
+  valueWithChange: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  primaryValue: {
     fontSize: 14,
     fontWeight: '600',
     color: Colors.textPrimary,
     fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
-  gainValue: {
-    fontSize: 14,
+  changeValue: {
+    fontSize: 11,
     fontWeight: '600',
     fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+  },
+  meltInfoRow: {
+    paddingLeft: 12,
+    marginTop: 2,
+  },
+  meltInfoText: {
+    fontSize: 11,
+    color: Colors.textSecondary,
+    opacity: 0.7,
   },
   actionButtons: {
     flexDirection: 'row',

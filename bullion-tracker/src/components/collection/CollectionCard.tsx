@@ -100,14 +100,11 @@ export function CollectionCard({ item }: CollectionCardProps) {
 
       {/* Values */}
       <div className="space-y-2">
+        {/* Primary Value */}
         <div className="flex items-center justify-between text-sm">
-          <span className="text-text-secondary">Melt:</span>
-          <span className="font-mono font-medium text-text-primary">
-            {formatCurrency(currentMeltValue)}
+          <span className="text-text-secondary">
+            {item.category === 'NUMISMATIC' ? 'Guide Value:' : 'Current Value:'}
           </span>
-        </div>
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-text-secondary">Book:</span>
           <div className="flex items-center gap-2">
             <span className="font-mono font-medium text-text-primary">
               {formatCurrency(currentBookValue)}
@@ -121,6 +118,17 @@ export function CollectionCard({ item }: CollectionCardProps) {
               {formatPercent(percentChange)}
             </span>
           </div>
+        </div>
+        {/* Secondary Melt Value - indented and informative */}
+        <div className="flex items-center justify-between text-xs pl-3">
+          <span className="text-text-secondary/70">
+            Melt: {formatCurrency(currentMeltValue)}
+            {item.category === 'BULLION' && item.premiumPercent !== undefined && item.premiumPercent !== 0 && (
+              <span className="ml-1">
+                ({item.premiumPercent > 0 ? '+' : ''}{item.premiumPercent}% premium)
+              </span>
+            )}
+          </span>
         </div>
         {item.category === 'NUMISMATIC' && item.confidenceLevel && (
           <div style={{ paddingTop: '8px' }}>
