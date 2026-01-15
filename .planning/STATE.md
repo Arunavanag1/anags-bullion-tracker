@@ -11,9 +11,9 @@ See: .planning/PROJECT.md (updated 2026-01-09)
 ## Current Position
 
 Phase: 25 of 25 (Unified Portfolio Display) — COMPLETE
-Plan: 1 of 1 in current phase (25-01 complete)
+Plan: 2 of 2 in current phase (25-01, 25-02 complete)
 Status: v1.7 Unified Portfolio Value COMPLETE
-Last activity: 2026-01-15 — Completed 25-01-PLAN.md (Unified Portfolio Display)
+Last activity: 2026-01-15 — Completed 25-02-PLAN.md (Remove Web Dashboard Toggle)
 
 Progress: ██████████ 68% (17 of 25 phases complete)
 

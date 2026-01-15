@@ -351,10 +351,11 @@ Plans:
 **Goal**: Remove spot/book toggle, display single portfolio value using appropriate valuation per item type
 **Depends on**: Phase 24 (Portfolio Value Dashboard Updates)
 **Research**: Unlikely (internal UI cleanup)
-**Plans**: 1 plan
+**Plans**: 2 plans
 
 Plans:
 - [x] 25-01: Remove toggle, show unified portfolio value on web and mobile
+- [x] 25-02: Remove spot/book toggle from main web dashboard page.tsx
 
 **Scope:**
 - Remove "Spot Value" / "Book Value" toggle from mobile DashboardScreen
@@ -466,7 +467,7 @@ Plans:
 | 22. Valuation Type System | v1.6 | 1/1 | Complete | 2026-01-15 |
 | 23. Dynamic Guide Price Integration | v1.6 | 1/1 | Complete | 2026-01-15 |
 | 24. Portfolio Value Dashboard Updates | v1.6 | 1/1 | Complete | 2026-01-15 |
-| 25. Unified Portfolio Display | v1.7 | 1/1 | Complete | 2026-01-15 |
+| 25. Unified Portfolio Display | v1.7 | 2/2 | Complete | 2026-01-15 |
 
 ---
 *Updated: 2026-01-15 after Phase 25 completed - v1.7 milestone complete*
