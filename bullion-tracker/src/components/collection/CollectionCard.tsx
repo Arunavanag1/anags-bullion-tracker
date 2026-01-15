@@ -71,7 +71,7 @@ export function CollectionCard({ item }: CollectionCardProps) {
       )}
 
       {/* Title and Category Badge */}
-      <div className="mb-3">
+      <div className="mb-4">
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
           <CategoryBadge category={item.category as 'BULLION' | 'NUMISMATIC'} />
           {item.isProblemCoin && item.problemType && (
@@ -81,25 +81,24 @@ export function CollectionCard({ item }: CollectionCardProps) {
         <h3 className="text-lg font-semibold text-text-primary line-clamp-2">
           {displayTitle}
         </h3>
-        {item.category === 'NUMISMATIC' && (
-          <div className="text-sm text-text-secondary mt-1">
-            {item.gradingService && `${item.gradingService} `}
-            {item.grade}
-            {item.certNumber && ` • Cert #${item.certNumber}`}
-          </div>
-        )}
       </div>
 
-      {/* Weight & Metal */}
+      {/* Weight & Metal (+ Grade for numismatics) */}
       <div className="flex items-center gap-2 text-text-primary mb-4">
         <span className="text-xl">{getMetalEmoji(item.metal)}</span>
         <span className="font-mono text-sm">
           {item.weightOz} oz {quantity > 1 && `× ${quantity} = ${formatWeight(totalWeight)}`}
         </span>
+        {item.category === 'NUMISMATIC' && (
+          <span className="text-sm text-text-secondary ml-1">
+            • {item.gradingService && `${item.gradingService} `}{item.grade}
+            {item.certNumber && ` • #${item.certNumber}`}
+          </span>
+        )}
       </div>
 
       {/* Values */}
-      <div className="space-y-2">
+      <div className="space-y-4">
         {/* Primary Value */}
         <div className="flex items-center justify-between text-sm">
           <span className="text-text-secondary">
@@ -123,15 +122,15 @@ export function CollectionCard({ item }: CollectionCardProps) {
         <div className="flex items-center justify-between text-xs pl-3">
           <span className="text-text-secondary/70">
             Melt: {formatCurrency(currentMeltValue)}
-            {item.category === 'BULLION' && item.premiumPercent !== undefined && item.premiumPercent !== 0 && (
+            {item.category === 'BULLION' && (
               <span className="ml-1">
-                ({item.premiumPercent > 0 ? '+' : ''}{item.premiumPercent}% premium)
+                ({(item.premiumPercent || 0) > 0 ? '+' : ''}{item.premiumPercent || 0}% premium)
               </span>
             )}
           </span>
         </div>
         {item.category === 'NUMISMATIC' && item.confidenceLevel && (
-          <div style={{ paddingTop: '8px' }}>
+          <div>
             <ConfidenceIndicator level={item.confidenceLevel as 'high' | 'medium' | 'low' | 'user'} />
           </div>
         )}

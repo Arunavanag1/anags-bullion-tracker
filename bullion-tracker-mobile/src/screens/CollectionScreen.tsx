@@ -217,13 +217,13 @@ export function CollectionScreen({ navigation }: Props) {
                     </View>
                     <Text style={styles.itemMeta}>
                       Qty: {item.quantity || 1} × {formatWeight(item.weightOz || 0)}
-                      {item.category === 'NUMISMATIC' && item.gradingService && (
-                        <Text> • {item.gradingService} {item.grade}</Text>
+                      {item.category === 'NUMISMATIC' && (
+                        <Text> • {item.gradingService ? `${item.gradingService} ` : ''}{item.grade}</Text>
                       )}
                     </Text>
 
                     {/* Primary Value */}
-                    <View style={styles.valueRow}>
+                    <View style={styles.valueRowSpaced}>
                       <Text style={styles.valueLabel}>
                         {item.category === 'NUMISMATIC' ? 'Guide Value:' : 'Current Value:'}
                       </Text>
@@ -239,11 +239,11 @@ export function CollectionScreen({ navigation }: Props) {
                     </View>
 
                     {/* Secondary Melt Value - indented and informative */}
-                    <View style={styles.meltInfoRow}>
+                    <View style={styles.meltInfoRowSpaced}>
                       <Text style={styles.meltInfoText}>
                         Melt: {formatCurrency(meltValue)}
-                        {item.category === 'BULLION' && item.premiumPercent !== undefined && item.premiumPercent !== 0 && (
-                          ` (${item.premiumPercent > 0 ? '+' : ''}${item.premiumPercent}% premium)`
+                        {item.category === 'BULLION' && (
+                          ` (${(item.premiumPercent || 0) > 0 ? '+' : ''}${item.premiumPercent || 0}% premium)`
                         )}
                       </Text>
                     </View>
@@ -537,6 +537,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 4,
   },
+  valueRowSpaced: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 12,
+    marginBottom: 4,
+  },
   valueLabel: {
     fontSize: 12,
     color: Colors.textSecondary,
@@ -560,6 +566,10 @@ const styles = StyleSheet.create({
   meltInfoRow: {
     paddingLeft: 12,
     marginTop: 2,
+  },
+  meltInfoRowSpaced: {
+    paddingLeft: 12,
+    marginTop: 8,
   },
   meltInfoText: {
     fontSize: 11,
