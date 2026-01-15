@@ -3,11 +3,9 @@ import { View, Text, ScrollView, Image, TouchableOpacity, RefreshControl, StyleS
 import { LinearGradient } from 'expo-linear-gradient';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../App';
+import { useSpotPrices } from '../contexts/SpotPricesContext';
 import { api } from '../lib/api';
-import { fetchSpotPrices } from '../lib/prices';
 import type { CollectionItem } from '../lib/api';
-import type { SpotPrices } from '../types';
-import Constants from 'expo-constants';
 import { Colors } from '../lib/colors';
 import { PricePill } from '../components/ui/PricePill';
 import { TabButton } from '../components/ui/TabButton';
@@ -18,22 +16,18 @@ const { width } = Dimensions.get('window');
 const imageSize = (width - 60) / 3; // 3 columns with 20px padding on sides and 10px gaps
 
 export function CollageScreen({ navigation }: Props) {
+  const { spotPrices, refresh: refreshSpotPrices } = useSpotPrices();
   const [items, setItems] = useState<CollectionItem[]>([]);
-  const [spotPrices, setSpotPrices] = useState<SpotPrices | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
   const loadData = async () => {
     try {
-      const [itemsData, pricesData] = await Promise.all([
-        api.getCollectionItems(),
-        fetchSpotPrices(Constants.expoConfig?.extra?.metalPriceApiKey || ''),
-      ]);
+      const itemsData = await api.getCollectionItems();
 
       // Filter items that have images
       const itemsWithImages = itemsData.filter(item => item.images && item.images.length > 0);
       setItems(itemsWithImages);
-      setSpotPrices(pricesData);
     } catch (error) {
       console.error('Failed to load items:', error);
     } finally {
@@ -50,9 +44,9 @@ export function CollageScreen({ navigation }: Props) {
     return unsubscribe;
   }, [navigation]);
 
-  const onRefresh = () => {
+  const onRefresh = async () => {
     setRefreshing(true);
-    loadData();
+    await Promise.all([loadData(), refreshSpotPrices()]);
   };
 
   if (loading) {

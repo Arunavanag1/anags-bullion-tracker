@@ -4,14 +4,13 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../App';
 import { useAuth } from '../contexts/AuthContext';
+import { useSpotPrices } from '../contexts/SpotPricesContext';
 import { api } from '../lib/api';
-import { fetchSpotPrices } from '../lib/prices';
 import { getValuationMethod, setValuationMethod, getGainDisplayFormat, setGainDisplayFormat, type GainDisplayFormat } from '../lib/settings';
 import { calculatePortfolioSummary, formatCurrency, formatPercentage } from '../lib/calculations';
 import { savePortfolioValue, calculateDailyGain, get24hAgoValue } from '../lib/dailyTracking';
-import type { SpotPrices, ValuationMethod } from '../types';
+import type { ValuationMethod } from '../types';
 import type { CollectionItem } from '../lib/api';
-import Constants from 'expo-constants';
 import { Colors } from '../lib/colors';
 import { useCollectionSummary } from '../hooks/useCoins';
 import { TopPerformers } from '../components/TopPerformers';
@@ -22,8 +21,8 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Dashboard'>;
 
 export function DashboardScreen({ navigation }: Props) {
   const { user, signOut } = useAuth();
+  const { spotPrices, refresh: refreshSpotPrices } = useSpotPrices();
   const [items, setItems] = useState<CollectionItem[]>([]);
-  const [spotPrices, setSpotPrices] = useState<SpotPrices | null>(null);
   const [valuationMethod, setValuationMethodState] = useState<ValuationMethod>('spot');
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -51,21 +50,19 @@ export function DashboardScreen({ navigation }: Props) {
 
   const loadData = async () => {
     try {
-      const [itemsData, pricesData, method, gainFormat] = await Promise.all([
+      const [itemsData, method, gainFormat] = await Promise.all([
         api.getCollectionItems(),
-        fetchSpotPrices(Constants.expoConfig?.extra?.metalPriceApiKey || ''),
         getValuationMethod(),
         getGainDisplayFormat(),
       ]);
 
       setItems(itemsData as any);
-      setSpotPrices(pricesData);
       setValuationMethodState(method);
       setGainDisplayFormatState(gainFormat);
 
       // Calculate current portfolio value and save for daily tracking
-      if (itemsData && pricesData) {
-        const summary = calculatePortfolioSummary(itemsData as any, pricesData);
+      if (itemsData && spotPrices) {
+        const summary = calculatePortfolioSummary(itemsData as any, spotPrices);
         const currentValue = method === 'spot' ? summary.totalMeltValue : summary.totalBookValue;
 
         // Save current value for future 24h comparisons
@@ -98,9 +95,9 @@ export function DashboardScreen({ navigation }: Props) {
     return unsubscribe;
   }, [navigation]);
 
-  const onRefresh = () => {
+  const onRefresh = async () => {
     setRefreshing(true);
-    loadData();
+    await Promise.all([loadData(), refreshSpotPrices()]);
   };
 
   const handleValuationMethodChange = async (method: ValuationMethod) => {

@@ -3,12 +3,11 @@ import { View, Text, ScrollView, RefreshControl, TouchableOpacity, Image, Alert,
 import { LinearGradient } from 'expo-linear-gradient';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../App';
+import { useSpotPrices } from '../contexts/SpotPricesContext';
 import { api } from '../lib/api';
 import type { CollectionItem } from '../lib/api';
-import { fetchSpotPrices } from '../lib/prices';
 import { formatCurrency, formatPercentage, formatWeight } from '../lib/calculations';
 import type { SpotPrices, ItemCategory } from '../types';
-import Constants from 'expo-constants';
 import { Colors } from '../lib/colors';
 import { CategoryBadge } from '../components/numismatic/CategoryBadge';
 import { ProblemCoinBadge } from '../components/numismatic/ProblemCoinBadge';
@@ -18,21 +17,16 @@ import { TabButton } from '../components/ui/TabButton';
 type Props = NativeStackScreenProps<RootStackParamList, 'Collection'>;
 
 export function CollectionScreen({ navigation }: Props) {
+  const { spotPrices, refresh: refreshSpotPrices } = useSpotPrices();
   const [items, setItems] = useState<CollectionItem[]>([]);
-  const [spotPrices, setSpotPrices] = useState<SpotPrices | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [categoryFilter, setCategoryFilter] = useState<ItemCategory | 'ALL'>('ALL');
 
   const loadData = async () => {
     try {
-      const [itemsData, pricesData] = await Promise.all([
-        api.getCollectionItems(),
-        fetchSpotPrices(Constants.expoConfig?.extra?.metalPriceApiKey || ''),
-      ]);
-
+      const itemsData = await api.getCollectionItems();
       setItems(itemsData);
-      setSpotPrices(pricesData);
     } catch (error: any) {
       console.error('Failed to load data:', error);
       if (error.message?.includes('Failed to fetch')) {
@@ -52,9 +46,9 @@ export function CollectionScreen({ navigation }: Props) {
     return unsubscribe;
   }, [navigation]);
 
-  const onRefresh = () => {
+  const onRefresh = async () => {
     setRefreshing(true);
-    loadData();
+    await Promise.all([loadData(), refreshSpotPrices()]);
   };
 
   const handleDelete = (item: CollectionItem) => {
