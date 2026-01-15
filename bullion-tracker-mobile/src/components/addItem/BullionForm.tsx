@@ -4,6 +4,15 @@ import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
 import type { Metal } from '../../types';
 
+/**
+ * BullionForm - Details form for bullion items
+ *
+ * Collects name, metal type, weight, quantity, price, and notes.
+ * Manages its own form state and calls onSubmit with complete data.
+ *
+ * @example
+ * <BullionForm onSubmit={handleBullionSubmit} loading={isSubmitting} />
+ */
 export interface BullionFormData {
   name: string;
   metal: Metal;

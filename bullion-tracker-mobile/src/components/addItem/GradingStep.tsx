@@ -2,6 +2,15 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import type { GradingService } from '../../types';
 
+/**
+ * GradingStep - Second step for numismatic items
+ *
+ * Displays grading service selection: RAW, PCGS, or NGC.
+ * Selected service determines form fields shown in details step.
+ *
+ * @example
+ * <GradingStep onSelect={(service) => setGradingService(service)} />
+ */
 interface GradingStepProps {
   onSelect: (service: GradingService) => void;
 }

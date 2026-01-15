@@ -7,6 +7,16 @@ import { GradePicker } from '../numismatic/GradePicker';
 import { PriceGuideDisplay } from '../numismatic/PriceGuideDisplay';
 import type { Metal, GradingService, ProblemType, CoinReference } from '../../types';
 
+/**
+ * NumismaticForm - Details form for numismatic (collectible coin) items
+ *
+ * Adapts fields based on grading service: RAW shows estimated grade toggle,
+ * PCGS/NGC shows certification number. Includes coin search, grade picker,
+ * price guide integration, and problem coin designation.
+ *
+ * @example
+ * <NumismaticForm gradingService="PCGS" onSubmit={handleSubmit} loading={false} />
+ */
 export interface NumismaticFormData {
   selectedCoin: CoinReference | null;
   grade: string;

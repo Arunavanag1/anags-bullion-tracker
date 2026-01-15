@@ -3,6 +3,15 @@ import { View, StyleSheet, Platform } from 'react-native';
 import { TabButton } from './TabButton';
 import { Colors } from '../../lib/colors';
 
+/**
+ * TabBar - Shared bottom navigation bar
+ *
+ * Displays Dashboard, Collection, and Photos tabs with active state highlighting.
+ * Collection tab supports optional badge for item count.
+ *
+ * @example
+ * <TabBar activeTab="dashboard" onTabPress={(tab) => navigate(tab)} collectionBadge={5} />
+ */
 type TabName = 'dashboard' | 'collection' | 'collage';
 
 interface TabBarProps {

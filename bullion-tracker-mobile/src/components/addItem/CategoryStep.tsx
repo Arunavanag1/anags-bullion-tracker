@@ -2,6 +2,15 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import type { ItemCategory } from '../../types';
 
+/**
+ * CategoryStep - First step of add item flow
+ *
+ * Displays BULLION vs NUMISMATIC category selection cards.
+ * BULLION goes directly to details form, NUMISMATIC goes to grading step.
+ *
+ * @example
+ * <CategoryStep onSelect={(cat) => setCategory(cat)} />
+ */
 interface CategoryStepProps {
   onSelect: (category: ItemCategory) => void;
 }
