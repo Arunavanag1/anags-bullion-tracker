@@ -103,6 +103,7 @@ export interface CollectionItem {
   weightOz?: number;
   bookValueType?: BookValueType;
   customBookValue?: number;
+  premiumPercent?: number;
   spotPriceAtCreation?: number;
 
   // Numismatic fields

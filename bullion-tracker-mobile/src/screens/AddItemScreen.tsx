@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Alert, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, Alert, StyleSheet, ActivityIndicator } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../App';
 import { Card } from '../components/ui/Card';
 import { api } from '../lib/api';
+import type { CollectionItem } from '../lib/api';
 import { fetchSpotPrices } from '../lib/prices';
-import type { ItemCategory, GradingService } from '../types';
+import type { ItemCategory, GradingService, Metal, ProblemType, CoinReference } from '../types';
 import Constants from 'expo-constants';
 import {
   CategoryStep,
@@ -20,16 +21,97 @@ type Props = NativeStackScreenProps<RootStackParamList, 'AddItem'>;
 
 type Step = 'category' | 'grading' | 'details';
 
-export function AddItemScreen({ navigation }: Props) {
+export function AddItemScreen({ navigation, route }: Props) {
+  const itemId = route.params?.itemId;
+  const isEditing = !!itemId;
+
   const [loading, setLoading] = useState(false);
-  const [step, setStep] = useState<Step>('category');
+  const [initialLoading, setInitialLoading] = useState(isEditing);
+  const [step, setStep] = useState<Step>(isEditing ? 'details' : 'category');
   const [category, setCategory] = useState<ItemCategory | null>(null);
   const [gradingService, setGradingService] = useState<GradingService | null>(null);
+
+  // Form initial data for editing
+  const [bullionInitialData, setBullionInitialData] = useState<BullionFormData | undefined>();
+  const [numismaticInitialData, setNumismaticInitialData] = useState<NumismaticFormData | undefined>();
+  const [existingItem, setExistingItem] = useState<CollectionItem | null>(null);
+
+  // Load existing item data when editing
+  useEffect(() => {
+    if (itemId) {
+      loadExistingItem(itemId);
+    }
+  }, [itemId]);
+
+  const loadExistingItem = async (id: string) => {
+    try {
+      setInitialLoading(true);
+      const item = await api.getCollectionItem(id);
+      setExistingItem(item);
+      setCategory(item.category as ItemCategory);
+
+      if (item.category === 'BULLION') {
+        setBullionInitialData({
+          name: item.title || '',
+          metal: (item.metal as Metal) || 'silver',
+          weight: item.weightOz?.toString() || '',
+          quantity: item.quantity?.toString() || '1',
+          purchasePrice: item.customBookValue?.toString() || item.purchasePrice?.toString() || '',
+          premiumPercent: item.premiumPercent?.toString() || '0',
+          purchaseDate: item.purchaseDate ? new Date(item.purchaseDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+          notes: item.notes || '',
+          images: item.images || [],
+        });
+      } else if (item.category === 'NUMISMATIC') {
+        setGradingService((item.gradingService as GradingService) || 'RAW');
+
+        // For numismatic items, we need to reconstruct the coin reference
+        // This is a simplified version - in practice you might fetch the full coin reference
+        const coinRef: CoinReference | null = item.coinReferenceId ? {
+          id: item.coinReferenceId,
+          pcgsNumber: '',
+          fullName: item.title || '',
+          series: '',
+          year: 0,
+          mintMark: null,
+          denomination: '',
+          metal: item.metal || 'silver',
+          weightOz: item.weightOz || null,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        } : null;
+
+        setNumismaticInitialData({
+          selectedCoin: coinRef,
+          grade: item.grade || '',
+          certNumber: item.certificationNumber || '',
+          isGradeEstimated: item.isGradeEstimated || false,
+          isProblemCoin: item.isProblemCoin || false,
+          problemType: (item.problemType as ProblemType) || 'cleaned',
+          numismaticValue: item.numismaticValue?.toString() || '',
+          numismaticMetal: (item.metal as Metal) || 'silver',
+          purchasePrice: item.purchasePrice?.toString() || '',
+          purchaseDate: item.purchaseDate ? new Date(item.purchaseDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+          notes: item.notes || '',
+          images: item.images || [],
+        });
+      }
+    } catch (error) {
+      console.error('Failed to load item:', error);
+      Alert.alert('Error', 'Failed to load item details');
+      navigation.goBack();
+    } finally {
+      setInitialLoading(false);
+    }
+  };
 
   const resetForm = () => {
     setStep('category');
     setCategory(null);
     setGradingService(null);
+    setBullionInitialData(undefined);
+    setNumismaticInitialData(undefined);
+    setExistingItem(null);
   };
 
   const handleCategorySelect = (cat: ItemCategory) => {
@@ -47,6 +129,11 @@ export function AddItemScreen({ navigation }: Props) {
   };
 
   const handleBack = () => {
+    if (isEditing) {
+      navigation.goBack();
+      return;
+    }
+
     if (step === 'details') {
       if (category === 'NUMISMATIC') {
         setStep('grading');
@@ -78,39 +165,60 @@ export function AddItemScreen({ navigation }: Props) {
 
     setLoading(true);
     try {
-      const spotPrices = await fetchSpotPrices(Constants.expoConfig?.extra?.metalPriceApiKey || '');
-      const currentSpotPrice = spotPrices[data.metal];
+      if (isEditing && itemId) {
+        // Update existing item
+        const updateData = {
+          title: data.name.trim(),
+          metal: data.metal,
+          weightOz: Number(data.weight),
+          quantity: Number(data.quantity),
+          customBookValue: Number(data.purchasePrice),
+          premiumPercent: data.premiumPercent ? Number(data.premiumPercent) : 0,
+          purchaseDate: data.purchaseDate,
+          purchasePrice: Number(data.purchasePrice),
+          notes: data.notes.trim() || undefined,
+          images: data.images,
+        };
 
-      const itemData = {
-        category: 'BULLION' as ItemCategory,
-        type: 'itemized' as const,
-        title: data.name.trim(),
-        metal: data.metal,
-        weightOz: Number(data.weight),
-        quantity: Number(data.quantity),
-        bookValueType: 'custom' as const,
-        customBookValue: Number(data.purchasePrice),
-        spotPriceAtCreation: currentSpotPrice,
-        purchaseDate: data.purchaseDate,
-        purchasePrice: Number(data.purchasePrice),
-        notes: data.notes.trim() || undefined,
-        images: [],
-      };
+        await api.updateCollectionItem(itemId, updateData);
+        Alert.alert('Success', 'Item updated successfully');
+      } else {
+        // Create new item
+        const spotPrices = await fetchSpotPrices(Constants.expoConfig?.extra?.metalPriceApiKey || '');
+        const currentSpotPrice = spotPrices[data.metal];
 
-      await api.createCollectionItem(itemData);
-      Alert.alert('Success', 'Item added to collection');
+        const itemData = {
+          category: 'BULLION' as ItemCategory,
+          type: 'itemized' as const,
+          title: data.name.trim(),
+          metal: data.metal,
+          weightOz: Number(data.weight),
+          quantity: Number(data.quantity),
+          bookValueType: 'spot' as const,
+          premiumPercent: data.premiumPercent ? Number(data.premiumPercent) : 0,
+          spotPriceAtCreation: currentSpotPrice,
+          purchaseDate: data.purchaseDate,
+          purchasePrice: Number(data.purchasePrice),
+          notes: data.notes.trim() || undefined,
+          images: data.images,
+        };
+
+        await api.createCollectionItem(itemData);
+        Alert.alert('Success', 'Item added to collection');
+      }
+
       resetForm();
       navigation.goBack();
     } catch (error) {
-      console.error('Failed to create item:', error);
-      Alert.alert('Error', error instanceof Error ? error.message : 'Failed to create item');
+      console.error('Failed to save item:', error);
+      Alert.alert('Error', error instanceof Error ? error.message : 'Failed to save item');
     } finally {
       setLoading(false);
     }
   };
 
   const handleNumismaticSubmit = async (data: NumismaticFormData) => {
-    if (!data.selectedCoin) {
+    if (!isEditing && !data.selectedCoin) {
       Alert.alert('Error', 'Please select a coin');
       return;
     }
@@ -129,36 +237,62 @@ export function AddItemScreen({ navigation }: Props) {
 
     setLoading(true);
     try {
-      const itemData = {
-        category: 'NUMISMATIC' as ItemCategory,
-        coinReferenceId: data.selectedCoin.id,
-        grade: data.grade,
-        gradingService: gradingService!,
-        certificationNumber: gradingService !== 'RAW' ? data.certNumber.trim() : undefined,
-        isGradeEstimated: gradingService === 'RAW' ? data.isGradeEstimated : false,
-        isProblemCoin: data.isProblemCoin,
-        problemType: data.isProblemCoin ? data.problemType : undefined,
-        numismaticValue: Number(data.numismaticValue),
-        metal: data.numismaticMetal,
-        purchaseDate: data.purchaseDate,
-        purchasePrice: data.purchasePrice ? Number(data.purchasePrice) : undefined,
-        notes: data.notes.trim() || undefined,
-        images: [],
-      };
+      if (isEditing && itemId) {
+        // Update existing item
+        const updateData: any = {
+          grade: data.grade,
+          certificationNumber: gradingService !== 'RAW' ? data.certNumber.trim() : undefined,
+          isGradeEstimated: gradingService === 'RAW' ? data.isGradeEstimated : false,
+          isProblemCoin: data.isProblemCoin,
+          problemType: data.isProblemCoin ? data.problemType : undefined,
+          numismaticValue: Number(data.numismaticValue),
+          metal: data.numismaticMetal,
+          purchaseDate: data.purchaseDate,
+          purchasePrice: data.purchasePrice ? Number(data.purchasePrice) : undefined,
+          notes: data.notes.trim() || undefined,
+          images: data.images,
+        };
 
-      await api.createCollectionItem(itemData);
-      Alert.alert('Success', 'Item added to collection');
+        await api.updateCollectionItem(itemId, updateData);
+        Alert.alert('Success', 'Item updated successfully');
+      } else {
+        // Create new item
+        const itemData = {
+          category: 'NUMISMATIC' as ItemCategory,
+          coinReferenceId: data.selectedCoin!.id,
+          grade: data.grade,
+          gradingService: gradingService!,
+          certificationNumber: gradingService !== 'RAW' ? data.certNumber.trim() : undefined,
+          isGradeEstimated: gradingService === 'RAW' ? data.isGradeEstimated : false,
+          isProblemCoin: data.isProblemCoin,
+          problemType: data.isProblemCoin ? data.problemType : undefined,
+          numismaticValue: Number(data.numismaticValue),
+          metal: data.numismaticMetal,
+          purchaseDate: data.purchaseDate,
+          purchasePrice: data.purchasePrice ? Number(data.purchasePrice) : undefined,
+          notes: data.notes.trim() || undefined,
+          images: data.images,
+        };
+
+        await api.createCollectionItem(itemData);
+        Alert.alert('Success', 'Item added to collection');
+      }
+
       resetForm();
       navigation.goBack();
     } catch (error) {
-      console.error('Failed to create item:', error);
-      Alert.alert('Error', error instanceof Error ? error.message : 'Failed to create item');
+      console.error('Failed to save item:', error);
+      Alert.alert('Error', error instanceof Error ? error.message : 'Failed to save item');
     } finally {
       setLoading(false);
     }
   };
 
   const renderStepIndicator = () => {
+    if (isEditing) {
+      return null; // Don't show step indicator when editing
+    }
+
     const steps = category === 'NUMISMATIC' ? ['Category', 'Grading', 'Details'] : ['Category', 'Details'];
     const currentIndex = step === 'category' ? 0 : step === 'grading' ? 1 : category === 'NUMISMATIC' ? 2 : 1;
 
@@ -178,13 +312,22 @@ export function AddItemScreen({ navigation }: Props) {
     );
   };
 
+  if (initialLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#3B82F6" />
+        <Text style={styles.loadingText}>Loading item...</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Add Item</Text>
-        {step !== 'category' && (
+        <Text style={styles.headerTitle}>{isEditing ? 'Edit Item' : 'Add Item'}</Text>
+        {(step !== 'category' || isEditing) && (
           <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-            <Text style={styles.backButtonText}>← Back</Text>
+            <Text style={styles.backButtonText}>{isEditing ? '← Cancel' : '← Back'}</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -192,16 +335,23 @@ export function AddItemScreen({ navigation }: Props) {
       {renderStepIndicator()}
 
       <Card style={styles.card}>
-        {step === 'category' && <CategoryStep onSelect={handleCategorySelect} />}
-        {step === 'grading' && <GradingStep onSelect={handleGradingSelect} />}
+        {step === 'category' && !isEditing && <CategoryStep onSelect={handleCategorySelect} />}
+        {step === 'grading' && !isEditing && <GradingStep onSelect={handleGradingSelect} />}
         {step === 'details' && category === 'BULLION' && (
-          <BullionForm onSubmit={handleBullionSubmit} loading={loading} />
+          <BullionForm
+            onSubmit={handleBullionSubmit}
+            loading={loading}
+            initialData={bullionInitialData}
+            isEditing={isEditing}
+          />
         )}
         {step === 'details' && category === 'NUMISMATIC' && gradingService && (
           <NumismaticForm
             gradingService={gradingService}
             onSubmit={handleNumismaticSubmit}
             loading={loading}
+            initialData={numismaticInitialData}
+            isEditing={isEditing}
           />
         )}
       </Card>
@@ -213,6 +363,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F9FAFB',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F9FAFB',
+  },
+  loadingText: {
+    marginTop: 12,
+    fontSize: 14,
+    color: '#6B7280',
   },
   header: {
     flexDirection: 'row',

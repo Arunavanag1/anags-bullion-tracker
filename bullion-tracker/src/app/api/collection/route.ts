@@ -95,6 +95,7 @@ export async function POST(request: NextRequest) {
 
       if (body.title !== undefined) createData.title = body.title;
       if (body.customBookValue !== undefined) createData.customBookValue = body.customBookValue;
+      if (body.premiumPercent !== undefined) createData.premiumPercent = body.premiumPercent;
     } else if (category === 'NUMISMATIC') {
       // Validate numismatic required fields
       const { coinReferenceId, grade, gradingService, bookValueType, metal } = body;

@@ -30,9 +30,11 @@ export function calculateCurrentBookValue(
   const totalWeight = (item.weightOz || 0) * quantity;
   const originalMelt = totalWeight * (item.spotPriceAtCreation || currentSpotPrice);
 
-  // If using spot value, just return current melt value
+  // If using spot value (with optional premium)
   if (item.bookValueType === 'spot') {
-    return totalWeight * currentSpotPrice;
+    const meltValue = totalWeight * currentSpotPrice;
+    const premiumMultiplier = 1 + ((item.premiumPercent || 0) / 100);
+    return meltValue * premiumMultiplier;
   }
 
   // For custom book values

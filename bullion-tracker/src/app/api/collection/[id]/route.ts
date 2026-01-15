@@ -110,6 +110,7 @@ export async function PUT(
     if (body.numismaticValue !== undefined) updateData.numismaticValue = body.numismaticValue;
     if (body.purchasePrice !== undefined) updateData.purchasePrice = body.purchasePrice;
     if (body.purchaseDate) updateData.purchaseDate = new Date(body.purchaseDate);
+    if (body.premiumPercent !== undefined) updateData.premiumPercent = body.premiumPercent;
 
     // Handle images: delete all existing and create new ones
     if (body.images && body.images.length > 0) {

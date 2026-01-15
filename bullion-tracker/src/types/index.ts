@@ -27,6 +27,7 @@ export interface ItemizedPiece {
   images: string[];
   bookValueType: BookValueType;
   customBookValue?: number;
+  premiumPercent?: number;
   spotPriceAtCreation: number;
   createdAt: Date;
   updatedAt: Date;
@@ -54,6 +55,7 @@ export interface BulkWeight {
   images: string[];
   bookValueType: BookValueType;
   customBookValue?: number;
+  premiumPercent?: number;
   spotPriceAtCreation: number;
   createdAt: Date;
   updatedAt: Date;

@@ -354,7 +354,7 @@ Plans:
 **Plans**: TBD
 
 Plans:
-- [ ] 21-01: TBD (run /gsd:plan-phase 21 to break down)
+- [x] 21-01: Add premiumPercent field and update calculations/forms
 
 **Scope:**
 - Add `premiumPercent` field to bullion items (positive = premium, negative = discount)
@@ -439,7 +439,7 @@ Plans:
 | 18. State Management Refactor | v1.5 | 1/1 | Complete | 2026-01-15 |
 | 19. Component Refactor | v1.5 | 1/1 | Complete | 2026-01-15 |
 | 20. API & Data Layer Cleanup | v1.5 | 0/? | Not started | - |
-| 21. Bullion Premium Pricing | v1.6 | 0/? | Not started | - |
+| 21. Bullion Premium Pricing | v1.6 | 1/1 | Complete | 2026-01-15 |
 | 22. Valuation Type System | v1.6 | 0/? | Not started | - |
 | 23. Dynamic Guide Price Integration | v1.6 | 0/? | Not started | - |
 | 24. Portfolio Value Dashboard Updates | v1.6 | 0/? | Not started | - |

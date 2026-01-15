@@ -5,17 +5,17 @@
 See: .planning/PROJECT.md (updated 2026-01-09)
 
 **Core value:** Showcase coin photography beautifully
-**Current focus:** v1.5 Mobile Refactor — Phase 19 complete, Phase 20 next
-**Next milestone:** v1.5 Mobile Refactor (in progress)
+**Current focus:** v1.6 Portfolio Valuation Model — Phase 21 complete, Phase 22 next
+**Next milestone:** v1.6 Portfolio Valuation Model (in progress)
 
 ## Current Position
 
-Phase: 19 of 20 (Component Refactor) — COMPLETE
-Plan: 1 of 1 in current phase (19-01 complete)
-Status: v1.5 Mobile Refactor in progress
-Last activity: 2026-01-15 — Completed 19-01-PLAN.md (Component Refactor)
+Phase: 21 of 24 (Bullion Premium Pricing) — COMPLETE
+Plan: 1 of 1 in current phase (21-01 complete)
+Status: v1.6 Portfolio Valuation Model in progress
+Last activity: 2026-01-15 — Completed 21-01-PLAN.md (Bullion Premium Pricing)
 
-Progress: █████░░░░░ 50% (12 of 24 phases complete)
+Progress: █████▌░░░░ 54% (13 of 24 phases complete)
 
 ## Milestones Overview
 
@@ -27,7 +27,7 @@ Progress: █████░░░░░ 50% (12 of 24 phases complete)
 | v1.3 Improvements | 10-12 | COMPLETE |
 | v1.4 Auth Deployment | 13-16 | In Progress |
 | v1.5 Mobile Refactor | 17-20 | In Progress |
-| v1.6 Portfolio Valuation Model | 21-24 | Planned |
+| v1.6 Portfolio Valuation Model | 21-24 | In Progress |
 
 ## Performance Metrics
 
@@ -81,6 +81,8 @@ Recent decisions affecting current work:
 - Phase 19: Multi-step form pattern: Parent manages step state, child components handle step UI
 - Phase 19: Form components accept onSubmit callback with typed data interface
 - Phase 19: JSDoc with @example for component usage documentation
+- Phase 21: Used prisma db push instead of migrations (no migration directory exists)
+- Phase 21: New bullion items use bookValueType: 'spot' to leverage premium pricing
 
 ### Deferred Issues
 
@@ -127,5 +129,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Completed Phase 19 Component Refactor (19-01-PLAN.md)
+Stopped at: Completed Phase 21 Bullion Premium Pricing (21-01-PLAN.md)
 Resume file: None
