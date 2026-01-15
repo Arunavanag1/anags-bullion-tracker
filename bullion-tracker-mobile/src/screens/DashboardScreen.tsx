@@ -320,7 +320,7 @@ export function DashboardScreen({ navigation }: Props) {
         )}
 
         {/* Category Breakdown Card */}
-        {categorySummary && !summaryLoading && (categorySummary.bullionCount > 0 || categorySummary.numismaticCount > 0) && (
+        {categorySummary && !summaryLoading && (categorySummary.bullionItems > 0 || categorySummary.numismaticItems > 0) && (
           <View style={styles.categoryCard}>
             <Text style={styles.categoryLabel}>CATEGORY BREAKDOWN</Text>
 
@@ -328,7 +328,7 @@ export function DashboardScreen({ navigation }: Props) {
               <View style={styles.categoryItem}>
                 <Text style={styles.categoryTitle}>Bullion</Text>
                 <Text style={styles.categoryValue}>{formatCurrency(categorySummary.bullionValue)}</Text>
-                <Text style={styles.categoryCount}>{categorySummary.bullionCount} items</Text>
+                <Text style={styles.categoryCount}>{categorySummary.bullionItems} items</Text>
               </View>
 
               <View style={styles.categoryDivider} />
@@ -336,7 +336,7 @@ export function DashboardScreen({ navigation }: Props) {
               <View style={styles.categoryItem}>
                 <Text style={styles.categoryTitle}>Numismatic</Text>
                 <Text style={styles.categoryValue}>{formatCurrency(categorySummary.numismaticValue)}</Text>
-                <Text style={styles.categoryCount}>{categorySummary.numismaticCount} items</Text>
+                <Text style={styles.categoryCount}>{categorySummary.numismaticItems} items</Text>
               </View>
             </View>
           </View>

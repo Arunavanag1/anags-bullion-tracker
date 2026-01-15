@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { api } from '../lib/api';
-import type { CoinReference, ValidGrade, PriceGuideData } from '../types';
+import type { CoinReference, ValidGrade, PriceGuideData, CollectionSummary } from '../types';
 
 /**
  * Search coins with debouncing
@@ -103,7 +103,7 @@ export function useGrades() {
  * Get collection summary
  */
 export function useCollectionSummary() {
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<CollectionSummary | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 

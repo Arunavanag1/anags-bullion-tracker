@@ -4,6 +4,22 @@ import Fuse from 'fuse.js';
 import Constants from 'expo-constants';
 import type { CoinReference, ValidGrade, PriceGuideData, CollectionSummary, ItemCategory, GradingService, ProblemType, BookValueType } from '../types';
 
+// Fuse.js search result interface
+interface FuseResult<T> {
+  item: T;
+  refIndex: number;
+  score?: number;
+}
+
+// Image response from API can be string URL or object with url property
+type ImageResponse = string | { url: string };
+
+// Helper to transform image array from API response
+function transformImages(images: ImageResponse[] | undefined): string[] {
+  if (!images) return [];
+  return images.map((img: ImageResponse) => typeof img === 'string' ? img : img.url);
+}
+
 // Get API URL from environment with development fallback
 function getApiUrl(): string {
   const envUrl = Constants.expoConfig?.extra?.apiUrl;
@@ -167,7 +183,7 @@ function fuzzySearchCoins(coins: CoinReference[], query: string): CoinReference[
     keys: ['fullName', 'series', 'year', 'pcgsNumber'],
     threshold: 0.3,
   });
-  return fuse.search(query).map((result: any) => result.item).slice(0, 10);
+  return fuse.search(query).map((result: FuseResult<CoinReference>) => result.item).slice(0, 10);
 }
 
 // ===== PRICE GUIDE =====
@@ -331,9 +347,9 @@ export const api = {
     const data = await response.json();
 
     // Transform API response to match mobile app format
-    return data.data.map((item: any) => ({
+    return data.data.map((item: CollectionItem & { images?: ImageResponse[] }) => ({
       ...item,
-      images: item.images?.map((img: any) => typeof img === 'string' ? img : img.url) || [],
+      images: transformImages(item.images),
     }));
   },
 
@@ -345,10 +361,11 @@ export const api = {
     }
 
     const data = await response.json();
+    const item: CollectionItem & { images?: ImageResponse[] } = data.data;
 
     return {
-      ...data.data,
-      images: data.data.images?.map((img: any) => typeof img === 'string' ? img : img.url) || [],
+      ...item,
+      images: transformImages(item.images),
     };
   },
 
@@ -364,10 +381,11 @@ export const api = {
     }
 
     const data = await response.json();
+    const created: CollectionItem & { images?: ImageResponse[] } = data.data;
 
     return {
-      ...data.data,
-      images: data.data.images?.map((img: any) => typeof img === 'string' ? img : img.url) || [],
+      ...created,
+      images: transformImages(created.images),
     };
   },
 
@@ -383,10 +401,11 @@ export const api = {
     }
 
     const data = await response.json();
+    const updated: CollectionItem & { images?: ImageResponse[] } = data.data;
 
     return {
-      ...data.data,
-      images: data.data.images?.map((img: any) => typeof img === 'string' ? img : img.url) || [],
+      ...updated,
+      images: transformImages(updated.images),
     };
   },
 
