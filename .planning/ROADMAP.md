@@ -7,7 +7,8 @@
 - 📋 **v1.2 Security & Stability** — Phases 3-9 (planned)
 - ✅ **v1.3 Improvements** — Phases 10-12 (complete)
 - 🚧 **v1.4 Auth Deployment** — Phases 13-16 (in progress)
-- 📋 **v1.5 Mobile Refactor** — Phases 17-20 (planned)
+- 🚧 **v1.5 Mobile Refactor** — Phases 17-20 (in progress)
+- 📋 **v1.6 Portfolio Valuation Model** — Phases 21-24 (planned)
 
 ## Overview
 
@@ -341,6 +342,79 @@ Plans:
 - Add request caching where appropriate
 - Document API integration patterns
 
+### 📋 v1.6 Portfolio Valuation Model (Planned)
+
+**Milestone Goal:** Improve portfolio value calculations with dynamic pricing for bullion (spot + premium) and numismatics (guide price), plus custom value override option
+
+#### Phase 21: Bullion Premium Pricing
+
+**Goal**: Add user-defined premium/discount percentage for bullion items that adjusts melt value
+**Depends on**: Phase 20 (API & Data Layer Cleanup)
+**Research**: Unlikely (straightforward calculation change)
+**Plans**: TBD
+
+Plans:
+- [ ] 21-01: TBD (run /gsd:plan-phase 21 to break down)
+
+**Scope:**
+- Add `premiumPercent` field to bullion items (positive = premium, negative = discount)
+- Update add/edit forms to include premium percentage input
+- Calculate bullion value as: spot × weight × quantity × (1 + premiumPercent/100)
+- Update portfolio summary to use new calculation
+- Display premium info on item cards/details
+
+#### Phase 22: Valuation Type System
+
+**Goal**: Implement valuation type selector (spot+premium, guide price, custom) for all items
+**Depends on**: Phase 21
+**Research**: Unlikely (internal data model change)
+**Plans**: TBD
+
+Plans:
+- [ ] 22-01: TBD (run /gsd:plan-phase 22 to break down)
+
+**Scope:**
+- Add `valuationType` field: 'spot_premium' | 'guide_price' | 'custom'
+- Bullion defaults to 'spot_premium', numismatics defaults to 'guide_price'
+- Custom value stays fixed (no auto-updates)
+- Update forms to show valuation type selector
+- Ensure backward compatibility with existing items
+
+#### Phase 23: Dynamic Guide Price Integration
+
+**Goal**: Set up infrastructure for numismatic guide prices to update over time
+**Depends on**: Phase 22
+**Research**: Likely (price guide API integration, caching strategy)
+**Research topics**: PCGS/NGC price guide APIs, price history storage
+**Plans**: TBD
+
+Plans:
+- [ ] 23-01: TBD (run /gsd:plan-phase 23 to break down)
+
+**Scope:**
+- Store guide price snapshots with timestamps
+- Create price guide update mechanism (manual initially, API later)
+- Track numismatic value changes over time
+- Show price history on item details
+- Handle missing/unavailable guide prices gracefully
+
+#### Phase 24: Portfolio Value Dashboard Updates
+
+**Goal**: Update dashboard and reports to reflect new valuation model
+**Depends on**: Phase 23
+**Research**: Unlikely (UI updates)
+**Plans**: TBD
+
+Plans:
+- [ ] 24-01: TBD (run /gsd:plan-phase 24 to break down)
+
+**Scope:**
+- Show breakdown by valuation type in portfolio summary
+- Display premium/discount totals for bullion
+- Show guide price vs melt value comparison for numismatics
+- Add "last updated" indicators for dynamic values
+- Update mobile app to match web valuation display
+
 ## Progress
 
 | Phase | Milestone | Plans Complete | Status | Completed |
@@ -365,6 +439,10 @@ Plans:
 | 18. State Management Refactor | v1.5 | 1/1 | Complete | 2026-01-15 |
 | 19. Component Refactor | v1.5 | 1/1 | Complete | 2026-01-15 |
 | 20. API & Data Layer Cleanup | v1.5 | 0/? | Not started | - |
+| 21. Bullion Premium Pricing | v1.6 | 0/? | Not started | - |
+| 22. Valuation Type System | v1.6 | 0/? | Not started | - |
+| 23. Dynamic Guide Price Integration | v1.6 | 0/? | Not started | - |
+| 24. Portfolio Value Dashboard Updates | v1.6 | 0/? | Not started | - |
 
 ---
-*Updated: 2026-01-15 after Phase 19 Component Refactor completed*
+*Updated: 2026-01-14 after v1.6 Portfolio Valuation Model milestone created*

@@ -15,7 +15,7 @@ Plan: 1 of 1 in current phase (19-01 complete)
 Status: v1.5 Mobile Refactor in progress
 Last activity: 2026-01-15 — Completed 19-01-PLAN.md (Component Refactor)
 
-Progress: ██████░░░░ 60% (12 of 20 phases complete)
+Progress: █████░░░░░ 50% (12 of 24 phases complete)
 
 ## Milestones Overview
 
@@ -27,6 +27,7 @@ Progress: ██████░░░░ 60% (12 of 20 phases complete)
 | v1.3 Improvements | 10-12 | COMPLETE |
 | v1.4 Auth Deployment | 13-16 | In Progress |
 | v1.5 Mobile Refactor | 17-20 | In Progress |
+| v1.6 Portfolio Valuation Model | 21-24 | Planned |
 
 ## Performance Metrics
 
@@ -116,6 +117,12 @@ None yet.
   - Phase 18: State Management Refactor (clean up state, reduce prop drilling)
   - Phase 19: Component Refactor (extract reusable components, improve types)
   - Phase 20: API & Data Layer Cleanup (consolidate API calls, error handling)
+
+- Milestone v1.6 created: Portfolio Valuation Model (dynamic pricing), 4 phases (Phase 21-24)
+  - Phase 21: Bullion Premium Pricing (spot + user-defined premium/discount %)
+  - Phase 22: Valuation Type System (spot_premium | guide_price | custom)
+  - Phase 23: Dynamic Guide Price Integration (numismatic price updates)
+  - Phase 24: Portfolio Value Dashboard Updates (display new valuation info)
 
 ## Session Continuity
 
