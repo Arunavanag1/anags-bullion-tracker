@@ -406,7 +406,7 @@ Plans:
 **Plans**: TBD
 
 Plans:
-- [ ] 24-01: TBD (run /gsd:plan-phase 24 to break down)
+- [ ] 24-01: Create valuation breakdown API and update web/mobile dashboards
 
 **Scope:**
 - Show breakdown by valuation type in portfolio summary
