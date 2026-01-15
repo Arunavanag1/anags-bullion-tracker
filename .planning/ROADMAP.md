@@ -342,6 +342,29 @@ Plans:
 - Add request caching where appropriate
 - Document API integration patterns
 
+### ✅ v1.7 Unified Portfolio Value (COMPLETE)
+
+**Milestone Goal:** Simplify portfolio display by removing spot/book toggle and showing a single unified portfolio value
+
+#### Phase 25: Unified Portfolio Display
+
+**Goal**: Remove spot/book toggle, display single portfolio value using appropriate valuation per item type
+**Depends on**: Phase 24 (Portfolio Value Dashboard Updates)
+**Research**: Unlikely (internal UI cleanup)
+**Plans**: 1 plan
+
+Plans:
+- [x] 25-01: Remove toggle, show unified portfolio value on web and mobile
+
+**Scope:**
+- Remove "Spot Value" / "Book Value" toggle from mobile DashboardScreen
+- Remove separate melt/book value display from web CollectionSummary
+- Show single unified "Portfolio Value" that sums:
+  - Bullion items: spot × weight × quantity × (1 + premiumPercent/100), default 0% if not set
+  - Numismatic items: guide_price (numismaticValue) or custom value
+- Update portfolio summary API to return unified value
+- Ensure daily gain tracking uses unified value
+
 ### ✅ v1.6 Portfolio Valuation Model (COMPLETE)
 
 **Milestone Goal:** Improve portfolio value calculations with dynamic pricing for bullion (spot + premium) and numismatics (guide price), plus custom value override option
@@ -443,6 +466,7 @@ Plans:
 | 22. Valuation Type System | v1.6 | 1/1 | Complete | 2026-01-15 |
 | 23. Dynamic Guide Price Integration | v1.6 | 1/1 | Complete | 2026-01-15 |
 | 24. Portfolio Value Dashboard Updates | v1.6 | 1/1 | Complete | 2026-01-15 |
+| 25. Unified Portfolio Display | v1.7 | 1/1 | Complete | 2026-01-15 |
 
 ---
-*Updated: 2026-01-15 after Phase 24 completed - v1.6 milestone complete*
+*Updated: 2026-01-15 after Phase 25 completed - v1.7 milestone complete*

@@ -5,17 +5,17 @@
 See: .planning/PROJECT.md (updated 2026-01-09)
 
 **Core value:** Showcase coin photography beautifully
-**Current focus:** v1.6 Portfolio Valuation Model — COMPLETE
-**Next milestone:** TBD (v1.7 or next priority)
+**Current focus:** v1.7 Unified Portfolio Value — COMPLETE
+**Next milestone:** TBD (v1.8 or next priority)
 
 ## Current Position
 
-Phase: 24 of 24 (Portfolio Value Dashboard Updates) — COMPLETE
-Plan: 1 of 1 in current phase (24-01 complete)
-Status: v1.6 Portfolio Valuation Model COMPLETE
-Last activity: 2026-01-15 — Completed 24-01-PLAN.md (Portfolio Value Dashboard Updates)
+Phase: 25 of 25 (Unified Portfolio Display) — COMPLETE
+Plan: 1 of 1 in current phase (25-01 complete)
+Status: v1.7 Unified Portfolio Value COMPLETE
+Last activity: 2026-01-15 — Completed 25-01-PLAN.md (Unified Portfolio Display)
 
-Progress: ██████████ 67% (16 of 24 phases complete)
+Progress: ██████████ 68% (17 of 25 phases complete)
 
 ## Milestones Overview
 
@@ -28,6 +28,7 @@ Progress: ██████████ 67% (16 of 24 phases complete)
 | v1.4 Auth Deployment | 13-16 | In Progress |
 | v1.5 Mobile Refactor | 17-20 | In Progress |
 | v1.6 Portfolio Valuation Model | 21-24 | COMPLETE |
+| v1.7 Unified Portfolio Value | 25 | COMPLETE |
 
 ## Performance Metrics
 
@@ -89,6 +90,8 @@ Recent decisions affecting current work:
 - Phase 23: Server-only value-history.ts to avoid prisma import in client components
 - Phase 23: Greysheet price preferred over PCGS price in sync-prices endpoint
 - Phase 23: Simple text-based ValueHistoryChart (no charting library)
+- Phase 25: Always use totalBookValue as unified portfolio value (removes spot/book toggle)
+- Phase 25: Melt value shown in parentheses for context on web dashboard
 
 ### Deferred Issues
 
@@ -135,5 +138,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Completed Phase 24 Portfolio Value Dashboard Updates (24-01-PLAN.md) - v1.6 milestone complete
+Stopped at: Completed Phase 25 (25-01-PLAN.md) - v1.7 Unified Portfolio Value milestone complete
 Resume file: None
