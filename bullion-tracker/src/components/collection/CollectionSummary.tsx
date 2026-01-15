@@ -1,6 +1,7 @@
 'use client';
 
 import { usePortfolioSummary } from '@/hooks/usePortfolioSummary';
+import { useValuationBreakdown } from '@/hooks/useValuationBreakdown';
 import { useSpotPrices } from '@/hooks/useSpotPrices';
 import { formatCurrency, formatWeight, getMetalEmoji } from '@/lib/calculations';
 import { Card } from '@/components/ui/Card';
@@ -8,6 +9,7 @@ import { AllocationDonutChart } from '@/components/charts/AllocationDonutChart';
 
 export function CollectionSummary() {
   const { data: summary, isLoading } = usePortfolioSummary();
+  const { data: breakdown } = useValuationBreakdown();
   const { data: prices } = useSpotPrices();
 
   if (isLoading || !summary) {
@@ -125,6 +127,77 @@ export function CollectionSummary() {
           </div>
         </div>
       </div>
+
+      {/* Valuation Breakdown Section */}
+      {breakdown && (breakdown.spotPremium.count > 0 || breakdown.guidePrice.count > 0 || breakdown.custom.count > 0) && (
+        <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+          <h3 className="text-sm font-medium text-text-secondary mb-4">
+            Valuation Breakdown
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Spot + Premium */}
+            {breakdown.spotPremium.count > 0 && (
+              <div className="bg-surface-secondary rounded-lg p-4">
+                <div className="text-xs font-medium text-text-secondary uppercase tracking-wide mb-2">
+                  Spot + Premium
+                </div>
+                <div className="text-xl font-bold text-text-primary font-mono">
+                  {formatCurrency(breakdown.spotPremium.totalValue)}
+                </div>
+                <div className="text-sm text-text-secondary mt-1">
+                  {breakdown.spotPremium.count} item{breakdown.spotPremium.count !== 1 ? 's' : ''}
+                </div>
+                <div className={`text-sm mt-1 ${breakdown.spotPremium.avgPremiumPercent >= 0 ? 'text-success' : 'text-red-600'}`}>
+                  Avg premium: {breakdown.spotPremium.avgPremiumPercent >= 0 ? '+' : ''}{breakdown.spotPremium.avgPremiumPercent.toFixed(1)}%
+                </div>
+              </div>
+            )}
+
+            {/* Guide Price */}
+            {breakdown.guidePrice.count > 0 && (
+              <div className="bg-surface-secondary rounded-lg p-4">
+                <div className="text-xs font-medium text-text-secondary uppercase tracking-wide mb-2">
+                  Guide Price
+                </div>
+                <div className="text-xl font-bold text-text-primary font-mono">
+                  {formatCurrency(breakdown.guidePrice.totalValue)}
+                </div>
+                <div className="text-sm text-text-secondary mt-1">
+                  {breakdown.guidePrice.count} item{breakdown.guidePrice.count !== 1 ? 's' : ''}
+                </div>
+                <div className={`text-sm mt-1 ${breakdown.guidePrice.premiumOverMelt >= 0 ? 'text-success' : 'text-red-600'}`}>
+                  {breakdown.guidePrice.premiumOverMelt >= 0 ? '+' : ''}{breakdown.guidePrice.premiumOverMelt.toFixed(1)}% over melt
+                </div>
+              </div>
+            )}
+
+            {/* Custom */}
+            {breakdown.custom.count > 0 && (
+              <div className="bg-surface-secondary rounded-lg p-4">
+                <div className="text-xs font-medium text-text-secondary uppercase tracking-wide mb-2">
+                  Custom Value
+                </div>
+                <div className="text-xl font-bold text-text-primary font-mono">
+                  {formatCurrency(breakdown.custom.totalValue)}
+                </div>
+                <div className="text-sm text-text-secondary mt-1">
+                  {breakdown.custom.count} item{breakdown.custom.count !== 1 ? 's' : ''}
+                </div>
+                <div className="text-sm text-text-secondary mt-1">
+                  Fixed value
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Last Sync Date */}
+          {breakdown.lastSyncDate && (
+            <div className="text-xs text-text-secondary mt-3">
+              Prices updated: {new Date(breakdown.lastSyncDate).toLocaleDateString()}
+            </div>
+          )}
+        </div>
+      )}
     </Card>
   );
 }

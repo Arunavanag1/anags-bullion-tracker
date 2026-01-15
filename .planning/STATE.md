@@ -5,17 +5,17 @@
 See: .planning/PROJECT.md (updated 2026-01-09)
 
 **Core value:** Showcase coin photography beautifully
-**Current focus:** v1.6 Portfolio Valuation Model — Phase 23 complete, Phase 24 next
-**Next milestone:** v1.6 Portfolio Valuation Model (in progress)
+**Current focus:** v1.6 Portfolio Valuation Model — COMPLETE
+**Next milestone:** TBD (v1.7 or next priority)
 
 ## Current Position
 
-Phase: 23 of 24 (Dynamic Guide Price Integration) — COMPLETE
-Plan: 1 of 1 in current phase (23-01 complete)
-Status: v1.6 Portfolio Valuation Model in progress
-Last activity: 2026-01-15 — Completed 23-01-PLAN.md (Dynamic Guide Price Integration)
+Phase: 24 of 24 (Portfolio Value Dashboard Updates) — COMPLETE
+Plan: 1 of 1 in current phase (24-01 complete)
+Status: v1.6 Portfolio Valuation Model COMPLETE
+Last activity: 2026-01-15 — Completed 24-01-PLAN.md (Portfolio Value Dashboard Updates)
 
-Progress: ██████░░░░ 63% (15 of 24 phases complete)
+Progress: ██████████ 67% (16 of 24 phases complete)
 
 ## Milestones Overview
 
@@ -27,7 +27,7 @@ Progress: ██████░░░░ 63% (15 of 24 phases complete)
 | v1.3 Improvements | 10-12 | COMPLETE |
 | v1.4 Auth Deployment | 13-16 | In Progress |
 | v1.5 Mobile Refactor | 17-20 | In Progress |
-| v1.6 Portfolio Valuation Model | 21-24 | In Progress |
+| v1.6 Portfolio Valuation Model | 21-24 | COMPLETE |
 
 ## Performance Metrics
 
@@ -135,5 +135,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Completed Phase 23 Dynamic Guide Price Integration (23-01-PLAN.md)
+Stopped at: Completed Phase 24 Portfolio Value Dashboard Updates (24-01-PLAN.md) - v1.6 milestone complete
 Resume file: None

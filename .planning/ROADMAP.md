@@ -8,7 +8,7 @@
 - ✅ **v1.3 Improvements** — Phases 10-12 (complete)
 - 🚧 **v1.4 Auth Deployment** — Phases 13-16 (in progress)
 - 🚧 **v1.5 Mobile Refactor** — Phases 17-20 (in progress)
-- 📋 **v1.6 Portfolio Valuation Model** — Phases 21-24 (planned)
+- ✅ **v1.6 Portfolio Valuation Model** — Phases 21-24 (COMPLETE)
 
 ## Overview
 
@@ -342,7 +342,7 @@ Plans:
 - Add request caching where appropriate
 - Document API integration patterns
 
-### 📋 v1.6 Portfolio Valuation Model (Planned)
+### ✅ v1.6 Portfolio Valuation Model (COMPLETE)
 
 **Milestone Goal:** Improve portfolio value calculations with dynamic pricing for bullion (spot + premium) and numismatics (guide price), plus custom value override option
 
@@ -406,7 +406,7 @@ Plans:
 **Plans**: TBD
 
 Plans:
-- [ ] 24-01: Create valuation breakdown API and update web/mobile dashboards
+- [x] 24-01: Create valuation breakdown API and update web/mobile dashboards
 
 **Scope:**
 - Show breakdown by valuation type in portfolio summary
@@ -442,7 +442,7 @@ Plans:
 | 21. Bullion Premium Pricing | v1.6 | 1/1 | Complete | 2026-01-15 |
 | 22. Valuation Type System | v1.6 | 1/1 | Complete | 2026-01-15 |
 | 23. Dynamic Guide Price Integration | v1.6 | 1/1 | Complete | 2026-01-15 |
-| 24. Portfolio Value Dashboard Updates | v1.6 | 0/? | Not started | - |
+| 24. Portfolio Value Dashboard Updates | v1.6 | 1/1 | Complete | 2026-01-15 |
 
 ---
-*Updated: 2026-01-15 after Phase 23 completed*
+*Updated: 2026-01-15 after Phase 24 completed - v1.6 milestone complete*

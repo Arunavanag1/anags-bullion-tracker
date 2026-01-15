@@ -113,3 +113,24 @@ export interface ValueHistoryEntry {
   value: number;
   source: string | null;
 }
+
+// Valuation Breakdown for portfolio dashboard
+export interface ValuationBreakdown {
+  spotPremium: {
+    count: number;
+    totalValue: number;
+    totalPremium: number;
+    avgPremiumPercent: number;
+  };
+  guidePrice: {
+    count: number;
+    totalValue: number;
+    totalMeltValue: number;
+    premiumOverMelt: number;
+  };
+  custom: {
+    count: number;
+    totalValue: number;
+  };
+  lastSyncDate: string | null;
+}

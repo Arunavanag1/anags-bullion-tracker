@@ -9,7 +9,7 @@ import { api } from '../lib/api';
 import { getValuationMethod, setValuationMethod, getGainDisplayFormat, setGainDisplayFormat, type GainDisplayFormat } from '../lib/settings';
 import { calculatePortfolioSummary, formatCurrency, formatPercentage } from '../lib/calculations';
 import { savePortfolioValue, calculateDailyGain, get24hAgoValue } from '../lib/dailyTracking';
-import type { ValuationMethod } from '../types';
+import type { ValuationMethod, ValuationBreakdown } from '../types';
 import type { CollectionItem } from '../lib/api';
 import { Colors } from '../lib/colors';
 import { useCollectionSummary } from '../hooks/useCoins';
@@ -29,6 +29,7 @@ export function DashboardScreen({ navigation }: Props) {
   const [dailyGain, setDailyGain] = useState<number | null>(null);
   const [yesterdayValue, setYesterdayValue] = useState<number | null>(null);
   const [gainDisplayFormat, setGainDisplayFormatState] = useState<GainDisplayFormat>('dollar');
+  const [valuationBreakdown, setValuationBreakdown] = useState<ValuationBreakdown | null>(null);
   const { data: categorySummary, isLoading: summaryLoading } = useCollectionSummary();
 
   const handleSignOut = () => {
@@ -50,15 +51,17 @@ export function DashboardScreen({ navigation }: Props) {
 
   const loadData = async () => {
     try {
-      const [itemsData, method, gainFormat] = await Promise.all([
+      const [itemsData, method, gainFormat, breakdown] = await Promise.all([
         api.getCollectionItems(),
         getValuationMethod(),
         getGainDisplayFormat(),
+        api.getValuationBreakdown().catch(() => null),
       ]);
 
       setItems(itemsData as any);
       setValuationMethodState(method);
       setGainDisplayFormatState(gainFormat);
+      setValuationBreakdown(breakdown);
 
       // Calculate current portfolio value and save for daily tracking
       if (itemsData && spotPrices) {
@@ -339,6 +342,52 @@ export function DashboardScreen({ navigation }: Props) {
                 <Text style={styles.categoryCount}>{categorySummary.numismaticItems} items</Text>
               </View>
             </View>
+          </View>
+        )}
+
+        {/* Valuation Breakdown Card */}
+        {valuationBreakdown && (valuationBreakdown.spotPremium.count > 0 || valuationBreakdown.guidePrice.count > 0 || valuationBreakdown.custom.count > 0) && (
+          <View style={styles.valuationCard}>
+            <Text style={styles.valuationLabel}>VALUATION BREAKDOWN</Text>
+
+            <View style={styles.valuationRow}>
+              {valuationBreakdown.spotPremium.count > 0 && (
+                <View style={styles.valuationItem}>
+                  <Text style={styles.valuationTitle}>Spot+Premium</Text>
+                  <Text style={styles.valuationValue}>{formatCurrency(valuationBreakdown.spotPremium.totalValue)}</Text>
+                  <Text style={styles.valuationCount}>{valuationBreakdown.spotPremium.count} item{valuationBreakdown.spotPremium.count !== 1 ? 's' : ''}</Text>
+                  <Text style={[styles.valuationMetric, { color: valuationBreakdown.spotPremium.avgPremiumPercent >= 0 ? Colors.positive : Colors.negative }]}>
+                    {valuationBreakdown.spotPremium.avgPremiumPercent >= 0 ? '+' : ''}{valuationBreakdown.spotPremium.avgPremiumPercent.toFixed(1)}% avg
+                  </Text>
+                </View>
+              )}
+
+              {valuationBreakdown.guidePrice.count > 0 && (
+                <View style={styles.valuationItem}>
+                  <Text style={styles.valuationTitle}>Guide Price</Text>
+                  <Text style={styles.valuationValue}>{formatCurrency(valuationBreakdown.guidePrice.totalValue)}</Text>
+                  <Text style={styles.valuationCount}>{valuationBreakdown.guidePrice.count} item{valuationBreakdown.guidePrice.count !== 1 ? 's' : ''}</Text>
+                  <Text style={[styles.valuationMetric, { color: valuationBreakdown.guidePrice.premiumOverMelt >= 0 ? Colors.positive : Colors.negative }]}>
+                    {valuationBreakdown.guidePrice.premiumOverMelt >= 0 ? '+' : ''}{valuationBreakdown.guidePrice.premiumOverMelt.toFixed(1)}% over melt
+                  </Text>
+                </View>
+              )}
+
+              {valuationBreakdown.custom.count > 0 && (
+                <View style={styles.valuationItem}>
+                  <Text style={styles.valuationTitle}>Custom</Text>
+                  <Text style={styles.valuationValue}>{formatCurrency(valuationBreakdown.custom.totalValue)}</Text>
+                  <Text style={styles.valuationCount}>{valuationBreakdown.custom.count} item{valuationBreakdown.custom.count !== 1 ? 's' : ''}</Text>
+                  <Text style={styles.valuationMetric}>Fixed value</Text>
+                </View>
+              )}
+            </View>
+
+            {valuationBreakdown.lastSyncDate && (
+              <Text style={styles.valuationSync}>
+                Last synced: {new Date(valuationBreakdown.lastSyncDate).toLocaleDateString()}
+              </Text>
+            )}
           </View>
         )}
 
@@ -636,5 +685,62 @@ const styles = StyleSheet.create({
   categoryCount: {
     fontSize: 12,
     color: Colors.textTertiary,
+  },
+  valuationCard: {
+    backgroundColor: Colors.bgCard,
+    borderRadius: 24,
+    padding: 24,
+    marginTop: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 20,
+    elevation: 2,
+  },
+  valuationLabel: {
+    fontSize: 13,
+    color: Colors.textSecondary,
+    marginBottom: 16,
+    letterSpacing: 0.5,
+  },
+  valuationRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 12,
+  },
+  valuationItem: {
+    flex: 1,
+    minWidth: 90,
+    backgroundColor: Colors.bgSecondary,
+    borderRadius: 12,
+    padding: 12,
+  },
+  valuationTitle: {
+    fontSize: 11,
+    color: Colors.textSecondary,
+    marginBottom: 4,
+    textTransform: 'uppercase',
+    letterSpacing: 0.3,
+  },
+  valuationValue: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: Colors.textPrimary,
+    marginBottom: 2,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+  },
+  valuationCount: {
+    fontSize: 11,
+    color: Colors.textTertiary,
+    marginBottom: 4,
+  },
+  valuationMetric: {
+    fontSize: 11,
+    color: Colors.textSecondary,
+  },
+  valuationSync: {
+    fontSize: 11,
+    color: Colors.textTertiary,
+    marginTop: 12,
   },
 });

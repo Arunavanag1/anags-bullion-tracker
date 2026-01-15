@@ -2,7 +2,7 @@ import * as SecureStore from 'expo-secure-store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Fuse from 'fuse.js';
 import Constants from 'expo-constants';
-import type { CoinReference, ValidGrade, PriceGuideData, CollectionSummary, ItemCategory, GradingService, ProblemType, BookValueType, ValueHistoryEntry } from '../types';
+import type { CoinReference, ValidGrade, PriceGuideData, CollectionSummary, ItemCategory, GradingService, ProblemType, BookValueType, ValueHistoryEntry, ValuationBreakdown } from '../types';
 
 // Fuse.js search result interface
 interface FuseResult<T> {
@@ -481,6 +481,20 @@ export const api = {
 
     if (!response.ok) {
       throw new Error('Failed to sync prices');
+    }
+
+    const data = await response.json();
+    return data.data;
+  },
+
+  /**
+   * Get valuation breakdown by type (spot_premium, guide_price, custom)
+   */
+  async getValuationBreakdown(): Promise<ValuationBreakdown> {
+    const response = await makeRequest('/api/portfolio/valuation-breakdown');
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch valuation breakdown');
     }
 
     const data = await response.json();
