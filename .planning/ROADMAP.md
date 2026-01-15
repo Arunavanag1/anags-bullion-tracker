@@ -285,7 +285,7 @@ Plans:
 **Plans**: TBD
 
 Plans:
-- [ ] 17-01: TBD (run /gsd:plan-phase 17 to break down)
+- [x] 17-01: Audit mobile codebase, create MOBILE-ARCHITECTURE.md
 
 **Scope:**
 - Audit current file structure and organization
@@ -361,10 +361,10 @@ Plans:
 | 14. Mobile Auth Hardening | v1.4 | 0/? | Not started | - |
 | 15. Security Headers & CORS | v1.4 | 0/? | Not started | - |
 | 16. Deployment Verification | v1.4 | 0/? | Not started | - |
-| 17. Mobile Code Audit | v1.5 | 0/? | Not started | - |
+| 17. Mobile Code Audit | v1.5 | 1/1 | Complete | 2026-01-15 |
 | 18. State Management Refactor | v1.5 | 0/? | Not started | - |
 | 19. Component Refactor | v1.5 | 0/? | Not started | - |
 | 20. API & Data Layer Cleanup | v1.5 | 0/? | Not started | - |
 
 ---
-*Updated: 2026-01-14 after v1.5 Mobile Refactor milestone created*
+*Updated: 2026-01-15 after Phase 17 Mobile Code Audit completed*
