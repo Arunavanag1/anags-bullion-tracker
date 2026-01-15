@@ -15,7 +15,6 @@ import { calculateCurrentBookValue, calculateCurrentMeltValue, getPurchasePrice 
 import type { TimeRange, CollectionItem } from '@/types';
 
 export default function BullionTrackerWeb() {
-  const [valuationMode, setValuationMode] = useState<"spot" | "book">("spot");
   const [activeTab, setActiveTab] = useState("dashboard");
   const [timeRange, setTimeRange] = useState<TimeRange>("1M");
   const [categoryFilter, setCategoryFilter] = useState<"all" | "bullion" | "numismatic">("all");
@@ -76,7 +75,8 @@ export default function BullionTrackerWeb() {
     return { totalMeltValue: melt, totalBookValue: book, totalCostBasis: cost };
   }, [collectionData, spotPricesData]);
 
-  const currentValue = valuationMode === "spot" ? totalMeltValue : totalBookValue;
+  // Always use totalBookValue as unified portfolio value
+  const currentValue = totalBookValue;
   const costBasis = totalCostBasis;
   const gain = currentValue - costBasis;
   const returnPct = costBasis > 0 ? (gain / costBasis) * 100 : 0;
@@ -317,39 +317,17 @@ export default function BullionTrackerWeb() {
                 padding: "28px",
                 boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
               }}>
-                <div style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
+                <span style={{
+                  fontSize: "12px",
+                  fontWeight: "600",
+                  color: "#888",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.5px",
+                  display: "block",
                   marginBottom: "20px",
                 }}>
-                  <span style={{
-                    fontSize: "12px",
-                    fontWeight: "600",
-                    color: "#888",
-                    textTransform: "uppercase",
-                    letterSpacing: "0.5px",
-                  }}>
-                    Portfolio Value
-                  </span>
-                  <div style={{
-                    display: "flex",
-                    background: "#F5F5F5",
-                    borderRadius: "10px",
-                    padding: "4px",
-                  }}>
-                    <ToggleButton
-                      label="Spot"
-                      active={valuationMode === "spot"}
-                      onClick={() => setValuationMode("spot")}
-                    />
-                    <ToggleButton
-                      label="Book"
-                      active={valuationMode === "book"}
-                      onClick={() => setValuationMode("book")}
-                    />
-                  </div>
-                </div>
+                  Portfolio Value
+                </span>
 
                 <div style={{
                   fontSize: "44px",
@@ -919,8 +897,8 @@ export default function BullionTrackerWeb() {
                 gap: "24px",
                 marginBottom: "28px",
               }}>
-                <AllocationPieChart collection={collectionData} spotPrices={spotPricesData} valuationMode={valuationMode} />
-                <GainLossBarChart collection={collectionData} spotPrices={spotPricesData} valuationMode={valuationMode} />
+                <AllocationPieChart collection={collectionData} spotPrices={spotPricesData} />
+                <GainLossBarChart collection={collectionData} spotPrices={spotPricesData} />
               </div>
             )}
 
@@ -1021,30 +999,6 @@ const TabButton = ({ label, active, onClick, badge }: {
         {badge}
       </span>
     )}
-  </button>
-);
-
-const ToggleButton = ({ label, active, onClick }: {
-  label: string;
-  active: boolean;
-  onClick: () => void;
-}) => (
-  <button
-    onClick={onClick}
-    style={{
-      background: active ? "white" : "transparent",
-      border: "none",
-      borderRadius: "8px",
-      padding: "8px 16px",
-      fontSize: "13px",
-      fontWeight: "500",
-      color: active ? "#1a1a1a" : "#888",
-      cursor: "pointer",
-      transition: "all 0.2s ease",
-      boxShadow: active ? "0 1px 4px rgba(0,0,0,0.08)" : "none",
-    }}
-  >
-    {label}
   </button>
 );
 
