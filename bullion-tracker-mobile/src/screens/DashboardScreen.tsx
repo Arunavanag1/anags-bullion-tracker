@@ -6,10 +6,10 @@ import { RootStackParamList } from '../../App';
 import { useAuth } from '../contexts/AuthContext';
 import { useSpotPrices } from '../contexts/SpotPricesContext';
 import { api } from '../lib/api';
-import { getValuationMethod, setValuationMethod, getGainDisplayFormat, setGainDisplayFormat, type GainDisplayFormat } from '../lib/settings';
+import { getGainDisplayFormat, setGainDisplayFormat, type GainDisplayFormat } from '../lib/settings';
 import { calculatePortfolioSummary, formatCurrency, formatPercentage } from '../lib/calculations';
 import { savePortfolioValue, calculateDailyGain, get24hAgoValue } from '../lib/dailyTracking';
-import type { ValuationMethod, ValuationBreakdown } from '../types';
+import type { ValuationBreakdown } from '../types';
 import type { CollectionItem } from '../lib/api';
 import { Colors } from '../lib/colors';
 import { useCollectionSummary } from '../hooks/useCoins';
@@ -23,7 +23,6 @@ export function DashboardScreen({ navigation }: Props) {
   const { user, signOut } = useAuth();
   const { spotPrices, refresh: refreshSpotPrices } = useSpotPrices();
   const [items, setItems] = useState<CollectionItem[]>([]);
-  const [valuationMethod, setValuationMethodState] = useState<ValuationMethod>('spot');
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [dailyGain, setDailyGain] = useState<number | null>(null);
@@ -51,22 +50,21 @@ export function DashboardScreen({ navigation }: Props) {
 
   const loadData = async () => {
     try {
-      const [itemsData, method, gainFormat, breakdown] = await Promise.all([
+      const [itemsData, gainFormat, breakdown] = await Promise.all([
         api.getCollectionItems(),
-        getValuationMethod(),
         getGainDisplayFormat(),
         api.getValuationBreakdown().catch(() => null),
       ]);
 
       setItems(itemsData as any);
-      setValuationMethodState(method);
       setGainDisplayFormatState(gainFormat);
       setValuationBreakdown(breakdown);
 
       // Calculate current portfolio value and save for daily tracking
+      // Always use totalBookValue (unified portfolio value)
       if (itemsData && spotPrices) {
         const summary = calculatePortfolioSummary(itemsData as any, spotPrices);
-        const currentValue = method === 'spot' ? summary.totalMeltValue : summary.totalBookValue;
+        const currentValue = summary.totalBookValue;
 
         // Save current value for future 24h comparisons
         await savePortfolioValue(currentValue);
@@ -103,11 +101,6 @@ export function DashboardScreen({ navigation }: Props) {
     await Promise.all([loadData(), refreshSpotPrices()]);
   };
 
-  const handleValuationMethodChange = async (method: ValuationMethod) => {
-    setValuationMethodState(method);
-    await setValuationMethod(method);
-  };
-
   const handleGainDisplayFormatChange = async (format: GainDisplayFormat) => {
     setGainDisplayFormatState(format);
     await setGainDisplayFormat(format);
@@ -122,9 +115,8 @@ export function DashboardScreen({ navigation }: Props) {
   }
 
   const summary = spotPrices ? calculatePortfolioSummary(items, spotPrices) : null;
-  const currentValue = summary && spotPrices ? (
-    valuationMethod === 'spot' ? summary.totalMeltValue : summary.totalBookValue
-  ) : 0;
+  // Always use totalBookValue as the unified portfolio value
+  const currentValue = summary ? summary.totalBookValue : 0;
 
   // Calculate allocation percentages
   const totalMeltValue = summary?.totalMeltValue || 1;
@@ -187,20 +179,6 @@ export function DashboardScreen({ navigation }: Props) {
 
         {/* Portfolio Value Card */}
         <View style={styles.portfolioCard}>
-          {/* Toggle */}
-          <View style={styles.toggleContainer}>
-            <ToggleButton
-              active={valuationMethod === 'spot'}
-              onPress={() => handleValuationMethodChange('spot')}
-              label="Spot Value"
-            />
-            <ToggleButton
-              active={valuationMethod === 'book'}
-              onPress={() => handleValuationMethodChange('book')}
-              label="Book Value"
-            />
-          </View>
-
           {/* Hero Value */}
           <View style={styles.heroValueContainer}>
             <Text style={styles.heroLabel}>PORTFOLIO VALUE</Text>
@@ -408,17 +386,6 @@ export function DashboardScreen({ navigation }: Props) {
   );
 }
 
-const ToggleButton = ({ active, onPress, label }: { active: boolean; onPress: () => void; label: string }) => (
-  <TouchableOpacity
-    onPress={onPress}
-    style={[styles.toggleButton, active && styles.toggleButtonActive]}
-  >
-    <Text style={[styles.toggleButtonText, active && styles.toggleButtonTextActive]}>
-      {label}
-    </Text>
-  </TouchableOpacity>
-);
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -502,35 +469,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.04,
     shadowRadius: 20,
     elevation: 2,
-  },
-  toggleContainer: {
-    flexDirection: 'row',
-    backgroundColor: Colors.bgSecondary,
-    borderRadius: 12,
-    padding: 4,
-    marginBottom: 24,
-    alignSelf: 'flex-start',
-  },
-  toggleButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 10,
-  },
-  toggleButtonActive: {
-    backgroundColor: 'white',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  toggleButtonText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: Colors.textSecondary,
-  },
-  toggleButtonTextActive: {
-    color: Colors.textPrimary,
   },
   heroValueContainer: {
     marginBottom: 24,

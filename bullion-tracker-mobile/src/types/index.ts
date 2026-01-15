@@ -2,8 +2,6 @@ export type Metal = 'gold' | 'silver' | 'platinum';
 
 export type TimeRange = '24H' | '1W' | '1M' | '1Y' | '5Y';
 
-export type ValuationMethod = 'spot' | 'book';
-
 export type ItemCategory = 'BULLION' | 'NUMISMATIC';
 
 export type GradingService = 'PCGS' | 'NGC' | 'RAW';
