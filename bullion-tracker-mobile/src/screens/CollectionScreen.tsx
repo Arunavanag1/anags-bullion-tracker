@@ -52,7 +52,7 @@ export function CollectionScreen({ navigation }: Props) {
   };
 
   const handleDelete = (item: CollectionItem) => {
-    const itemName = item.type === 'itemized' && item.title ? item.title : `${item.metal} (Bulk)`;
+    const itemName = item.title || `${item.metal} (Bulk)`;
     Alert.alert(
       'Delete Item',
       `Are you sure you want to delete "${itemName}"?`,
@@ -167,7 +167,7 @@ export function CollectionScreen({ navigation }: Props) {
           {items
             .filter(item => categoryFilter === 'ALL' || (item.category || 'BULLION') === categoryFilter)
             .map((item) => {
-            const itemName = item.type === 'itemized' && item.title ? item.title : `${item.metal} (Bulk)`;
+            const itemName = item.title || `${item.metal} (Bulk)`;
             const spotPrice = spotPrices?.[item.metal as keyof SpotPrices] || 0;
             const pureWeight = (item.weightOz || 0) * (item.quantity || 1);
             const meltValue = pureWeight * (typeof spotPrice === 'number' ? spotPrice : 0);

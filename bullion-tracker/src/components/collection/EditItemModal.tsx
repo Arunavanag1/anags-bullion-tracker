@@ -106,7 +106,7 @@ export function EditItemModal({ isOpen, onClose, item }: EditItemModalProps) {
       data.gradingService = gradingService || undefined;
       data.certNumber = certNumber || undefined;
       data.numismaticValue = numismaticValue ? parseFloat(numismaticValue) : undefined;
-      data.bookValueType = 'numismatic';
+      data.bookValueType = 'guide_price';
     } else {
       // Bullion items use spot or custom book value
       data.bookValueType = bookValueType;
@@ -231,8 +231,8 @@ export function EditItemModal({ isOpen, onClose, item }: EditItemModalProps) {
                 <input
                   type="radio"
                   value="spot"
-                  checked={bookValueType === 'spot'}
-                  onChange={() => setBookValueType('spot')}
+                  checked={bookValueType === 'spot_premium'}
+                  onChange={() => setBookValueType('spot_premium')}
                   className="text-accent-primary focus:ring-accent-primary"
                 />
                 <span className="text-text-primary">

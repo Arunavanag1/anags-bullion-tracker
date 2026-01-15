@@ -194,7 +194,7 @@ export function AddItemScreen({ navigation, route }: Props) {
           metal: data.metal,
           weightOz: Number(data.weight),
           quantity: Number(data.quantity),
-          bookValueType: 'spot' as const,
+          bookValueType: 'spot_premium' as const,
           premiumPercent: data.premiumPercent ? Number(data.premiumPercent) : 0,
           spotPriceAtCreation: currentSpotPrice,
           purchaseDate: data.purchaseDate,

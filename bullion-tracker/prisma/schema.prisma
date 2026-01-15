@@ -93,7 +93,7 @@ model CollectionItem {
   images              Image[]
 
   // Valuation
-  bookValueType       String   // 'custom' | 'spot' | 'numismatic'
+  bookValueType       String   // 'spot_premium' | 'guide_price' | 'custom'
   customBookValue     Float?
   premiumPercent      Float    @default(0)  // Premium/discount % for bullion (positive = premium, negative = discount)
   numismaticValue     Float?   // Auto-populated from price guide

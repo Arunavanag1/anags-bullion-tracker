@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Switch, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, Switch, Image, StyleSheet, Alert } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
 import { CoinSearchInput } from '../numismatic/CoinSearchInput';
@@ -12,10 +13,8 @@ import type { Metal, GradingService, ProblemType, CoinReference } from '../../ty
  *
  * Adapts fields based on grading service: RAW shows estimated grade toggle,
  * PCGS/NGC shows certification number. Includes coin search, grade picker,
- * price guide integration, and problem coin designation.
- *
- * @example
- * <NumismaticForm gradingService="PCGS" onSubmit={handleSubmit} loading={false} />
+ * price guide integration, problem coin designation, and photo upload.
+ * Supports both creating new items and editing existing ones.
  */
 export interface NumismaticFormData {
   selectedCoin: CoinReference | null;
@@ -29,28 +28,92 @@ export interface NumismaticFormData {
   purchasePrice: string;
   purchaseDate: string;
   notes: string;
+  images: string[];
 }
 
 interface NumismaticFormProps {
   gradingService: GradingService;
   onSubmit: (data: NumismaticFormData) => Promise<void>;
   loading: boolean;
+  initialData?: NumismaticFormData;
+  isEditing?: boolean;
 }
 
-export function NumismaticForm({ gradingService, onSubmit, loading }: NumismaticFormProps) {
-  const [selectedCoin, setSelectedCoin] = useState<CoinReference | null>(null);
-  const [grade, setGrade] = useState('');
-  const [certNumber, setCertNumber] = useState('');
-  const [isGradeEstimated, setIsGradeEstimated] = useState(false);
-  const [isProblemCoin, setIsProblemCoin] = useState(false);
-  const [problemType, setProblemType] = useState<ProblemType>('cleaned');
-  const [numismaticValue, setNumismaticValue] = useState('');
-  const [useCustomValue, setUseCustomValue] = useState(false);
-  const [numismaticMetal, setNumismaticMetal] = useState<Metal>('silver');
-  const [purchasePrice, setPurchasePrice] = useState('');
-  const [purchaseDate, setPurchaseDate] = useState(new Date().toISOString().split('T')[0]);
-  const [notes, setNotes] = useState('');
+export function NumismaticForm({ gradingService, onSubmit, loading, initialData, isEditing = false }: NumismaticFormProps) {
+  const [selectedCoin, setSelectedCoin] = useState<CoinReference | null>(initialData?.selectedCoin || null);
+  const [grade, setGrade] = useState(initialData?.grade || '');
+  const [certNumber, setCertNumber] = useState(initialData?.certNumber || '');
+  const [isGradeEstimated, setIsGradeEstimated] = useState(initialData?.isGradeEstimated || false);
+  const [isProblemCoin, setIsProblemCoin] = useState(initialData?.isProblemCoin || false);
+  const [problemType, setProblemType] = useState<ProblemType>(initialData?.problemType || 'cleaned');
+  const [numismaticValue, setNumismaticValue] = useState(initialData?.numismaticValue || '');
+  const [useCustomValue, setUseCustomValue] = useState(isEditing); // Default to custom value when editing
+  const [numismaticMetal, setNumismaticMetal] = useState<Metal>(initialData?.numismaticMetal || 'silver');
+  const [purchasePrice, setPurchasePrice] = useState(initialData?.purchasePrice || '');
+  const [purchaseDate, setPurchaseDate] = useState(initialData?.purchaseDate || new Date().toISOString().split('T')[0]);
+  const [notes, setNotes] = useState(initialData?.notes || '');
+  const [images, setImages] = useState<string[]>(initialData?.images || []);
   const [currentGradingService, setCurrentGradingService] = useState<GradingService>(gradingService);
+
+  // Update form when initialData changes (for editing)
+  useEffect(() => {
+    if (initialData) {
+      setSelectedCoin(initialData.selectedCoin);
+      setGrade(initialData.grade);
+      setCertNumber(initialData.certNumber);
+      setIsGradeEstimated(initialData.isGradeEstimated);
+      setIsProblemCoin(initialData.isProblemCoin);
+      setProblemType(initialData.problemType);
+      setNumismaticValue(initialData.numismaticValue);
+      setNumismaticMetal(initialData.numismaticMetal);
+      setPurchasePrice(initialData.purchasePrice);
+      setPurchaseDate(initialData.purchaseDate);
+      setNotes(initialData.notes);
+      setImages(initialData.images || []);
+      setUseCustomValue(true);
+    }
+  }, [initialData]);
+
+  const pickImage = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permission needed', 'Please allow access to your photo library to add images.');
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8,
+    });
+
+    if (!result.canceled && result.assets[0]) {
+      setImages([...images, result.assets[0].uri]);
+    }
+  };
+
+  const takePhoto = async () => {
+    const { status } = await ImagePicker.requestCameraPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permission needed', 'Please allow access to your camera to take photos.');
+      return;
+    }
+
+    const result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8,
+    });
+
+    if (!result.canceled && result.assets[0]) {
+      setImages([...images, result.assets[0].uri]);
+    }
+  };
+
+  const removeImage = (index: number) => {
+    setImages(images.filter((_, i) => i !== index));
+  };
 
   const handleSubmit = () => {
     onSubmit({
@@ -65,13 +128,14 @@ export function NumismaticForm({ gradingService, onSubmit, loading }: Numismatic
       purchasePrice,
       purchaseDate,
       notes,
+      images,
     });
   };
 
   const isRaw = gradingService === 'RAW';
 
   return (
-    <ScrollView style={styles.form}>
+    <ScrollView style={styles.form} contentContainerStyle={styles.formContent}>
       <CoinSearchInput
         onSelect={setSelectedCoin}
         selectedCoin={selectedCoin}
@@ -199,13 +263,45 @@ export function NumismaticForm({ gradingService, onSubmit, loading }: Numismatic
         placeholder="Add any notes..."
       />
 
-      <Button
-        onPress={handleSubmit}
-        disabled={loading}
-        loading={loading}
-      >
-        {loading ? 'Adding...' : 'Add to Collection'}
-      </Button>
+      {/* Photo Section */}
+      <View style={styles.section}>
+        <Text style={styles.label}>Photos</Text>
+        <View style={styles.imageGrid}>
+          {images.map((uri, index) => (
+            <View key={index} style={styles.imageContainer}>
+              <Image source={{ uri }} style={styles.thumbnail} />
+              <TouchableOpacity
+                style={styles.removeButton}
+                onPress={() => removeImage(index)}
+              >
+                <Text style={styles.removeButtonText}>×</Text>
+              </TouchableOpacity>
+            </View>
+          ))}
+          {images.length < 4 && (
+            <View style={styles.addPhotoButtons}>
+              <TouchableOpacity style={styles.addPhotoButton} onPress={pickImage}>
+                <Text style={styles.addPhotoIcon}>🖼</Text>
+                <Text style={styles.addPhotoText}>Gallery</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.addPhotoButton} onPress={takePhoto}>
+                <Text style={styles.addPhotoIcon}>📷</Text>
+                <Text style={styles.addPhotoText}>Camera</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+      </View>
+
+      <View style={styles.buttonContainer}>
+        <Button
+          onPress={handleSubmit}
+          disabled={loading}
+          loading={loading}
+        >
+          {loading ? (isEditing ? 'Saving...' : 'Adding...') : (isEditing ? 'Save Changes' : 'Add to Collection')}
+        </Button>
+      </View>
     </ScrollView>
   );
 }
@@ -213,6 +309,9 @@ export function NumismaticForm({ gradingService, onSubmit, loading }: Numismatic
 const styles = StyleSheet.create({
   form: {
     flex: 1,
+  },
+  formContent: {
+    paddingBottom: 40,
   },
   section: {
     marginBottom: 20,
@@ -296,5 +395,63 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     color: '#1F2937',
+  },
+  imageGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+  },
+  imageContainer: {
+    position: 'relative',
+  },
+  thumbnail: {
+    width: 80,
+    height: 80,
+    borderRadius: 8,
+    backgroundColor: '#F3F4F6',
+  },
+  removeButton: {
+    position: 'absolute',
+    top: -8,
+    right: -8,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#EF4444',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  removeButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
+    lineHeight: 18,
+  },
+  addPhotoButtons: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  addPhotoButton: {
+    width: 80,
+    height: 80,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: '#E5E7EB',
+    borderStyle: 'dashed',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#F9FAFB',
+  },
+  addPhotoIcon: {
+    fontSize: 24,
+    marginBottom: 4,
+  },
+  addPhotoText: {
+    fontSize: 10,
+    color: '#6B7280',
+  },
+  buttonContainer: {
+    marginTop: 24,
+    marginBottom: 20,
   },
 });

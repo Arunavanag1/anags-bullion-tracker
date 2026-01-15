@@ -5,17 +5,17 @@
 See: .planning/PROJECT.md (updated 2026-01-09)
 
 **Core value:** Showcase coin photography beautifully
-**Current focus:** v1.6 Portfolio Valuation Model — Phase 21 complete, Phase 22 next
+**Current focus:** v1.6 Portfolio Valuation Model — Phase 22 complete, Phase 23 next
 **Next milestone:** v1.6 Portfolio Valuation Model (in progress)
 
 ## Current Position
 
-Phase: 21 of 24 (Bullion Premium Pricing) — COMPLETE
-Plan: 1 of 1 in current phase (21-01 complete)
+Phase: 22 of 24 (Valuation Type System) — COMPLETE
+Plan: 1 of 1 in current phase (22-01 complete)
 Status: v1.6 Portfolio Valuation Model in progress
-Last activity: 2026-01-15 — Completed 21-01-PLAN.md (Bullion Premium Pricing)
+Last activity: 2026-01-15 — Completed 22-01-PLAN.md (Valuation Type System)
 
-Progress: █████▌░░░░ 54% (13 of 24 phases complete)
+Progress: ██████░░░░ 58% (14 of 24 phases complete)
 
 ## Milestones Overview
 
@@ -83,6 +83,9 @@ Recent decisions affecting current work:
 - Phase 19: JSDoc with @example for component usage documentation
 - Phase 21: Used prisma db push instead of migrations (no migration directory exists)
 - Phase 21: New bullion items use bookValueType: 'spot' to leverage premium pricing
+- Phase 22: BookValueType expanded to 'spot_premium' | 'guide_price' | 'custom'
+- Phase 22: Legacy 'spot' values treated as spot_premium with 0% premium for backward compat
+- Phase 22: isTracking determined by valuation type, not 30% threshold logic
 
 ### Deferred Issues
 
@@ -129,5 +132,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Completed Phase 21 Bullion Premium Pricing (21-01-PLAN.md)
+Stopped at: Completed Phase 22 Valuation Type System (22-01-PLAN.md)
 Resume file: None

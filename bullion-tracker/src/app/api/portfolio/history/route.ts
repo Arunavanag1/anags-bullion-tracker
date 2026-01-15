@@ -76,7 +76,7 @@ export async function GET(request: NextRequest) {
         userId: item.userId,
         metal: item.metal as 'gold' | 'silver' | 'platinum',
         weightOz: item.weightOz || 0,
-        bookValueType: item.bookValueType as 'spot' | 'custom',
+        bookValueType: item.bookValueType as 'spot_premium' | 'guide_price' | 'custom',
         spotPriceAtCreation: item.spotPriceAtCreation || 0,
         customBookValue: item.customBookValue || undefined,
         createdAt: item.createdAt,

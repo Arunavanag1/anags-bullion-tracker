@@ -248,7 +248,7 @@ export function DashboardScreen({ navigation }: Props) {
                       styles.metricValue,
                       { color: summary.totalGain >= 0 ? Colors.positive : Colors.negative }
                     ]}>
-                      {summary.totalGain >= 0 ? '+' : ''}{formatPercentage(summary.gainPercentage)}
+                      {formatPercentage(summary.gainPercentage)}
                     </Text>
                   )}
                 </View>

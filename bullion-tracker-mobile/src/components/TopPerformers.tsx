@@ -3,6 +3,7 @@ import { View, Text, ActivityIndicator, StyleSheet } from 'react-native';
 import { Card } from './ui/Card';
 import { Colors } from '../lib/colors';
 import { api } from '../lib/api';
+import { useSpotPrices } from '../contexts/SpotPricesContext';
 
 interface MetalPerformance {
   metal: 'gold' | 'silver' | 'platinum';
@@ -51,6 +52,7 @@ const METAL_COLORS: Record<string, string> = {
 };
 
 export function TopPerformers() {
+  const { spotPrices } = useSpotPrices();
   const [metalData, setMetalData] = useState<MetalPerformanceResponse | null>(null);
   const [coinData, setCoinData] = useState<CoinPerformanceResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -74,6 +76,43 @@ export function TopPerformers() {
     }
   };
 
+  // Recalculate performance using the same spot prices as the banner
+  const getAdjustedPerformance = (metal: 'gold' | 'silver' | 'platinum'): MetalPerformance | null => {
+    if (!metalData || !spotPrices) return null;
+
+    const originalData = metalData.metals.find(m => m.metal === metal);
+    if (!originalData) return null;
+
+    // Use spot prices from context (same as banner) for current price
+    const currentPrice = spotPrices[metal];
+    const priceOneMonthAgo = originalData.priceOneMonthAgo;
+    const change = currentPrice - priceOneMonthAgo;
+    const changePercent = (change / priceOneMonthAgo) * 100;
+
+    return {
+      metal,
+      currentPrice: Math.round(currentPrice * 100) / 100,
+      priceOneMonthAgo: Math.round(priceOneMonthAgo * 100) / 100,
+      change: Math.round(change * 100) / 100,
+      changePercent: Math.round(changePercent * 100) / 100,
+    };
+  };
+
+  // Get adjusted best and worst performers
+  const getAdjustedBestAndWorst = () => {
+    if (!spotPrices || !metalData) return { best: null, worst: null };
+
+    const adjusted = (['gold', 'silver', 'platinum'] as const)
+      .map(metal => getAdjustedPerformance(metal))
+      .filter((p): p is MetalPerformance => p !== null)
+      .sort((a, b) => b.changePercent - a.changePercent);
+
+    return {
+      best: adjusted[0] || null,
+      worst: adjusted[adjusted.length - 1] || null,
+    };
+  };
+
   if (loading) {
     return (
       <Card>
@@ -86,6 +125,8 @@ export function TopPerformers() {
     );
   }
 
+  const { best: bestPerformer, worst: worstPerformer } = getAdjustedBestAndWorst();
+
   return (
     <Card>
       <Text style={styles.title}>Top Performers (30 Days)</Text>
@@ -94,25 +135,25 @@ export function TopPerformers() {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>METALS</Text>
 
-        {metalData?.bestPerformer && (
+        {bestPerformer && (
           <PerformanceRow
-            label={METAL_LABELS[metalData.bestPerformer.metal]}
-            color={METAL_COLORS[metalData.bestPerformer.metal]}
-            changePercent={metalData.bestPerformer.changePercent}
-            priceFrom={metalData.bestPerformer.priceOneMonthAgo}
-            priceTo={metalData.bestPerformer.currentPrice}
+            label={METAL_LABELS[bestPerformer.metal]}
+            color={METAL_COLORS[bestPerformer.metal]}
+            changePercent={bestPerformer.changePercent}
+            priceFrom={bestPerformer.priceOneMonthAgo}
+            priceTo={bestPerformer.currentPrice}
             type="best"
           />
         )}
 
-        {metalData?.worstPerformer &&
-         metalData.bestPerformer?.metal !== metalData.worstPerformer.metal && (
+        {worstPerformer &&
+         bestPerformer?.metal !== worstPerformer.metal && (
           <PerformanceRow
-            label={METAL_LABELS[metalData.worstPerformer.metal]}
-            color={METAL_COLORS[metalData.worstPerformer.metal]}
-            changePercent={metalData.worstPerformer.changePercent}
-            priceFrom={metalData.worstPerformer.priceOneMonthAgo}
-            priceTo={metalData.worstPerformer.currentPrice}
+            label={METAL_LABELS[worstPerformer.metal]}
+            color={METAL_COLORS[worstPerformer.metal]}
+            changePercent={worstPerformer.changePercent}
+            priceFrom={worstPerformer.priceOneMonthAgo}
+            priceTo={worstPerformer.currentPrice}
             type="worst"
           />
         )}
@@ -138,6 +179,13 @@ interface PerformanceRowProps {
   type: 'best' | 'worst';
 }
 
+function formatCompactPrice(price: number): string {
+  if (price >= 1000) {
+    return `$${Math.round(price).toLocaleString()}`;
+  }
+  return `$${price.toFixed(2)}`;
+}
+
 function PerformanceRow({ label, color, changePercent, priceFrom, priceTo, type }: PerformanceRowProps) {
   const isPositive = changePercent >= 0;
 
@@ -150,7 +198,7 @@ function PerformanceRow({ label, color, changePercent, priceFrom, priceTo, type 
       </View>
       <View style={styles.rowRight}>
         <Text style={styles.priceRange}>
-          ${priceFrom.toFixed(2)} → ${priceTo.toFixed(2)}
+          {formatCompactPrice(priceFrom)} → {formatCompactPrice(priceTo)}
         </Text>
         <Text style={[styles.percentChange, { color: isPositive ? Colors.positive : Colors.negative }]}>
           {isPositive ? '+' : ''}{changePercent.toFixed(2)}%
@@ -252,6 +300,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: Colors.textSecondary,
     textTransform: 'uppercase',
+    width: 38,
   },
   colorDot: {
     width: 8,

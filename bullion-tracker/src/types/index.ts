@@ -1,7 +1,14 @@
 // Metal types
 export type Metal = 'gold' | 'silver' | 'platinum';
 export type ItemType = 'itemized' | 'bulk';
-export type BookValueType = 'custom' | 'spot';
+
+/**
+ * Valuation Type System:
+ * - 'spot_premium': Value = spot × weight × (1 + premiumPercent%). For bullion.
+ * - 'guide_price': Value = numismaticValue from price guide. For numismatics.
+ * - 'custom': Value = customBookValue. Fixed, doesn't change with market.
+ */
+export type BookValueType = 'spot_premium' | 'guide_price' | 'custom';
 
 // Spot Price Interface
 export interface SpotPrice {

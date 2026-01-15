@@ -35,7 +35,7 @@ export function AddItemModal({ isOpen, onClose }: AddItemModalProps) {
   const [quantity, setQuantity] = useState(1);
   const [weightOz, setWeightOz] = useState(1);
   const [notes, setNotes] = useState('');
-  const [bookValueType, setBookValueType] = useState<BookValueType>('spot');
+  const [bookValueType, setBookValueType] = useState<BookValueType>('spot_premium');
   const [customBookValue, setCustomBookValue] = useState('');
   const [images, setImages] = useState<string[]>([]);
   const [purchaseDate, setPurchaseDate] = useState(new Date().toISOString().split('T')[0]);
@@ -73,7 +73,7 @@ export function AddItemModal({ isOpen, onClose }: AddItemModalProps) {
     setQuantity(1);
     setWeightOz(1);
     setNotes('');
-    setBookValueType('spot');
+    setBookValueType('spot_premium');
     setCustomBookValue('');
     setImages([]);
     setPurchaseDate(new Date().toISOString().split('T')[0]);
@@ -127,7 +127,7 @@ export function AddItemModal({ isOpen, onClose }: AddItemModalProps) {
         isProblemCoin,
         problemType: isProblemCoin ? problemType : undefined,
         isGradeEstimated: gradingService === 'RAW',
-        bookValueType: useCustomValue ? 'custom' : 'numismatic',
+        bookValueType: useCustomValue ? 'custom' : 'guide_price',
         customBookValue: useCustomValue ? parseFloat(numismaticValue) : undefined,
         numismaticValue: !useCustomValue ? parseFloat(numismaticValue || '0') : undefined,
       };
@@ -330,7 +330,7 @@ export function AddItemModal({ isOpen, onClose }: AddItemModalProps) {
                   Valuation Method
                 </label>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                  {(['spot', 'custom'] as BookValueType[]).map((type) => (
+                  {(['spot_premium', 'custom'] as BookValueType[]).map((type) => (
                     <button
                       key={type}
                       type="button"
@@ -346,7 +346,7 @@ export function AddItemModal({ isOpen, onClose }: AddItemModalProps) {
                         cursor: 'pointer',
                       }}
                     >
-                      {type === 'spot' ? 'Spot Price' : 'Custom Value'}
+                      {type === 'spot_premium' ? 'Spot Price' : 'Custom Value'}
                     </button>
                   ))}
                 </div>
@@ -375,7 +375,7 @@ export function AddItemModal({ isOpen, onClose }: AddItemModalProps) {
                     />
                   </div>
                 )}
-                {bookValueType === 'spot' && (
+                {bookValueType === 'spot_premium' && (
                   <div>
                     <label style={{ fontSize: '12px', fontWeight: '600', color: '#888', textTransform: 'uppercase', display: 'block', marginBottom: '8px' }}>
                       Calculated Spot Value

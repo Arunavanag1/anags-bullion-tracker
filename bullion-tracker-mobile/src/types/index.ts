@@ -10,7 +10,7 @@ export type GradingService = 'PCGS' | 'NGC' | 'RAW';
 
 export type ProblemType = 'cleaned' | 'damaged' | 'holed' | 'repaired';
 
-export type BookValueType = 'spot' | 'custom' | 'numismatic';
+export type BookValueType = 'spot_premium' | 'guide_price' | 'custom';
 
 export type ConfidenceLevel = 'high' | 'medium' | 'low';
 

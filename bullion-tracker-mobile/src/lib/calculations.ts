@@ -9,45 +9,45 @@ export function calculateMeltValue(item: CollectionItem, spotPrice: number): num
 }
 
 /**
- * Calculate the book value of an item using premium-tracking logic
+ * Calculate the book value of an item based on valuation type
  *
- * Logic:
- * - If bookValueType is 'spot', use current melt value
- * - If bookValueType is 'custom':
- *   - Check at purchase: if purchase price was >30% different from melt value
- *   - If YES (numismatic): book value = purchase price + 1% per year (compounded)
- *   - If NO (bullion): book value = current melt + original premium (tracks spot)
+ * Valuation types:
+ * - 'spot_premium': Value = spot × weight × (1 + premiumPercent%). For bullion.
+ * - 'guide_price': Value = numismaticValue from price guide. For numismatics.
+ * - 'custom': Value = customBookValue. Fixed, doesn't change with market.
+ * - Legacy 'spot': Treat as spot_premium with 0% premium
  */
 export function calculateBookValue(item: CollectionItem, currentSpotPrice: number): number {
   const totalWeight = (item.weightOz || 0) * (item.quantity || 1);
-  const originalMelt = totalWeight * (item.spotPriceAtCreation || 0);
+  const bookValueType = item.bookValueType as string;
 
-  // If using spot value, just return current melt value
-  if (item.bookValueType === 'spot') {
-    return totalWeight * currentSpotPrice;
+  // Handle by valuation type
+  switch (bookValueType) {
+    case 'spot_premium':
+    case 'spot': {
+      // Bullion: spot × weight × quantity × (1 + premium%)
+      const meltValue = totalWeight * currentSpotPrice;
+      const premiumMultiplier = 1 + ((item.premiumPercent || 0) / 100);
+      return meltValue * premiumMultiplier;
+    }
+
+    case 'guide_price': {
+      // Numismatic: use numismaticValue (guide price)
+      return item.numismaticValue ?? 0;
+    }
+
+    case 'custom': {
+      // Fixed value: customBookValue doesn't change
+      return item.customBookValue ?? 0;
+    }
+
+    default: {
+      // Legacy 'numismatic' or unknown - try numismaticValue, then customBookValue, then 0
+      if (item.numismaticValue !== undefined) return item.numismaticValue;
+      if (item.customBookValue !== undefined) return item.customBookValue;
+      return 0;
+    }
   }
-
-  // For custom book values
-  const customValue = item.customBookValue!;
-  const percentDiff = Math.abs((customValue - originalMelt) / originalMelt);
-
-  // Within 30% threshold - track with spot price movement proportionally
-  if (percentDiff <= 0.30) {
-    const priceRatio = currentSpotPrice / (item.spotPriceAtCreation || 1);
-    return customValue * priceRatio;
-  }
-
-  // Outside threshold - grows at 1% per annum (compounded)
-  if (item.purchaseDate) {
-    const purchaseDate = new Date(item.purchaseDate);
-    const now = new Date();
-    const yearsElapsed = (now.getTime() - purchaseDate.getTime()) / (1000 * 60 * 60 * 24 * 365.25);
-    const annualGrowthRate = 0.01; // 1% per annum
-    return customValue * Math.pow(1 + annualGrowthRate, yearsElapsed);
-  }
-
-  // Fallback if no purchase date
-  return customValue;
 }
 
 /**
