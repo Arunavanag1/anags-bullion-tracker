@@ -5,17 +5,17 @@
 See: .planning/PROJECT.md (updated 2026-01-09)
 
 **Core value:** Showcase coin photography beautifully
-**Current focus:** v1.5 Mobile Refactor — Phase 18 next
+**Current focus:** v1.5 Mobile Refactor — Phase 18 complete, Phase 19 next
 **Next milestone:** v1.5 Mobile Refactor (in progress)
 
 ## Current Position
 
-Phase: 17 of 20 (Mobile Code Audit) — COMPLETE
-Plan: 1 of 1 in current phase (17-01 complete)
+Phase: 18 of 20 (State Management Refactor) — COMPLETE
+Plan: 1 of 1 in current phase (18-01 complete)
 Status: v1.5 Mobile Refactor in progress
-Last activity: 2026-01-15 — Completed 17-01-PLAN.md (Mobile Code Audit)
+Last activity: 2026-01-15 — Completed 18-01-PLAN.md (State Management Refactor)
 
-Progress: █████░░░░░ 50% (10 of 20 phases complete)
+Progress: ██████░░░░ 55% (11 of 20 phases complete)
 
 ## Milestones Overview
 
@@ -48,10 +48,11 @@ Progress: █████░░░░░ 50% (10 of 20 phases complete)
 | 12 | 1 | 18m | 18m |
 | 13 | 1 | 26m | 26m |
 | 17 | 1 | 15m | 15m |
+| 18 | 1 | 8m | 8m |
 
 **Recent Trend:**
-- Last 5 plans: 20m, 18m, 26m, 15m
-- Trend: Audit phase executed quickly due to read-only nature
+- Last 5 plans: 18m, 26m, 15m, 8m
+- Trend: State refactor efficient due to clear patterns from audit
 
 ## Accumulated Context
 
@@ -72,6 +73,9 @@ Recent decisions affecting current work:
 - Phase 5: Fallback to base64 when Cloudinary not configured (dev-friendly)
 - Phase 13: Complete removal of test credentials UI (no development fallback)
 - Phase 13: Security audit sections in .env.example with phase references
+- Phase 18: SpotPricesContext placed inside AuthProvider (prices don't require auth)
+- Phase 18: Shared UI components follow Button.tsx pattern (Props interface, StyleSheet)
+- Phase 18: Context pattern: Provider + useX hook that throws if outside provider
 
 ### Deferred Issues
 
@@ -112,5 +116,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Completed Phase 17 Mobile Code Audit (17-01-PLAN.md)
+Stopped at: Completed Phase 18 State Management Refactor (18-01-PLAN.md)
 Resume file: None
