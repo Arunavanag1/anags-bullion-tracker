@@ -12,7 +12,7 @@ import { Colors } from '../lib/colors';
 import { CategoryBadge } from '../components/numismatic/CategoryBadge';
 import { ProblemCoinBadge } from '../components/numismatic/ProblemCoinBadge';
 import { PricePill } from '../components/ui/PricePill';
-import { TabButton } from '../components/ui/TabButton';
+import { TabBar } from '../components/ui/TabBar';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Collection'>;
 
@@ -256,27 +256,14 @@ export function CollectionScreen({ navigation }: Props) {
       )}
 
       {/* Bottom Tab Bar */}
-      <View style={styles.tabBar}>
-        <TabButton
-          icon="◎"
-          label="Dashboard"
-          active={false}
-          onPress={() => navigation.navigate('Dashboard')}
-        />
-        <TabButton
-          icon="◉"
-          label="Collection"
-          active={true}
-          onPress={() => {}}
-          badge={items.length}
-        />
-        <TabButton
-          icon="❖"
-          label="Photos"
-          active={false}
-          onPress={() => navigation.navigate('Collage')}
-        />
-      </View>
+      <TabBar
+        activeTab="collection"
+        onTabPress={(tab) => {
+          if (tab === 'dashboard') navigation.navigate('Dashboard');
+          if (tab === 'collage') navigation.navigate('Collage');
+        }}
+        collectionBadge={items.length}
+      />
     </View>
   );
 }
@@ -557,18 +544,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     color: Colors.negative,
-  },
-  tabBar: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'white',
-    borderTopWidth: 1,
-    borderTopColor: Colors.border,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingTop: 12,
-    paddingBottom: Platform.OS === 'ios' ? 28 : 12,
   },
 });

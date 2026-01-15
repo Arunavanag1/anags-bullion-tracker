@@ -15,7 +15,7 @@ import { Colors } from '../lib/colors';
 import { useCollectionSummary } from '../hooks/useCoins';
 import { TopPerformers } from '../components/TopPerformers';
 import { PricePill } from '../components/ui/PricePill';
-import { TabButton } from '../components/ui/TabButton';
+import { TabBar } from '../components/ui/TabBar';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Dashboard'>;
 
@@ -347,27 +347,14 @@ export function DashboardScreen({ navigation }: Props) {
       </ScrollView>
 
       {/* Bottom Tab Bar */}
-      <View style={styles.tabBar}>
-        <TabButton
-          icon="◎"
-          label="Dashboard"
-          active={true}
-          onPress={() => {}}
-        />
-        <TabButton
-          icon="◉"
-          label="Collection"
-          active={false}
-          onPress={() => navigation.navigate('Collection')}
-          badge={items.length}
-        />
-        <TabButton
-          icon="❖"
-          label="Photos"
-          active={false}
-          onPress={() => navigation.navigate('Collage')}
-        />
-      </View>
+      <TabBar
+        activeTab="dashboard"
+        onTabPress={(tab) => {
+          if (tab === 'collection') navigation.navigate('Collection');
+          if (tab === 'collage') navigation.navigate('Collage');
+        }}
+        collectionBadge={items.length}
+      />
     </View>
   );
 }
@@ -649,18 +636,5 @@ const styles = StyleSheet.create({
   categoryCount: {
     fontSize: 12,
     color: Colors.textTertiary,
-  },
-  tabBar: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'white',
-    borderTopWidth: 1,
-    borderTopColor: Colors.border,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingTop: 12,
-    paddingBottom: Platform.OS === 'ios' ? 28 : 12,
   },
 });

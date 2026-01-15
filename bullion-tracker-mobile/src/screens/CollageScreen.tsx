@@ -8,7 +8,7 @@ import { api } from '../lib/api';
 import type { CollectionItem } from '../lib/api';
 import { Colors } from '../lib/colors';
 import { PricePill } from '../components/ui/PricePill';
-import { TabButton } from '../components/ui/TabButton';
+import { TabBar } from '../components/ui/TabBar';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Collage'>;
 
@@ -127,27 +127,14 @@ export function CollageScreen({ navigation }: Props) {
       )}
 
       {/* Bottom Tab Bar */}
-      <View style={styles.tabBar}>
-        <TabButton
-          icon="◎"
-          label="Dashboard"
-          active={false}
-          onPress={() => navigation.navigate('Dashboard')}
-        />
-        <TabButton
-          icon="◉"
-          label="Collection"
-          active={false}
-          onPress={() => navigation.navigate('Collection')}
-          badge={items.length}
-        />
-        <TabButton
-          icon="❖"
-          label="Photos"
-          active={true}
-          onPress={() => {}}
-        />
-      </View>
+      <TabBar
+        activeTab="collage"
+        onTabPress={(tab) => {
+          if (tab === 'dashboard') navigation.navigate('Dashboard');
+          if (tab === 'collection') navigation.navigate('Collection');
+        }}
+        collectionBadge={items.length}
+      />
     </View>
   );
 }
@@ -233,18 +220,5 @@ const styles = StyleSheet.create({
   gridImage: {
     width: '100%',
     height: '100%',
-  },
-  tabBar: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'white',
-    borderTopWidth: 1,
-    borderTopColor: Colors.border,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingTop: 12,
-    paddingBottom: Platform.OS === 'ios' ? 28 : 12,
   },
 });
