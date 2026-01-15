@@ -70,32 +70,38 @@ export function CollectionCard({ item }: CollectionCardProps) {
         </div>
       )}
 
-      {/* Title and Category Badge */}
-      <div className="mb-4">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+      {/* Category Badge + Metal/Weight on same row */}
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
           <CategoryBadge category={item.category as 'BULLION' | 'NUMISMATIC'} />
           {item.isProblemCoin && item.problemType && (
             <ProblemBadge problemType={item.problemType} />
           )}
         </div>
-        <h3 className="text-lg font-semibold text-text-primary line-clamp-2">
-          {displayTitle}
-        </h3>
+        <div className="flex items-center gap-1.5 text-text-secondary text-sm">
+          <span>{getMetalEmoji(item.metal)}</span>
+          <span className="font-mono">
+            {item.weightOz} oz{quantity > 1 && ` × ${quantity}`}
+          </span>
+        </div>
       </div>
 
-      {/* Weight & Metal (+ Grade for numismatics) */}
-      <div className="flex items-center gap-2 text-text-primary mb-4">
-        <span className="text-xl">{getMetalEmoji(item.metal)}</span>
-        <span className="font-mono text-sm">
-          {item.weightOz} oz {quantity > 1 && `× ${quantity} = ${formatWeight(totalWeight)}`}
-        </span>
-        {item.category === 'NUMISMATIC' && (
-          <span className="text-sm text-text-secondary ml-1">
-            • {item.gradingService && `${item.gradingService} `}{item.grade}
-            {item.certNumber && ` • #${item.certNumber}`}
-          </span>
-        )}
-      </div>
+      {/* Title */}
+      <h3 className="text-lg font-semibold text-text-primary line-clamp-2 mb-1">
+        {displayTitle}
+      </h3>
+
+      {/* Grade for numismatics */}
+      {item.category === 'NUMISMATIC' && (
+        <div className="text-sm text-text-secondary mb-4">
+          {item.gradingService && `${item.gradingService} `}
+          {item.grade}
+          {item.certNumber && ` • Cert #${item.certNumber}`}
+        </div>
+      )}
+
+      {/* Spacer for bullion */}
+      {item.category !== 'NUMISMATIC' && <div className="mb-4" />}
 
       {/* Values */}
       <div className="space-y-4">
@@ -119,11 +125,11 @@ export function CollectionCard({ item }: CollectionCardProps) {
           </div>
         </div>
         {/* Secondary Melt Value - indented and informative */}
-        <div className="flex items-center justify-between text-xs pl-3">
+        <div className="text-xs pl-3">
           <span className="text-text-secondary/70">
             Melt: {formatCurrency(currentMeltValue)}
             {item.category === 'BULLION' && (
-              <span className="ml-1">
+              <span className="ml-2">
                 ({(item.premiumPercent || 0) > 0 ? '+' : ''}{item.premiumPercent || 0}% premium)
               </span>
             )}

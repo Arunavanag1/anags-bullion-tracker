@@ -205,22 +205,32 @@ export function CollectionScreen({ navigation }: Props) {
 
                   {/* Content */}
                   <View style={styles.itemContent}>
-                    <Text style={styles.itemName}>{itemName}</Text>
-                    <View style={styles.metalBadgeRow}>
-                      <View style={[styles.metalBadge, { backgroundColor: getMetalColor(item.metal || 'gold') }]}>
-                        <Text style={styles.metalBadgeText}>{item.metal || 'GOLD'}</Text>
+                    {/* Category badge left, metal/weight right */}
+                    <View style={styles.badgeWeightRow}>
+                      <View style={styles.badgeGroup}>
+                        <CategoryBadge category={item.category || 'BULLION'} />
+                        {item.isProblemCoin && item.problemType && (
+                          <ProblemCoinBadge isProblem={item.isProblemCoin} problemType={item.problemType} />
+                        )}
                       </View>
-                      <CategoryBadge category={item.category || 'BULLION'} />
-                      {item.isProblemCoin && item.problemType && (
-                        <ProblemCoinBadge isProblem={item.isProblemCoin} problemType={item.problemType} />
-                      )}
+                      <View style={styles.metalWeightGroup}>
+                        <Text style={styles.metalEmoji}>{getMetalEmoji(item.metal || 'gold')}</Text>
+                        <Text style={styles.weightText}>
+                          {item.weightOz || 0} oz{(item.quantity || 1) > 1 && ` × ${item.quantity}`}
+                        </Text>
+                      </View>
                     </View>
-                    <Text style={styles.itemMeta}>
-                      Qty: {item.quantity || 1} × {formatWeight(item.weightOz || 0)}
-                      {item.category === 'NUMISMATIC' && (
-                        <Text> • {item.gradingService ? `${item.gradingService} ` : ''}{item.grade}</Text>
-                      )}
-                    </Text>
+
+                    {/* Title */}
+                    <Text style={styles.itemName}>{itemName}</Text>
+
+                    {/* Grade for numismatics */}
+                    {item.category === 'NUMISMATIC' && (
+                      <Text style={styles.gradeText}>
+                        {item.gradingService ? `${item.gradingService} ` : ''}{item.grade}
+                        {item.certNumber && ` • Cert #${item.certNumber}`}
+                      </Text>
+                    )}
 
                     {/* Primary Value */}
                     <View style={styles.valueRowSpaced}>
@@ -243,7 +253,7 @@ export function CollectionScreen({ navigation }: Props) {
                       <Text style={styles.meltInfoText}>
                         Melt: {formatCurrency(meltValue)}
                         {item.category === 'BULLION' && (
-                          ` (${(item.premiumPercent || 0) > 0 ? '+' : ''}${item.premiumPercent || 0}% premium)`
+                          `  (${(item.premiumPercent || 0) > 0 ? '+' : ''}${item.premiumPercent || 0}% premium)`
                         )}
                       </Text>
                     </View>
@@ -505,32 +515,40 @@ const styles = StyleSheet.create({
   itemContent: {
     flex: 1,
   },
+  badgeWeightRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  badgeGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  metalWeightGroup: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  metalEmoji: {
+    fontSize: 14,
+  },
+  weightText: {
+    fontSize: 12,
+    color: Colors.textSecondary,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+  },
   itemName: {
     fontSize: 16,
     fontWeight: '600',
     color: Colors.textPrimary,
-    marginBottom: 8,
+    marginBottom: 4,
   },
-  metalBadgeRow: {
-    flexDirection: 'row',
-    gap: 8,
-    marginBottom: 12,
-    alignItems: 'center',
-  },
-  metalBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6,
-  },
-  metalBadgeText: {
-    fontSize: 10,
-    fontWeight: '600',
-    color: '#FFFFFF',
-    textTransform: 'uppercase',
-  },
-  itemMeta: {
+  gradeText: {
     fontSize: 12,
     color: Colors.textSecondary,
+    marginBottom: 4,
   },
   valueRow: {
     flexDirection: 'row',
