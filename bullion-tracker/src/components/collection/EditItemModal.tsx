@@ -48,6 +48,9 @@ export function EditItemModal({ isOpen, onClose, item }: EditItemModalProps) {
   const [customBookValue, setCustomBookValue] = useState(
     item.customBookValue?.toString() || ''
   );
+  const [premiumPercent, setPremiumPercent] = useState(
+    getItemProp<number | undefined>('premiumPercent', 0)?.toString() || '0'
+  );
   const [purchasePrice, setPurchasePrice] = useState(
     getItemProp<number | undefined>('purchasePrice', undefined)?.toString() || ''
   );
@@ -72,6 +75,7 @@ export function EditItemModal({ isOpen, onClose, item }: EditItemModalProps) {
       setNotes(item.notes || '');
       setBookValueType(item.bookValueType);
       setCustomBookValue(item.customBookValue?.toString() || '');
+      setPremiumPercent(getItemProp<number | undefined>('premiumPercent', 0)?.toString() || '0');
       setPurchasePrice(getItemProp<number | undefined>('purchasePrice', undefined)?.toString() || '');
       const pd = getItemProp<Date | string | undefined>('purchaseDate', undefined);
       setPurchaseDate(pd
@@ -83,7 +87,9 @@ export function EditItemModal({ isOpen, onClose, item }: EditItemModalProps) {
   }, [item]);
 
   const currentSpotPrice = prices?.[metal]?.pricePerOz || 0;
-  const spotValue = weightOz * quantity * currentSpotPrice;
+  const meltValue = weightOz * quantity * currentSpotPrice;
+  const premiumMultiplier = 1 + ((parseFloat(premiumPercent) || 0) / 100);
+  const spotValue = meltValue * premiumMultiplier;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -111,6 +117,7 @@ export function EditItemModal({ isOpen, onClose, item }: EditItemModalProps) {
       // Bullion items use spot or custom book value
       data.bookValueType = bookValueType;
       data.customBookValue = bookValueType === 'custom' ? parseFloat(customBookValue) : undefined;
+      data.premiumPercent = bookValueType === 'spot_premium' ? parseFloat(premiumPercent) || 0 : undefined;
     }
 
     try {
@@ -236,10 +243,32 @@ export function EditItemModal({ isOpen, onClose, item }: EditItemModalProps) {
                   className="text-accent-primary focus:ring-accent-primary"
                 />
                 <span className="text-text-primary">
-                  Use Spot Value{' '}
-                  <span className="font-mono text-sm">({formatCurrency(spotValue)})</span>
+                  Use Spot + Premium{' '}
+                  <span className="font-mono text-sm">
+                    ({formatCurrency(spotValue)}
+                    {parseFloat(premiumPercent) !== 0 && (
+                      <span className={parseFloat(premiumPercent) > 0 ? 'text-green-600' : 'text-red-600'}>
+                        {' '}{parseFloat(premiumPercent) > 0 ? '+' : ''}{premiumPercent}%
+                      </span>
+                    )})
+                  </span>
                 </span>
               </label>
+              {bookValueType === 'spot_premium' && (
+                <div className="ml-6">
+                  <Input
+                    label="Premium/Discount %"
+                    type="number"
+                    step="0.1"
+                    value={premiumPercent}
+                    onChange={(e) => setPremiumPercent(e.target.value)}
+                    placeholder="0"
+                  />
+                  <p className="text-xs text-text-secondary mt-1">
+                    Positive for premium (e.g., 5), negative for discount (e.g., -3)
+                  </p>
+                </div>
+              )}
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="radio"

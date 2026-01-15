@@ -37,6 +37,7 @@ export function AddItemModal({ isOpen, onClose }: AddItemModalProps) {
   const [notes, setNotes] = useState('');
   const [bookValueType, setBookValueType] = useState<BookValueType>('spot_premium');
   const [customBookValue, setCustomBookValue] = useState('');
+  const [premiumPercent, setPremiumPercent] = useState('0');
   const [images, setImages] = useState<string[]>([]);
   const [purchaseDate, setPurchaseDate] = useState(new Date().toISOString().split('T')[0]);
   const [purchasePrice, setPurchasePrice] = useState('');
@@ -63,7 +64,9 @@ export function AddItemModal({ isOpen, onClose }: AddItemModalProps) {
   }, [itemCategory, priceGuide, useCustomValue, selectedCoin, grade]);
 
   const currentSpotPrice = prices?.[metal]?.pricePerOz || 0;
-  const spotValue = weightOz * quantity * currentSpotPrice;
+  const meltValue = weightOz * quantity * currentSpotPrice;
+  const premiumMultiplier = 1 + ((parseFloat(premiumPercent) || 0) / 100);
+  const spotValue = meltValue * premiumMultiplier;
 
   const resetForm = () => {
     setStep(1);
@@ -75,6 +78,7 @@ export function AddItemModal({ isOpen, onClose }: AddItemModalProps) {
     setNotes('');
     setBookValueType('spot_premium');
     setCustomBookValue('');
+    setPremiumPercent('0');
     setImages([]);
     setPurchaseDate(new Date().toISOString().split('T')[0]);
     setPurchasePrice('');
@@ -115,6 +119,7 @@ export function AddItemModal({ isOpen, onClose }: AddItemModalProps) {
         bookValueType,
         spotPriceAtCreation: currentSpotPrice,
         customBookValue: bookValueType === 'custom' ? parseFloat(customBookValue) : undefined,
+        premiumPercent: bookValueType === 'spot_premium' ? parseFloat(premiumPercent) || 0 : undefined,
       };
     } else {
       data = {
@@ -352,6 +357,32 @@ export function AddItemModal({ isOpen, onClose }: AddItemModalProps) {
                 </div>
               </div>
 
+              {bookValueType === 'spot_premium' && (
+                <div style={{ marginBottom: '16px' }}>
+                  <label style={{ fontSize: '12px', fontWeight: '600', color: '#888', textTransform: 'uppercase', display: 'block', marginBottom: '8px' }}>
+                    Premium/Discount %
+                  </label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={premiumPercent}
+                    onChange={(e) => setPremiumPercent(e.target.value)}
+                    placeholder="0"
+                    style={{
+                      width: '100%',
+                      padding: '12px 16px',
+                      fontSize: '14px',
+                      border: '1px solid #E0E0E0',
+                      borderRadius: '10px',
+                      boxSizing: 'border-box',
+                    }}
+                  />
+                  <div style={{ fontSize: '11px', color: '#888', marginTop: '4px' }}>
+                    Use positive for premium (e.g., 5), negative for discount (e.g., -3)
+                  </div>
+                </div>
+              )}
+
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 {bookValueType === 'custom' && (
                   <div>
@@ -378,7 +409,7 @@ export function AddItemModal({ isOpen, onClose }: AddItemModalProps) {
                 {bookValueType === 'spot_premium' && (
                   <div>
                     <label style={{ fontSize: '12px', fontWeight: '600', color: '#888', textTransform: 'uppercase', display: 'block', marginBottom: '8px' }}>
-                      Calculated Spot Value
+                      Book Value (Spot + Premium)
                     </label>
                     <div style={{
                       padding: '12px 16px',
@@ -389,6 +420,11 @@ export function AddItemModal({ isOpen, onClose }: AddItemModalProps) {
                       color: '#666',
                     }}>
                       ${spotValue.toFixed(2)}
+                      {parseFloat(premiumPercent) !== 0 && (
+                        <span style={{ marginLeft: '8px', fontSize: '12px', color: parseFloat(premiumPercent) > 0 ? '#22A06B' : '#E53E3E' }}>
+                          ({parseFloat(premiumPercent) > 0 ? '+' : ''}{premiumPercent}%)
+                        </span>
+                      )}
                     </div>
                   </div>
                 )}
