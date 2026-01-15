@@ -38,7 +38,7 @@ export function CollectionSummary() {
 
   return (
     <Card>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Metal Totals with Donut Chart */}
         <div>
           <h3 className="text-sm font-medium text-text-secondary mb-3">
@@ -101,29 +101,16 @@ export function CollectionSummary() {
           )}
         </div>
 
-        {/* Melt Value */}
+        {/* Portfolio Value */}
         <div>
           <h3 className="text-sm font-medium text-text-secondary mb-3">
-            Total Melt Value
-          </h3>
-          <div className="text-3xl font-bold text-text-primary font-mono">
-            {formatCurrency(summary.totalMeltValue)}
-          </div>
-          <div className="text-sm text-text-secondary mt-1">
-            Based on spot prices
-          </div>
-        </div>
-
-        {/* Book Value */}
-        <div>
-          <h3 className="text-sm font-medium text-text-secondary mb-3">
-            Total Book Value
+            Portfolio Value
           </h3>
           <div className="text-3xl font-bold text-text-primary font-mono">
             {formatCurrency(summary.totalBookValue)}
           </div>
           <div className={`text-sm mt-1 ${percentChange >= 0 ? 'text-success' : 'text-red-600'}`}>
-            {percentChange >= 0 ? '+' : ''}{percentChange.toFixed(2)}% vs melt
+            {percentChange >= 0 ? '+' : ''}{percentChange.toFixed(2)}% vs melt ({formatCurrency(summary.totalMeltValue)})
           </div>
         </div>
       </div>
