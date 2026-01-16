@@ -10,12 +10,12 @@ See: .planning/PROJECT.md (updated 2026-01-09)
 
 ## Current Position
 
-Phase: 26 of 30 (Mobile Radial Collage)
-Plan: 1 of 2 (26-01 ready)
+Phase: 27 of 30 (Device Testing & Bug Fixes)
+Plan: 27-01-PLAN.md (Device Testing & Bug Fixes)
 Status: Ready to execute
-Last activity: 2026-01-15 — Phase 26 planned (2 plans)
+Last activity: 2026-01-15 — Phase 26 complete (circular carousel shipped)
 
-Progress: █████████░ 57% (17 of 30 phases complete)
+Progress: ██████████ 60% (18 of 30 phases complete)
 
 ## Milestones Overview
 
@@ -93,6 +93,8 @@ Recent decisions affecting current work:
 - Phase 23: Simple text-based ValueHistoryChart (no charting library)
 - Phase 25: Always use totalBookValue as unified portfolio value (removes spot/book toggle)
 - Phase 25: Melt value shown in parentheses for context on web dashboard
+- Phase 26: Circular carousel instead of radial arc for mobile (fits screen better)
+- Phase 26: Use React Native Animated API instead of Reanimated Gestures for Expo Go compatibility
 
 ### Deferred Issues
 
@@ -146,5 +148,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Milestone v1.8 Mobile Deployment Readiness created
+Stopped at: Phase 26 complete - circular carousel shipped
 Resume file: None

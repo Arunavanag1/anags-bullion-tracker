@@ -7,14 +7,14 @@ import { useAuth } from '../contexts/AuthContext';
 import { useSpotPrices } from '../contexts/SpotPricesContext';
 import { api } from '../lib/api';
 import { getGainDisplayFormat, setGainDisplayFormat, type GainDisplayFormat } from '../lib/settings';
-import { calculatePortfolioSummary, formatCurrency, formatPercentage } from '../lib/calculations';
+import { calculatePortfolioSummary, formatCurrency, formatCurrencyCompact, formatPercentage } from '../lib/calculations';
 import { savePortfolioValue, calculateDailyGain, get24hAgoValue } from '../lib/dailyTracking';
 import type { ValuationBreakdown } from '../types';
 import type { CollectionItem } from '../lib/api';
 import { Colors } from '../lib/colors';
 import { useCollectionSummary } from '../hooks/useCoins';
 import { TopPerformers } from '../components/TopPerformers';
-import { PricePill } from '../components/ui/PricePill';
+import { SpotPriceBanner } from '../components/ui/SpotPriceBanner';
 import { TabBar } from '../components/ui/TabBar';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Dashboard'>;
@@ -133,21 +133,8 @@ export function DashboardScreen({ navigation }: Props) {
       <StatusBar barStyle="light-content" />
       {Platform.OS === 'ios' && <View style={styles.statusBarSpacer} />}
 
-      {/* Spot Price Banner */}
-      <LinearGradient
-        colors={[Colors.bannerGradientStart, Colors.bannerGradientEnd]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.spotBanner}
-      >
-        {spotPrices && (
-          <>
-            <PricePill metal="Au" price={spotPrices.gold} color={Colors.gold} />
-            <PricePill metal="Ag" price={spotPrices.silver} color={Colors.silver} />
-            <PricePill metal="Pt" price={spotPrices.platinum} color={Colors.platinum} />
-          </>
-        )}
-      </LinearGradient>
+      {/* Spot Price Banner - Expandable */}
+      <SpotPriceBanner spotPrices={spotPrices} />
 
       <ScrollView
         style={styles.scrollView}
@@ -199,7 +186,7 @@ export function DashboardScreen({ navigation }: Props) {
                         styles.metricValue,
                         { color: dailyGain >= 0 ? Colors.positive : Colors.negative }
                       ]}>
-                        {dailyGain >= 0 ? '+' : ''}{formatCurrency(dailyGain)}
+                        {dailyGain >= 0 ? '+' : ''}{formatCurrencyCompact(dailyGain)}
                       </Text>
                     ) : (
                       <Text style={[
@@ -222,7 +209,7 @@ export function DashboardScreen({ navigation }: Props) {
                       styles.metricValue,
                       { color: summary.totalGain >= 0 ? Colors.positive : Colors.negative }
                     ]}>
-                      {summary.totalGain >= 0 ? '+' : ''}{formatCurrency(summary.totalGain)}
+                      {summary.totalGain >= 0 ? '+' : ''}{formatCurrencyCompact(summary.totalGain)}
                     </Text>
                   ) : (
                     <Text style={[

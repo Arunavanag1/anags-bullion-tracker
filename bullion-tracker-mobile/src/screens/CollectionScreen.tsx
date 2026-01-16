@@ -6,13 +6,13 @@ import { RootStackParamList } from '../../App';
 import { useSpotPrices } from '../contexts/SpotPricesContext';
 import { api } from '../lib/api';
 import type { CollectionItem } from '../lib/api';
-import { formatCurrency, formatPercentage, formatWeight, calculateGain, calculateGainPercentage, calculateBookValue, calculatePurchaseCost } from '../lib/calculations';
+import { formatCurrency, formatCurrencyCompact, formatPercentage, formatWeight, calculateGain, calculateGainPercentage, calculateBookValue, calculatePurchaseCost } from '../lib/calculations';
 import { getPriceForDate } from '../lib/historical-data';
 import type { SpotPrices, ItemCategory } from '../types';
 import { Colors } from '../lib/colors';
 import { CategoryBadge } from '../components/numismatic/CategoryBadge';
 import { ProblemCoinBadge } from '../components/numismatic/ProblemCoinBadge';
-import { PricePill } from '../components/ui/PricePill';
+import { SpotPriceBanner } from '../components/ui/SpotPriceBanner';
 import { TabBar } from '../components/ui/TabBar';
 import { ValueHistoryChart } from '../components/numismatic/ValueHistoryChart';
 
@@ -95,21 +95,8 @@ export function CollectionScreen({ navigation }: Props) {
       <StatusBar barStyle="light-content" />
       {Platform.OS === 'ios' && <View style={styles.statusBarSpacer} />}
 
-      {/* Spot Price Banner */}
-      <LinearGradient
-        colors={[Colors.bannerGradientStart, Colors.bannerGradientEnd]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.spotBanner}
-      >
-        {spotPrices && (
-          <>
-            <PricePill metal="Au" price={spotPrices.gold} color={Colors.gold} />
-            <PricePill metal="Ag" price={spotPrices.silver} color={Colors.silver} />
-            <PricePill metal="Pt" price={spotPrices.platinum} color={Colors.platinum} />
-          </>
-        )}
-      </LinearGradient>
+      {/* Spot Price Banner - Expandable */}
+      <SpotPriceBanner spotPrices={spotPrices} />
 
       {items.length === 0 ? (
         <View style={styles.emptyContainer}>
@@ -188,13 +175,26 @@ export function CollectionScreen({ navigation }: Props) {
               const gain = calculateGain(item, typeof spotPrice === 'number' ? spotPrice : 0);
               const gainPercent = calculateGainPercentage(item, typeof spotPrice === 'number' ? spotPrice : 0);
 
-              // Calculate daily change based on spot price movement
+              // Calculate daily change based on value difference
+              // For bullion: value = weight × spot × (1 + premium%)
+              // For numismatic: value doesn't change daily (guide prices don't update daily)
               const metalKey = item.metal as 'gold' | 'silver' | 'platinum';
               const yesterdaySpot = yesterdayPrices[metalKey] || 0;
               const todaySpot = typeof spotPrice === 'number' ? spotPrice : 0;
-              const dailySpotChange = todaySpot - yesterdaySpot;
-              const dailyValueChange = pureWeight * dailySpotChange;
-              const dailyChangePercent = yesterdaySpot > 0 ? (dailySpotChange / yesterdaySpot) * 100 : 0;
+
+              let dailyValueChange = 0;
+              let dailyChangePercent = 0;
+
+              const bookValueType = item.bookValueType as string;
+              if (bookValueType === 'spot_premium' || bookValueType === 'spot' || !bookValueType) {
+                // Bullion: calculate based on spot price change with premium
+                const premiumMultiplier = 1 + ((item.premiumPercent || 0) / 100);
+                const todayValue = pureWeight * todaySpot * premiumMultiplier;
+                const yesterdayValue = pureWeight * yesterdaySpot * premiumMultiplier;
+                dailyValueChange = todayValue - yesterdayValue;
+                dailyChangePercent = yesterdayValue > 0 ? (dailyValueChange / yesterdayValue) * 100 : 0;
+              }
+              // For numismatic (guide_price, custom): daily change is 0 since guide prices don't update daily
 
               return (
                 <View key={item.id} style={styles.itemCard}>
@@ -270,7 +270,7 @@ export function CollectionScreen({ navigation }: Props) {
                         styles.returnValue,
                         { color: gain >= 0 ? Colors.positive : Colors.negative }
                       ]}>
-                        {gain >= 0 ? '+' : ''}{formatCurrency(gain)} ({formatPercentage(gainPercent)})
+                        {gain >= 0 ? '+' : ''}{formatCurrencyCompact(gain)} ({formatPercentage(gainPercent)})
                       </Text>
                     </View>
 

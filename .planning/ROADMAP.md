@@ -374,7 +374,7 @@ Plans:
 **Plans**: TBD
 
 Plans:
-- [ ] 27-01: TBD (run /gsd:plan-phase 27 to break down)
+- [ ] 27-01: Device testing checklist, iOS/Android testing, bug fixes, data sync verification
 
 **Scope:**
 - Test all screens and flows on physical iOS device

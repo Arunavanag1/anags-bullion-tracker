@@ -158,6 +158,24 @@ export function formatCurrency(value: number): string {
 }
 
 /**
+ * Format currency value in compact form for large numbers
+ * e.g., $12,345.67 -> $12.3k
+ */
+export function formatCurrencyCompact(value: number): string {
+  const absValue = Math.abs(value);
+  const sign = value < 0 ? '-' : '';
+
+  if (absValue >= 10000) {
+    // Format as $x.xk
+    const inThousands = absValue / 1000;
+    return `${sign}$${inThousands.toFixed(1)}k`;
+  }
+
+  // Use regular formatting for values under $10,000
+  return formatCurrency(value);
+}
+
+/**
  * Format weight with proper unit
  */
 export function formatWeight(weight: number): string {
