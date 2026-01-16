@@ -115,10 +115,11 @@ Plans:
 **Goal**: Comprehensive error handling, input validation, security headers, CORS config
 **Depends on**: Phase 32
 **Research**: Unlikely (established patterns)
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 33-01: TBD
+- [ ] 33-01: Security headers middleware, API error standardization
+- [ ] 33-02: Input validation utilities, collection API rate limiting
 
 #### Phase 34: Performance Review
 **Goal**: Fix N+1 queries, add pagination, optimize bundle size, improve load times
