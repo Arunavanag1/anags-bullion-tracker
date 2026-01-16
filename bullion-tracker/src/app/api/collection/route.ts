@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { getUserId } from '@/lib/auth';
+import { validationError, notFoundError, handleApiError } from '@/lib/api-errors';
 
 export const dynamic = 'force-dynamic';
 
@@ -32,26 +33,8 @@ export async function GET() {
       success: true,
       data: items,
     });
-  } catch (error: any) {
-    console.error('Error fetching collection items:', error);
-
-    if (error.message === 'Unauthorized') {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Unauthorized',
-        },
-        { status: 401 }
-      );
-    }
-
-    return NextResponse.json(
-      {
-        success: false,
-        error: 'Failed to fetch collection items',
-      },
-      { status: 500 }
-    );
+  } catch (error) {
+    return handleApiError(error, 'fetch collection items');
   }
 }
 
@@ -77,13 +60,9 @@ export async function POST(request: NextRequest) {
       const { type, metal, weightOz, bookValueType, spotPriceAtCreation } = body;
 
       if (!type || !metal || !weightOz || !bookValueType || spotPriceAtCreation === undefined) {
-        return NextResponse.json(
-          {
-            success: false,
-            error: 'Missing required bullion fields',
-          },
-          { status: 400 }
-        );
+        throw validationError('Missing required bullion fields', {
+          required: ['type', 'metal', 'weightOz', 'bookValueType', 'spotPriceAtCreation'],
+        });
       }
 
       createData.type = type;
@@ -101,13 +80,9 @@ export async function POST(request: NextRequest) {
       const { coinReferenceId, grade, gradingService, bookValueType, metal } = body;
 
       if (!coinReferenceId || !grade || !gradingService || !bookValueType) {
-        return NextResponse.json(
-          {
-            success: false,
-            error: 'Missing required numismatic fields',
-          },
-          { status: 400 }
-        );
+        throw validationError('Missing required numismatic fields', {
+          required: ['coinReferenceId', 'grade', 'gradingService', 'bookValueType'],
+        });
       }
 
       // Fetch coin reference to get metal, weight, and build title
@@ -116,13 +91,7 @@ export async function POST(request: NextRequest) {
       });
 
       if (!coinReference) {
-        return NextResponse.json(
-          {
-            success: false,
-            error: 'Coin reference not found',
-          },
-          { status: 404 }
-        );
+        throw notFoundError('Coin reference not found');
       }
 
       // Use provided metal, or fall back to coin reference metal
@@ -150,13 +119,10 @@ export async function POST(request: NextRequest) {
       if (body.customBookValue !== undefined) createData.customBookValue = body.customBookValue;
       if (body.numismaticValue !== undefined) createData.numismaticValue = body.numismaticValue;
     } else {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Invalid category',
-        },
-        { status: 400 }
-      );
+      throw validationError('Invalid category', {
+        allowed: ['BULLION', 'NUMISMATIC'],
+        received: category,
+      });
     }
 
     // Add common optional fields
@@ -188,25 +154,7 @@ export async function POST(request: NextRequest) {
       success: true,
       data: item,
     });
-  } catch (error: any) {
-    console.error('Error creating collection item:', error);
-
-    if (error.message === 'Unauthorized') {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Unauthorized',
-        },
-        { status: 401 }
-      );
-    }
-
-    return NextResponse.json(
-      {
-        success: false,
-        error: 'Failed to create collection item',
-      },
-      { status: 500 }
-    );
+  } catch (error) {
+    return handleApiError(error, 'create collection item');
   }
 }

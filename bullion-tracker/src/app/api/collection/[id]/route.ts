@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { getUserId } from '@/lib/auth';
+import { notFoundError, handleApiError } from '@/lib/api-errors';
 
 export const dynamic = 'force-dynamic';
 
@@ -31,39 +32,15 @@ export async function GET(
     });
 
     if (!item) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Item not found',
-        },
-        { status: 404 }
-      );
+      throw notFoundError('Item not found');
     }
 
     return NextResponse.json({
       success: true,
       data: item,
     });
-  } catch (error: any) {
-    console.error('Error fetching collection item:', error);
-
-    if (error.message === 'Unauthorized') {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Unauthorized',
-        },
-        { status: 401 }
-      );
-    }
-
-    return NextResponse.json(
-      {
-        success: false,
-        error: 'Failed to fetch collection item',
-      },
-      { status: 500 }
-    );
+  } catch (error) {
+    return handleApiError(error, 'fetch collection item');
   }
 }
 
@@ -86,13 +63,7 @@ export async function PUT(
     });
 
     if (!existingItem || existingItem.userId !== userId) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Item not found',
-        },
-        { status: 404 }
-      );
+      throw notFoundError('Item not found');
     }
 
     // Build update data object, only including defined fields
@@ -139,26 +110,8 @@ export async function PUT(
       success: true,
       data: item,
     });
-  } catch (error: any) {
-    console.error('Error updating collection item:', error);
-
-    if (error.message === 'Unauthorized') {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Unauthorized',
-        },
-        { status: 401 }
-      );
-    }
-
-    return NextResponse.json(
-      {
-        success: false,
-        error: 'Failed to update collection item',
-      },
-      { status: 500 }
-    );
+  } catch (error) {
+    return handleApiError(error, 'update collection item');
   }
 }
 
@@ -180,13 +133,7 @@ export async function DELETE(
     });
 
     if (!existingItem || existingItem.userId !== userId) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Item not found',
-        },
-        { status: 404 }
-      );
+      throw notFoundError('Item not found');
     }
 
     await prisma.collectionItem.delete({
@@ -196,25 +143,7 @@ export async function DELETE(
     return NextResponse.json({
       success: true,
     });
-  } catch (error: any) {
-    console.error('Error deleting collection item:', error);
-
-    if (error.message === 'Unauthorized') {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Unauthorized',
-        },
-        { status: 401 }
-      );
-    }
-
-    return NextResponse.json(
-      {
-        success: false,
-        error: 'Failed to delete collection item',
-      },
-      { status: 500 }
-    );
+  } catch (error) {
+    return handleApiError(error, 'delete collection item');
   }
 }
