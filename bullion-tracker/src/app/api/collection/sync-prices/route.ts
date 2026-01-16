@@ -57,21 +57,55 @@ export async function POST(request: NextRequest) {
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    let updated = 0;
 
-    for (const item of items) {
-      if (!item.coinReferenceId || !item.grade) continue;
+    // Filter items with valid coinReferenceId and grade
+    const validItems = items.filter((item) => item.coinReferenceId && item.grade);
 
-      // Fetch latest price guide entry
-      const priceGuide = await prisma.coinPriceGuide.findFirst({
-        where: {
-          coinReferenceId: item.coinReferenceId,
-          gradeCode: item.grade,
-        },
-        orderBy: {
-          priceDate: 'desc',
+    if (validItems.length === 0) {
+      return NextResponse.json({
+        success: true,
+        data: {
+          synced: 0,
+          updated: 0,
+          message: 'No valid items to sync',
         },
       });
+    }
+
+    // Extract unique (coinReferenceId, grade) pairs for batch query
+    const priceKeys = validItems.map((item) => ({
+      coinReferenceId: item.coinReferenceId!,
+      gradeCode: item.grade!,
+    }));
+
+    // Batch fetch all price guides
+    const allPriceGuides = await prisma.coinPriceGuide.findMany({
+      where: {
+        OR: priceKeys.map((key) => ({
+          coinReferenceId: key.coinReferenceId,
+          gradeCode: key.gradeCode,
+        })),
+      },
+      orderBy: { priceDate: 'desc' },
+    });
+
+    // Build lookup map (most recent price per coin+grade)
+    const priceGuideMap = new Map<string, typeof allPriceGuides[0]>();
+    for (const pg of allPriceGuides) {
+      const key = `${pg.coinReferenceId}-${pg.gradeCode}`;
+      if (!priceGuideMap.has(key)) {
+        priceGuideMap.set(key, pg);
+      }
+    }
+
+    // Prepare batch operations
+    const updateOperations: ReturnType<typeof prisma.collectionItem.update>[] = [];
+    const upsertOperations: ReturnType<typeof prisma.itemValueHistory.upsert>[] = [];
+    let updated = 0;
+
+    for (const item of validItems) {
+      const key = `${item.coinReferenceId}-${item.grade}`;
+      const priceGuide = priceGuideMap.get(key);
 
       if (!priceGuide) continue;
 
@@ -87,36 +121,44 @@ export async function POST(request: NextRequest) {
       // Determine source
       const source = priceGuide.greysheetPrice ? 'greysheet' : 'pcgs';
 
-      // Update numismaticValue if changed
-      const currentValue = item.numismaticValue;
-      if (currentValue !== guideValue) {
-        await prisma.collectionItem.update({
-          where: { id: item.id },
-          data: { numismaticValue: guideValue },
-        });
+      // Queue update if value changed
+      if (item.numismaticValue !== guideValue) {
+        updateOperations.push(
+          prisma.collectionItem.update({
+            where: { id: item.id },
+            data: { numismaticValue: guideValue },
+          })
+        );
         updated++;
       }
 
-      // Upsert value history entry for today
-      await prisma.itemValueHistory.upsert({
-        where: {
-          collectionItemId_priceDate: {
-            collectionItemId: item.id,
-            priceDate: today,
+      // Queue upsert for value history
+      upsertOperations.push(
+        prisma.itemValueHistory.upsert({
+          where: {
+            collectionItemId_priceDate: {
+              collectionItemId: item.id,
+              priceDate: today,
+            },
           },
-        },
-        update: {
-          value: guideValue,
-          source,
-        },
-        create: {
-          collectionItemId: item.id,
-          valueType: 'guide_price',
-          value: guideValue,
-          priceDate: today,
-          source,
-        },
-      });
+          update: {
+            value: guideValue,
+            source,
+          },
+          create: {
+            collectionItemId: item.id,
+            valueType: 'guide_price',
+            value: guideValue,
+            priceDate: today,
+            source,
+          },
+        })
+      );
+    }
+
+    // Execute all writes in a single transaction
+    if (updateOperations.length > 0 || upsertOperations.length > 0) {
+      await prisma.$transaction([...updateOperations, ...upsertOperations]);
     }
 
     return NextResponse.json({
