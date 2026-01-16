@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import bcrypt from 'bcryptjs';
 import { checkRateLimit, getClientIp } from '@/lib/ratelimit';
-import { validatePassword } from '@/lib/validation';
+import { validatePassword, validateEmail } from '@/lib/validation';
 
 export async function POST(request: NextRequest) {
   try {
@@ -33,6 +33,16 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Validate email format and normalize
+    const emailCheck = validateEmail(email);
+    if (!emailCheck.valid) {
+      return NextResponse.json(
+        { error: emailCheck.reason },
+        { status: 400 }
+      );
+    }
+    const normalizedEmail = emailCheck.normalizedEmail!;
+
     const passwordCheck = validatePassword(password);
     if (!passwordCheck.valid) {
       return NextResponse.json(
@@ -41,9 +51,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if user already exists
+    // Check if user already exists (using normalized email)
     const existingUser = await prisma.user.findUnique({
-      where: { email },
+      where: { email: normalizedEmail },
     });
 
     if (existingUser) {
@@ -56,11 +66,11 @@ export async function POST(request: NextRequest) {
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create user
+    // Create user (store normalized email)
     const user = await prisma.user.create({
       data: {
         name,
-        email,
+        email: normalizedEmail,
         password: hashedPassword,
       },
     });
