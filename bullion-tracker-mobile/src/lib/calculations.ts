@@ -159,19 +159,19 @@ export function formatCurrency(value: number): string {
 
 /**
  * Format currency value in compact form for large numbers
- * e.g., $12,345.67 -> $12.3k
+ * e.g., $1,234.56 -> $1.2k
  */
 export function formatCurrencyCompact(value: number): string {
   const absValue = Math.abs(value);
   const sign = value < 0 ? '-' : '';
 
-  if (absValue >= 10000) {
-    // Format as $x.xk
+  if (absValue >= 1000) {
+    // Format as $x.xk for values >= $1,000
     const inThousands = absValue / 1000;
     return `${sign}$${inThousands.toFixed(1)}k`;
   }
 
-  // Use regular formatting for values under $10,000
+  // Use regular formatting for values under $1,000
   return formatCurrency(value);
 }
 
