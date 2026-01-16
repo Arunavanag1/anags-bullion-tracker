@@ -125,10 +125,11 @@ Plans:
 **Goal**: Fix N+1 queries, add pagination, optimize bundle size, improve load times
 **Depends on**: Phase 33
 **Research**: Unlikely (internal optimization)
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 34-01: TBD
+- [ ] 34-01: Fix N+1 queries in coins/performance and sync-prices routes
+- [ ] 34-02: Add pagination to collection API, configure bundle optimization
 
 #### Phase 35: Code Quality Sweep
 **Goal**: ESLint strict mode, remove dead code, fix all TypeScript issues, document patterns
