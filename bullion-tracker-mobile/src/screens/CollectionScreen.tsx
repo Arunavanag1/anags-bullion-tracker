@@ -6,7 +6,8 @@ import { RootStackParamList } from '../../App';
 import { useSpotPrices } from '../contexts/SpotPricesContext';
 import { api } from '../lib/api';
 import type { CollectionItem } from '../lib/api';
-import { formatCurrency, formatPercentage, formatWeight } from '../lib/calculations';
+import { formatCurrency, formatPercentage, formatWeight, calculateGain, calculateGainPercentage, calculateBookValue, calculatePurchaseCost } from '../lib/calculations';
+import { getPriceForDate } from '../lib/historical-data';
 import type { SpotPrices, ItemCategory } from '../types';
 import { Colors } from '../lib/colors';
 import { CategoryBadge } from '../components/numismatic/CategoryBadge';
@@ -166,28 +167,50 @@ export function CollectionScreen({ navigation }: Props) {
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={Colors.accentDark} />
             }
           >
-          {items
-            .filter(item => categoryFilter === 'ALL' || (item.category || 'BULLION') === categoryFilter)
-            .map((item) => {
-            const itemName = item.title || `${item.metal} (Bulk)`;
-            const spotPrice = spotPrices?.[item.metal as keyof SpotPrices] || 0;
-            const pureWeight = (item.weightOz || 0) * (item.quantity || 1);
-            const meltValue = pureWeight * (typeof spotPrice === 'number' ? spotPrice : 0);
+          {(() => {
+            // Get yesterday's prices for daily change calculation
+            const yesterday = new Date();
+            yesterday.setDate(yesterday.getDate() - 1);
+            const yesterdayPrices = getPriceForDate(yesterday);
 
-            // Calculate current book value based on category
-            const premiumMultiplier = 1 + ((item.premiumPercent || 0) / 100);
-            const currentValue = item.category === 'NUMISMATIC'
-              ? (item.numismaticValue || item.customBookValue || 0)
-              : meltValue * premiumMultiplier;
+            return items
+              .filter(item => categoryFilter === 'ALL' || (item.category || 'BULLION') === categoryFilter)
+              .map((item) => {
+              const itemName = item.title || `${item.metal} (Bulk)`;
+              const spotPrice = spotPrices?.[item.metal as keyof SpotPrices] || 0;
+              const pureWeight = (item.weightOz || 0) * (item.quantity || 1);
+              const meltValue = pureWeight * (typeof spotPrice === 'number' ? spotPrice : 0);
 
-            // Purchase value for gain/loss calculation
-            const purchaseValue = item.customBookValue || ((item.weightOz || 0) * (item.quantity || 1) * (item.spotPriceAtCreation || 0));
-            const gain = currentValue - purchaseValue;
-            const gainPercent = purchaseValue > 0 ? (gain / purchaseValue) * 100 : 0;
+              // Calculate current book value using the proper function
+              const currentValue = calculateBookValue(item, typeof spotPrice === 'number' ? spotPrice : 0);
 
-            return (
-              <View key={item.id} style={styles.itemCard}>
-                <View style={styles.itemRow}>
+              // Calculate gain using the proper function
+              const gain = calculateGain(item, typeof spotPrice === 'number' ? spotPrice : 0);
+              const gainPercent = calculateGainPercentage(item, typeof spotPrice === 'number' ? spotPrice : 0);
+
+              // Calculate daily change based on spot price movement
+              const metalKey = item.metal as 'gold' | 'silver' | 'platinum';
+              const yesterdaySpot = yesterdayPrices[metalKey] || 0;
+              const todaySpot = typeof spotPrice === 'number' ? spotPrice : 0;
+              const dailySpotChange = todaySpot - yesterdaySpot;
+              const dailyValueChange = pureWeight * dailySpotChange;
+              const dailyChangePercent = yesterdaySpot > 0 ? (dailySpotChange / yesterdaySpot) * 100 : 0;
+
+              return (
+                <View key={item.id} style={styles.itemCard}>
+                  {/* Daily Change Bubble */}
+                  <View style={[
+                    styles.dailyChangeBubble,
+                    { backgroundColor: dailyChangePercent >= 0 ? Colors.positive + '20' : Colors.negative + '20' }
+                  ]}>
+                    <Text style={[
+                      styles.dailyChangeText,
+                      { color: dailyChangePercent >= 0 ? Colors.positive : Colors.negative }
+                    ]}>
+                      {dailyChangePercent >= 0 ? '+' : ''}{dailyChangePercent.toFixed(1)}%
+                    </Text>
+                  </View>
+                  <View style={styles.itemRow}>
                   {/* Image */}
                   <View style={styles.imageContainer}>
                     {item.images && item.images.length > 0 ? (
@@ -240,9 +263,9 @@ export function CollectionScreen({ navigation }: Props) {
                       <Text style={styles.primaryValue}>{formatCurrency(currentValue)}</Text>
                     </View>
 
-                    {/* Return to date */}
+                    {/* Total Return */}
                     <View style={styles.returnRow}>
-                      <Text style={styles.valueLabel}>Return:</Text>
+                      <Text style={styles.valueLabel}>Total Return:</Text>
                       <Text style={[
                         styles.returnValue,
                         { color: gain >= 0 ? Colors.positive : Colors.negative }
@@ -299,8 +322,9 @@ export function CollectionScreen({ navigation }: Props) {
                   </TouchableOpacity>
                 </View>
               </View>
-            );
-          })}
+              );
+            });
+          })()}
           </ScrollView>
         </>
       )}
@@ -491,6 +515,21 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.04,
     shadowRadius: 20,
     elevation: 2,
+    position: 'relative',
+  },
+  dailyChangeBubble: {
+    position: 'absolute',
+    top: 8,
+    left: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    zIndex: 1,
+  },
+  dailyChangeText: {
+    fontSize: 11,
+    fontWeight: '600',
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   itemRow: {
     flexDirection: 'row',
