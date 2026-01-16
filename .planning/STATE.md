@@ -2,12 +2,12 @@
 
 ## Current Position
 
-Phase: 32 of 36 (Auth Security Audit)
-Plan: 1 of 1 in current phase
-Status: Phase complete
-Last activity: 2026-01-16 - Completed 32-01-PLAN.md
+Phase: 33 of 36 (API Hardening)
+Plan: 1 of 2 in current phase
+Status: In progress
+Last activity: 2026-01-16 - Completed 33-01-PLAN.md
 
-Progress: ████░░░░░░ 33% (v1.9 milestone)
+Progress: ████░░░░░░ 42% (v1.9 milestone)
 
 ## Active Milestone
 
@@ -18,7 +18,7 @@ Progress: ████░░░░░░ 33% (v1.9 milestone)
 ## Session Continuity
 
 Last session: 2026-01-16
-Stopped at: Completed Phase 32 (auth security hardening)
+Stopped at: Completed 33-01-PLAN.md (security headers & error standardization)
 Resume file: None
 
 ## Accumulated Context
@@ -31,11 +31,13 @@ Resume file: None
 - Local spot price tracking (accurate 24h gains)
 - 7-day JWT tokens with refresh (Phase 32)
 - Email normalization at signup (Phase 32)
+- CSP allows unsafe-inline for Next.js dev (Phase 33)
+- Centralized API error handling (Phase 33)
 
 ### Technical Debt Being Addressed
 - [x] No test coverage → Phase 31 (76 tests)
 - [x] Auth vulnerabilities → Phase 32 (JWT expiry, email validation)
-- [ ] API security gaps → Phase 33
+- [ ] API security gaps → Phase 33 (in progress)
 - [ ] N+1 queries, no pagination → Phase 34
 - [ ] TypeScript issues, dead code → Phase 35
 - [ ] Deployment configuration → Phase 36
