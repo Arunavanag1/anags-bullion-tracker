@@ -194,3 +194,16 @@ export interface ValuationBreakdown {
   };
   lastSyncDate: string | null;  // From most recent ItemValueHistory
 }
+
+// Pagination Types
+export interface PaginationMeta {
+  hasMore: boolean;
+  nextCursor: string | null;
+  limit: number;
+}
+
+export interface PaginatedResponse<T> {
+  success: true;
+  data: T[];
+  pagination: PaginationMeta;
+}
