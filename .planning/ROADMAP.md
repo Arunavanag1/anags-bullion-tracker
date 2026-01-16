@@ -128,7 +128,7 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 34-01: Fix N+1 queries in coins/performance and sync-prices routes
+- [x] 34-01: Fix N+1 queries in coins/performance and sync-prices routes
 - [ ] 34-02: Add pagination to collection API, configure bundle optimization
 
 #### Phase 35: Code Quality Sweep
@@ -163,6 +163,6 @@ Phases execute in numeric order. v1.8 and v1.9 can partially overlap (testing ca
 | 31. Test Foundation | v1.9 | 3/3 | Complete | 2026-01-16 |
 | 32. Auth Security Audit | v1.9 | 1/1 | Complete | 2026-01-16 |
 | 33. API Hardening | v1.9 | 2/2 | Complete | 2026-01-16 |
-| 34. Performance Review | v1.9 | 0/? | Not started | - |
+| 34. Performance Review | v1.9 | 1/2 | In progress | - |
 | 35. Code Quality Sweep | v1.9 | 0/? | Not started | - |
 | 36. Deployment Verification | v1.9 | 0/? | Not started | - |
