@@ -606,16 +606,21 @@ const styles = StyleSheet.create({
   returnRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 4,
+    gap: 8,
   },
   valueLabel: {
     fontSize: 12,
     color: Colors.textSecondary,
+    flexShrink: 0,
   },
   returnValue: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '600',
     fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
+    textAlign: 'right',
+    flexShrink: 1,
   },
   valueWithChange: {
     flexDirection: 'row',
