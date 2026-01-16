@@ -64,14 +64,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate JWT token
+    // Generate JWT token (7 days expiry for mobile)
     const token = jwt.sign(
       {
         userId: user.id,
         email: user.email,
       },
       JWT_SECRET,
-      { expiresIn: '30d' } // 30 days
+      { expiresIn: '7d' }
     );
 
     return NextResponse.json({
