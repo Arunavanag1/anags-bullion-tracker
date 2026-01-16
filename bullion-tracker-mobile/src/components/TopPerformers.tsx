@@ -128,7 +128,7 @@ export function TopPerformers() {
   const { best: bestPerformer, worst: worstPerformer } = getAdjustedBestAndWorst();
 
   return (
-    <Card>
+    <Card style={{ marginTop: 16 }}>
       <Text style={styles.title}>Top Performers (30 Days)</Text>
 
       {/* Metals Section */}

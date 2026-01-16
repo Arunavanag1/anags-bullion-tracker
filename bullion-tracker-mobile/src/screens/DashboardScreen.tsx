@@ -531,7 +531,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   metricValue: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: '600',
     fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
@@ -539,6 +539,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.bgCard,
     borderRadius: 24,
     padding: 24,
+    marginBottom: 16,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.04,

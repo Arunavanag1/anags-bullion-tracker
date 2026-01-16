@@ -228,7 +228,7 @@ export function CollectionScreen({ navigation }: Props) {
                     {item.category === 'NUMISMATIC' && (
                       <Text style={styles.gradeText}>
                         {item.gradingService ? `${item.gradingService} ` : ''}{item.grade}
-                        {item.certNumber && ` • Cert #${item.certNumber}`}
+                        {item.certificationNumber && ` • Cert #${item.certificationNumber}`}
                       </Text>
                     )}
 
@@ -237,18 +237,21 @@ export function CollectionScreen({ navigation }: Props) {
                       <Text style={styles.valueLabel}>
                         {item.category === 'NUMISMATIC' ? 'Guide Value:' : 'Current Value:'}
                       </Text>
-                      <View style={styles.valueWithChange}>
-                        <Text style={styles.primaryValue}>{formatCurrency(currentValue)}</Text>
-                        <Text style={[
-                          styles.changeValue,
-                          { color: gain >= 0 ? Colors.positive : Colors.negative }
-                        ]}>
-                          {formatPercentage(gainPercent)}
-                        </Text>
-                      </View>
+                      <Text style={styles.primaryValue}>{formatCurrency(currentValue)}</Text>
                     </View>
 
-                    {/* Secondary Melt Value - indented and informative */}
+                    {/* Return to date */}
+                    <View style={styles.returnRow}>
+                      <Text style={styles.valueLabel}>Return:</Text>
+                      <Text style={[
+                        styles.returnValue,
+                        { color: gain >= 0 ? Colors.positive : Colors.negative }
+                      ]}>
+                        {gain >= 0 ? '+' : ''}{formatCurrency(gain)} ({formatPercentage(gainPercent)})
+                      </Text>
+                    </View>
+
+                    {/* Secondary Melt Value - indented */}
                     <View style={styles.meltInfoRowSpaced}>
                       <Text style={styles.meltInfoText}>
                         Melt: {formatCurrency(meltValue)}
@@ -561,9 +564,19 @@ const styles = StyleSheet.create({
     marginTop: 12,
     marginBottom: 4,
   },
+  returnRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 4,
+  },
   valueLabel: {
     fontSize: 12,
     color: Colors.textSecondary,
+  },
+  returnValue: {
+    fontSize: 12,
+    fontWeight: '600',
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   valueWithChange: {
     flexDirection: 'row',

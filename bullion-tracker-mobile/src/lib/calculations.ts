@@ -71,6 +71,10 @@ export function calculateGainPercentage(item: CollectionItem, spotPrice: number)
 
 /**
  * Calculate portfolio summary from collection items
+ *
+ * Total Return = currentValue - purchaseCost (cost basis at time of acquisition)
+ * - For bullion: purchaseCost = spotPriceAtCreation × weight × quantity
+ * - For numismatic: purchaseCost = purchasePrice or customBookValue
  */
 export function calculatePortfolioSummary(
   items: CollectionItem[],
@@ -78,6 +82,7 @@ export function calculatePortfolioSummary(
 ): PortfolioSummary {
   let totalMeltValue = 0;
   let totalBookValue = 0;
+  let totalPurchaseCost = 0;
   const totalWeight = {
     gold: 0,
     silver: 0,
@@ -89,14 +94,28 @@ export function calculatePortfolioSummary(
     const spotPrice = spotPrices[metalKey];
     if (typeof spotPrice !== 'number') return; // Skip if price is not available
 
-    totalMeltValue += calculateMeltValue(item, spotPrice);
-    totalBookValue += calculateBookValue(item, spotPrice);
+    const meltValue = calculateMeltValue(item, spotPrice);
+    const bookValue = calculateBookValue(item, spotPrice);
+
+    totalMeltValue += meltValue;
+    totalBookValue += bookValue;
+
+    // Calculate purchase cost (cost basis)
+    // For bullion: spot price at creation × weight × quantity
+    // For numismatic: purchase price or custom book value at creation
+    const totalItemWeight = (item.weightOz || 0) * (item.quantity || 1);
+    const purchaseCost = item.purchasePrice
+      || item.customBookValue
+      || (totalItemWeight * (item.spotPriceAtCreation || spotPrice));
+    totalPurchaseCost += purchaseCost;
+
     // weightOz is already pure weight
-    totalWeight[metalKey] += (item.weightOz || 0) * (item.quantity || 1);
+    totalWeight[metalKey] += totalItemWeight;
   });
 
-  const totalGain = totalMeltValue - totalBookValue;
-  const gainPercentage = totalBookValue > 0 ? (totalGain / totalBookValue) * 100 : 0;
+  // Total gain = current book value - purchase cost (what you paid)
+  const totalGain = totalBookValue - totalPurchaseCost;
+  const gainPercentage = totalPurchaseCost > 0 ? (totalGain / totalPurchaseCost) * 100 : 0;
 
   return {
     totalMeltValue,
