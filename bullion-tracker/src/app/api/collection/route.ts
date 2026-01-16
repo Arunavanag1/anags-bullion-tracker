@@ -9,31 +9,71 @@ export const dynamic = 'force-dynamic';
 
 /**
  * GET /api/collection
- * Returns all collection items for the user
+ * Returns collection items for the user with optional cursor-based pagination
+ *
+ * Query params:
+ *   - cursor: ID of the last item from previous page (optional)
+ *   - limit: Number of items per page (default: all, max: 100 when paginating)
+ *
+ * When limit is not provided, returns all items for backwards compatibility.
+ * When limit is provided, returns paginated response with pagination metadata.
  */
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
     const userId = await getUserId();
+    const { searchParams } = new URL(request.url);
 
-    const items = await prisma.collectionItem.findMany({
-      where: {
-        userId,
-      },
-      include: {
-        images: {
-          orderBy: {
-            order: 'asc',
-          },
+    const cursorParam = searchParams.get('cursor');
+    const limitParam = searchParams.get('limit');
+
+    // If no limit specified, return all items (backwards compatibility)
+    if (!limitParam) {
+      const items = await prisma.collectionItem.findMany({
+        where: { userId },
+        include: {
+          images: { orderBy: { order: 'asc' } },
         },
+        orderBy: { createdAt: 'desc' },
+      });
+
+      return NextResponse.json({
+        success: true,
+        data: items,
+      });
+    }
+
+    // Validate and cap limit
+    const limitValidation = validatePositiveNumber(Number(limitParam), 'limit');
+    if (!limitValidation.valid) {
+      throw validationError(limitValidation.reason!);
+    }
+    const limit = Math.min(Number(limitParam), 100); // Cap at 100
+
+    // Build query with cursor pagination
+    const items = await prisma.collectionItem.findMany({
+      where: { userId },
+      take: limit + 1, // Fetch one extra to detect hasMore
+      cursor: cursorParam ? { id: cursorParam } : undefined,
+      skip: cursorParam ? 1 : 0, // Skip cursor item itself
+      include: {
+        images: { orderBy: { order: 'asc' } },
       },
-      orderBy: {
-        createdAt: 'desc',
-      },
+      orderBy: { createdAt: 'desc' },
     });
+
+    // Detect if there are more items
+    const hasMore = items.length > limit;
+    const resultItems = hasMore ? items.slice(0, limit) : items;
+    const nextCursor = hasMore ? resultItems[resultItems.length - 1].id : null;
 
     return NextResponse.json({
       success: true,
-      data: items,
+      data: resultItems,
+      pagination: {
+        hasMore,
+        nextCursor,
+        limit,
+      },
     });
   } catch (error) {
     return handleApiError(error, 'fetch collection items');
