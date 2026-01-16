@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Platform, Animated } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors } from '../../lib/colors';
-import { getPriceForDate } from '../../lib/historical-data';
 import type { SpotPrices } from '../../types';
 
 interface SpotPriceBannerProps {
   spotPrices: SpotPrices | null;
+  spotPrices24hAgo: { gold: number; silver: number; platinum: number } | null;
 }
 
 interface MetalRowProps {
@@ -38,17 +38,16 @@ function MetalRow({ symbol, name, color, currentPrice, yesterdayPrice }: MetalRo
   );
 }
 
-export function SpotPriceBanner({ spotPrices }: SpotPriceBannerProps) {
+export function SpotPriceBanner({ spotPrices, spotPrices24hAgo }: SpotPriceBannerProps) {
   const [expanded, setExpanded] = useState(false);
 
   if (!spotPrices) {
     return null;
   }
 
-  // Get yesterday's prices
-  const yesterday = new Date();
-  yesterday.setDate(yesterday.getDate() - 1);
-  const yesterdayPrices = getPriceForDate(yesterday);
+  // Use tracked 24h ago prices, or fall back to current (no change shown)
+  const yesterdayPrices = spotPrices24hAgo || { gold: spotPrices.gold, silver: spotPrices.silver, platinum: spotPrices.platinum };
+  const hasHistoricalData = spotPrices24hAgo !== null;
 
   const goldChange = spotPrices.gold - yesterdayPrices.gold;
   const silverChange = spotPrices.silver - yesterdayPrices.silver;
@@ -97,7 +96,9 @@ export function SpotPriceBanner({ spotPrices }: SpotPriceBannerProps) {
         {/* Expanded View - Full Details */}
         {expanded && (
           <View style={styles.expandedContainer}>
-            <Text style={styles.expandedTitle}>24h Price Change</Text>
+            <Text style={styles.expandedTitle}>
+              {hasHistoricalData ? '24h Price Change' : '24h Price Change (tracking started)'}
+            </Text>
             <MetalRow
               symbol="Au"
               name="Gold"

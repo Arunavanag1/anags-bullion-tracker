@@ -7,7 +7,6 @@ import { useSpotPrices } from '../contexts/SpotPricesContext';
 import { api } from '../lib/api';
 import type { CollectionItem } from '../lib/api';
 import { formatCurrency, formatCurrencyCompact, formatPercentage, formatWeight, calculateGain, calculateGainPercentage, calculateBookValue, calculatePurchaseCost } from '../lib/calculations';
-import { getPriceForDate } from '../lib/historical-data';
 import type { SpotPrices, ItemCategory } from '../types';
 import { Colors } from '../lib/colors';
 import { CategoryBadge } from '../components/numismatic/CategoryBadge';
@@ -19,7 +18,7 @@ import { ValueHistoryChart } from '../components/numismatic/ValueHistoryChart';
 type Props = NativeStackScreenProps<RootStackParamList, 'Collection'>;
 
 export function CollectionScreen({ navigation }: Props) {
-  const { spotPrices, refresh: refreshSpotPrices } = useSpotPrices();
+  const { spotPrices, spotPrices24hAgo, refresh: refreshSpotPrices } = useSpotPrices();
   const [items, setItems] = useState<CollectionItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -96,7 +95,7 @@ export function CollectionScreen({ navigation }: Props) {
       {Platform.OS === 'ios' && <View style={styles.statusBarSpacer} />}
 
       {/* Spot Price Banner - Expandable */}
-      <SpotPriceBanner spotPrices={spotPrices} />
+      <SpotPriceBanner spotPrices={spotPrices} spotPrices24hAgo={spotPrices24hAgo} />
 
       {items.length === 0 ? (
         <View style={styles.emptyContainer}>
@@ -155,10 +154,8 @@ export function CollectionScreen({ navigation }: Props) {
             }
           >
           {(() => {
-            // Get yesterday's prices for daily change calculation
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1);
-            const yesterdayPrices = getPriceForDate(yesterday);
+            // Use tracked 24h ago prices, fall back to current prices (no change)
+            const yesterdayPrices = spotPrices24hAgo || { gold: spotPrices?.gold || 0, silver: spotPrices?.silver || 0, platinum: spotPrices?.platinum || 0 };
 
             return items
               .filter(item => categoryFilter === 'ALL' || (item.category || 'BULLION') === categoryFilter)

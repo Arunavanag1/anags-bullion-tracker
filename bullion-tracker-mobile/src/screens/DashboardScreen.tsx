@@ -21,7 +21,7 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Dashboard'>;
 
 export function DashboardScreen({ navigation }: Props) {
   const { user, signOut } = useAuth();
-  const { spotPrices, refresh: refreshSpotPrices } = useSpotPrices();
+  const { spotPrices, spotPrices24hAgo, refresh: refreshSpotPrices } = useSpotPrices();
   const [items, setItems] = useState<CollectionItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -134,7 +134,7 @@ export function DashboardScreen({ navigation }: Props) {
       {Platform.OS === 'ios' && <View style={styles.statusBarSpacer} />}
 
       {/* Spot Price Banner - Expandable */}
-      <SpotPriceBanner spotPrices={spotPrices} />
+      <SpotPriceBanner spotPrices={spotPrices} spotPrices24hAgo={spotPrices24hAgo} />
 
       <ScrollView
         style={styles.scrollView}
