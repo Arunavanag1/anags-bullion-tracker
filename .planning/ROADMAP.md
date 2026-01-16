@@ -98,7 +98,7 @@ Plans:
 **Plans**: 3 plans
 
 Plans:
-- [ ] 31-01: Vitest setup and configuration
+- [x] 31-01: Vitest setup and configuration
 - [ ] 31-02: TDD for calculation functions (book value, melt value, purchase price)
 - [ ] 31-03: TDD for validation and summary functions
 
@@ -158,7 +158,7 @@ Phases execute in numeric order. v1.8 and v1.9 can partially overlap (testing ca
 | 28. Performance & Error Handling | v1.8 | 0/? | In progress | - |
 | 29. App Store Build | v1.8 | 0/? | Not started | - |
 | 30. Final QA | v1.8 | 0/? | Not started | - |
-| 31. Test Foundation | v1.9 | 0/3 | In progress | - |
+| 31. Test Foundation | v1.9 | 1/3 | In progress | - |
 | 32. Auth Security Audit | v1.9 | 0/? | Not started | - |
 | 33. API Hardening | v1.9 | 0/? | Not started | - |
 | 34. Performance Review | v1.9 | 0/? | Not started | - |
