@@ -37,12 +37,12 @@ export function CollectionCard({ item }: CollectionCardProps) {
     currentPrice
   );
 
-  const quantity = 'quantity' in item ? item.quantity : 1;
+  const quantity = item.quantity ?? 1;
   const totalWeight = (item.weightOz || 0) * quantity;
   const hasImage = item.images && item.images.length > 0;
   const displayTitle = item.category === 'NUMISMATIC'
-    ? ('title' in item ? item.title : null) || 'Numismatic Coin'
-    : (item.type === 'itemized' && 'title' in item ? item.title : `${item.metal.toUpperCase()} (Bulk)`);
+    ? item.title || 'Numismatic Coin'
+    : (item.type === 'itemized' ? item.title || `${item.metal.toUpperCase()}` : `${item.metal.toUpperCase()} (Bulk)`);
 
   const handleDelete = async () => {
     if (confirm('Are you sure you want to delete this item?')) {

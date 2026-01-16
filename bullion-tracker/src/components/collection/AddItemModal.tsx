@@ -5,7 +5,7 @@ import { Modal } from '@/components/ui/Modal';
 import { ImageUploader } from './ImageUploader';
 import { useAddItem } from '@/hooks/useCollection';
 import { useSpotPrices } from '@/hooks/useSpotPrices';
-import { useCoinSearch } from '@/hooks/useCoinSearch';
+import { useCoinSearch, CoinReference } from '@/hooks/useCoinSearch';
 import { useGrades } from '@/hooks/useGrades';
 import { usePriceGuide } from '@/hooks/usePriceGuide';
 import { ConfidenceIndicator } from '@/components/numismatic/ConfidenceIndicator';
@@ -45,7 +45,7 @@ export function AddItemModal({ isOpen, onClose }: AddItemModalProps) {
   // Numismatic state
   const [certNumber, setCertNumber] = useState('');
   const [coinSearch, setCoinSearch] = useState('');
-  const [selectedCoin, setSelectedCoin] = useState<any>(null);
+  const [selectedCoin, setSelectedCoin] = useState<CoinReference | null>(null);
   const [grade, setGrade] = useState('');
   const [isProblemCoin, setIsProblemCoin] = useState(false);
   const [problemType, setProblemType] = useState('cleaned');

@@ -18,7 +18,7 @@ export function calculateCurrentBookValue(
   switch (item.bookValueType) {
     case 'spot_premium': {
       // Bullion: spot × weight × quantity × (1 + premium%)
-      const quantity = 'quantity' in item ? item.quantity : 1;
+      const quantity = item.quantity ?? 1;
       const totalWeight = (item.weightOz || 0) * quantity;
       const meltValue = totalWeight * currentSpotPrice;
       const premiumMultiplier = 1 + ((item.premiumPercent || 0) / 100);
@@ -38,7 +38,7 @@ export function calculateCurrentBookValue(
     // BACKWARD COMPATIBILITY: Handle legacy 'spot' value
     case 'spot' as unknown as typeof item.bookValueType: {
       // Treat as spot_premium with 0% premium
-      const quantity = 'quantity' in item ? item.quantity : 1;
+      const quantity = item.quantity ?? 1;
       const totalWeight = (item.weightOz || 0) * quantity;
       const meltValue = totalWeight * currentSpotPrice;
       const premiumMultiplier = 1 + ((item.premiumPercent || 0) / 100);
@@ -61,7 +61,7 @@ export function calculateCurrentMeltValue(
   item: CollectionItem,
   currentSpotPrice: number
 ): number {
-  const quantity = 'quantity' in item ? item.quantity : 1;
+  const quantity = item.quantity ?? 1;
   return (item.weightOz || 0) * quantity * currentSpotPrice;
 }
 
@@ -81,7 +81,7 @@ export function getPurchasePrice(item: CollectionItem): number {
   }
 
   // Fall back to original melt value at creation
-  const quantity = 'quantity' in item ? item.quantity : 1;
+  const quantity = item.quantity ?? 1;
   const totalWeight = (item.weightOz || 0) * quantity;
   return totalWeight * (item.spotPriceAtCreation || 0);
 }
@@ -137,7 +137,7 @@ export function calculateCollectionSummary(
   };
 
   items.forEach((item) => {
-    const quantity = 'quantity' in item ? item.quantity : 1;
+    const quantity = item.quantity ?? 1;
     const totalWeight = (item.weightOz || 0) * quantity;
     const spotPrice = spotPrices[item.metal];
 

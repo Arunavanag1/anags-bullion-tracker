@@ -33,9 +33,18 @@ interface ChartDataItem {
   [key: string]: string | number;
 }
 
-const CustomTooltip = ({ active, payload }: any) => {
+interface TooltipPayload {
+  payload: ChartDataItem;
+}
+
+interface TooltipProps {
+  active?: boolean;
+  payload?: TooltipPayload[];
+}
+
+const CustomTooltip = ({ active, payload }: TooltipProps) => {
   if (active && payload && payload.length) {
-    const data = payload[0].payload as ChartDataItem;
+    const data = payload[0].payload;
     return (
       <div className="bg-white border border-border rounded-lg p-3 shadow-lg">
         <p className="font-medium text-text-primary">{data.name}</p>
@@ -47,7 +56,16 @@ const CustomTooltip = ({ active, payload }: any) => {
   return null;
 };
 
-const renderCustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }: any) => {
+interface LabelProps {
+  cx?: number;
+  cy?: number;
+  midAngle?: number;
+  innerRadius?: number;
+  outerRadius?: number;
+  percent?: number;
+}
+
+const renderCustomLabel = ({ cx = 0, cy = 0, midAngle = 0, innerRadius = 0, outerRadius = 0, percent = 0 }: LabelProps) => {
   if (percent < 0.05) return null; // Don't show labels for slices less than 5%
 
   const RADIAN = Math.PI / 180;

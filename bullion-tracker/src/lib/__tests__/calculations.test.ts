@@ -6,7 +6,7 @@ import {
   getCalculatedValues,
   calculateCollectionSummary,
 } from '../calculations'
-import type { CollectionItem } from '@/types'
+import type { CollectionItem, BookValueType } from '@/types'
 
 // Helper to create a minimal valid CollectionItem for testing
 function createItem(overrides: Partial<CollectionItem>): CollectionItem {
@@ -119,7 +119,7 @@ describe('calculateCurrentBookValue', () => {
       const item = createItem({
         weightOz: 1,
         quantity: 1,
-        bookValueType: 'spot' as any, // Legacy value
+        bookValueType: 'spot' as unknown as BookValueType, // Legacy value
       })
       expect(calculateCurrentBookValue(item, 30)).toBe(30)
     })
@@ -287,7 +287,7 @@ describe('getCalculatedValues', () => {
 
   it('should set isTracking true for legacy spot', () => {
     const item = createItem({
-      bookValueType: 'spot' as any,
+      bookValueType: 'spot' as unknown as BookValueType,
     })
 
     const result = getCalculatedValues(item, 30)

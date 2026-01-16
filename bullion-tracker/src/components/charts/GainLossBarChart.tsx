@@ -36,9 +36,18 @@ const formatYAxisValue = (value: number) => {
   return `$${value.toFixed(0)}`;
 };
 
-const CustomTooltip = ({ active, payload }: any) => {
+interface TooltipPayload {
+  payload: MetalData;
+}
+
+interface TooltipProps {
+  active?: boolean;
+  payload?: TooltipPayload[];
+}
+
+const CustomTooltip = ({ active, payload }: TooltipProps) => {
   if (active && payload && payload.length) {
-    const data = payload[0].payload as MetalData;
+    const data = payload[0].payload;
     const isPositive = data.gainLoss >= 0;
 
     return (

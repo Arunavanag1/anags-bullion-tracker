@@ -3,7 +3,7 @@
  * Generates and manages RSA key pairs for JWT signing
  */
 
-import { generateKeyPair, exportJWK, exportPKCS8 } from 'jose';
+import { generateKeyPair, exportJWK, exportPKCS8, CryptoKey, KeyObject } from 'jose';
 import * as crypto from 'crypto';
 
 export interface JWKSKey {
@@ -105,7 +105,7 @@ export async function getJWKS(): Promise<JWKSResponse> {
   const { publicKey } = await getKeyPair();
 
   // Export as JWK
-  const jwk = await exportJWK(publicKey as any);
+  const jwk = await exportJWK(publicKey as unknown as CryptoKey | KeyObject);
 
   cachedJWKS = {
     keys: [

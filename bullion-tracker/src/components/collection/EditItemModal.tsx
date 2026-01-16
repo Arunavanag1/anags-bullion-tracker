@@ -33,7 +33,7 @@ export function EditItemModal({ isOpen, onClose, item }: EditItemModalProps) {
   // Initialize form state from item
   const [title, setTitle] = useState(getItemProp('title', ''));
   const [metal, setMetal] = useState<Metal>(item.metal);
-  const [quantity, setQuantity] = useState('quantity' in item ? item.quantity : 1);
+  const [quantity, setQuantity] = useState(item.quantity ?? 1);
   const [weightOz, setWeightOz] = useState(item.weightOz || 0);
 
   // Numismatic-specific fields
@@ -66,7 +66,7 @@ export function EditItemModal({ isOpen, onClose, item }: EditItemModalProps) {
     if (item) {
       setTitle(getItemProp('title', ''));
       setMetal(item.metal);
-      setQuantity('quantity' in item ? item.quantity : 1);
+      setQuantity(item.quantity ?? 1);
       setWeightOz(item.weightOz || 0);
       setGrade(getItemProp('grade', ''));
       setGradingService(getItemProp('gradingService', ''));

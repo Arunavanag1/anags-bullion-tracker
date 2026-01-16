@@ -1,6 +1,18 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import type { CollectionItem, ItemizedFormData, BulkWeightFormData, TimeRange } from '@/types';
 
+// API response types
+interface ImageResponse {
+  url: string;
+  order: number;
+}
+
+interface CollectionItemResponse extends Omit<CollectionItem, 'createdAt' | 'updatedAt' | 'images'> {
+  createdAt: string;
+  updatedAt: string;
+  images: ImageResponse[];
+}
+
 export function useCollection() {
   return useQuery({
     queryKey: ['collection'],
@@ -13,11 +25,11 @@ export function useCollection() {
       }
 
       // Convert date strings to Date objects
-      return data.data.map((item: any) => ({
+      return data.data.map((item: CollectionItemResponse) => ({
         ...item,
         createdAt: new Date(item.createdAt),
         updatedAt: new Date(item.updatedAt),
-        images: item.images.map((img: any) => img.url),
+        images: item.images.map((img: ImageResponse) => img.url),
       }));
     },
   });

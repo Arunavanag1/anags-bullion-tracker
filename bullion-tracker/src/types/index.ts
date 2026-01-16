@@ -56,7 +56,9 @@ export interface BulkWeight {
   id: string;
   type: 'bulk';
   userId: string;
+  title?: string;
   metal: Metal;
+  quantity?: number;
   weightOz: number;
   notes?: string;
   images: string[];

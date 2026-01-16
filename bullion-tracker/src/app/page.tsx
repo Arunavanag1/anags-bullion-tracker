@@ -92,7 +92,7 @@ export default function BullionTrackerWeb() {
     let platinum = 0;
 
     collectionData.forEach((item: CollectionItem) => {
-      const quantity = 'quantity' in item ? item.quantity : 1;
+      const quantity = item.quantity ?? 1;
       const totalWeight = (item.weightOz || 0) * quantity;
       if (item.metal === 'gold') gold += totalWeight;
       if (item.metal === 'silver') silver += totalWeight;
@@ -525,7 +525,7 @@ export default function BullionTrackerWeb() {
               {/* Items List */}
               <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                 {collectionData && collectionData.length > 0 ? (
-                  collectionData.slice(0, 5).map((item: any) => {
+                  collectionData.slice(0, 5).map((item: CollectionItem) => {
                     const isExpanded = expandedItemId === item.id;
                     return (
                       <div
@@ -577,7 +577,7 @@ export default function BullionTrackerWeb() {
                           </div>
                           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
                             <span style={{ fontSize: "16px", fontFamily: "monospace", fontWeight: "600", color: "#1a1a1a" }}>
-                              ${(item.numismaticValue || item.customBookValue || (item.spotPriceAtCreation && item.weightOz ? item.spotPriceAtCreation * item.weightOz * item.quantity : 0)).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                              ${(item.numismaticValue || item.customBookValue || (item.spotPriceAtCreation && item.weightOz ? item.spotPriceAtCreation * item.weightOz * (item.quantity ?? 1) : 0)).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                             </span>
                             <span style={{ fontSize: "18px", color: "#888", transition: "transform 0.2s ease", transform: isExpanded ? "rotate(180deg)" : "rotate(0deg)" }}>
                               ▼

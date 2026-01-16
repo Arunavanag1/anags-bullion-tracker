@@ -3,7 +3,7 @@
  * Creates and verifies JWT access tokens and refresh tokens
  */
 
-import { SignJWT, jwtVerify } from 'jose';
+import { SignJWT, jwtVerify, CryptoKey, KeyObject } from 'jose';
 import { getPrivateKey, getPublicKey, getKeyId } from './jwks';
 import { randomBytes } from 'crypto';
 
@@ -46,7 +46,7 @@ export async function createAccessToken(
     .setIssuer(ISSUER)
     .setAudience(AUDIENCE)
     .setExpirationTime(`${expiresInSeconds}s`)
-    .sign(privateKey as any);
+    .sign(privateKey as unknown as CryptoKey | KeyObject);
 
   return token;
 }
@@ -62,7 +62,7 @@ export async function createIdToken(
 ): Promise<string> {
   const privateKey = await getPrivateKey();
 
-  const payload: Record<string, any> = {
+  const payload: Record<string, unknown> = {
     sub: userId,
   };
 
@@ -75,7 +75,7 @@ export async function createIdToken(
     .setIssuer(ISSUER)
     .setAudience(clientId)
     .setExpirationTime('15m')
-    .sign(privateKey as any);
+    .sign(privateKey as unknown as CryptoKey | KeyObject);
 
   return token;
 }
@@ -95,7 +95,7 @@ export function createRefreshToken(): string {
 export async function verifyAccessToken(token: string): Promise<AccessTokenPayload> {
   const publicKey = await getPublicKey();
 
-  const { payload } = await jwtVerify(token, publicKey as any, {
+  const { payload } = await jwtVerify(token, publicKey as unknown as CryptoKey | KeyObject, {
     issuer: ISSUER,
     audience: AUDIENCE,
   });

@@ -45,8 +45,8 @@ export function CollectionGrid({ onAddItem }: CollectionGridProps) {
           return a.metal.localeCompare(b.metal);
 
         case 'weight': {
-          const aWeight = a.weightOz * ('quantity' in a ? a.quantity : 1);
-          const bWeight = b.weightOz * ('quantity' in b ? b.quantity : 1);
+          const aWeight = a.weightOz * (a.quantity ?? 1);
+          const bWeight = b.weightOz * (b.quantity ?? 1);
           return bWeight - aWeight;
         }
 
