@@ -119,7 +119,7 @@ Plans:
 
 Plans:
 - [x] 33-01: Security headers middleware, API error standardization
-- [ ] 33-02: Input validation utilities, collection API rate limiting
+- [x] 33-02: Input validation utilities, collection API rate limiting
 
 #### Phase 34: Performance Review
 **Goal**: Fix N+1 queries, add pagination, optimize bundle size, improve load times
@@ -161,7 +161,7 @@ Phases execute in numeric order. v1.8 and v1.9 can partially overlap (testing ca
 | 30. Final QA | v1.8 | 0/? | Not started | - |
 | 31. Test Foundation | v1.9 | 3/3 | Complete | 2026-01-16 |
 | 32. Auth Security Audit | v1.9 | 1/1 | Complete | 2026-01-16 |
-| 33. API Hardening | v1.9 | 0/? | Not started | - |
+| 33. API Hardening | v1.9 | 2/2 | Complete | 2026-01-16 |
 | 34. Performance Review | v1.9 | 0/? | Not started | - |
 | 35. Code Quality Sweep | v1.9 | 0/? | Not started | - |
 | 36. Deployment Verification | v1.9 | 0/? | Not started | - |
