@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/db';
 import { getUserId } from '@/lib/auth';
 import { validationError, notFoundError, rateLimitedError, handleApiError } from '@/lib/api-errors';
@@ -104,7 +105,7 @@ export async function POST(request: NextRequest) {
     const category = body.category;
 
     // Build create data based on category
-    const createData: any = {
+    const createData: Record<string, unknown> = {
       userId,
       category,
     };
@@ -209,7 +210,7 @@ export async function POST(request: NextRequest) {
 
     // Create the item
     const item = await prisma.collectionItem.create({
-      data: createData,
+      data: createData as Prisma.CollectionItemCreateInput,
       include: {
         images: {
           orderBy: {

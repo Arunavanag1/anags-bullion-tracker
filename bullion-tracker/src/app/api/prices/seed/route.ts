@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Get most recent prices with changes
-    const recentPrices: any = {};
+    const recentPrices: Record<string, { price: number; change: number; changePercent: number }> = {};
     for (const metal of ['gold', 'silver', 'platinum']) {
       const latest = await prisma.priceHistory.findFirst({
         where: { metal },

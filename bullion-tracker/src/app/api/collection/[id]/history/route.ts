@@ -69,10 +69,10 @@ export async function GET(
       success: true,
       data: formattedHistory,
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error fetching value history:', error);
 
-    if (error.message === 'Unauthorized') {
+    if (error instanceof Error && error.message === 'Unauthorized') {
       return NextResponse.json(
         {
           success: false,

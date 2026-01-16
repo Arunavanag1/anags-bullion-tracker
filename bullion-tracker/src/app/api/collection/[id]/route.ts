@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/db';
 import { getUserId } from '@/lib/auth';
 import { notFoundError, handleApiError } from '@/lib/api-errors';
@@ -67,7 +68,7 @@ export async function PUT(
     }
 
     // Build update data object, only including defined fields
-    const updateData: any = {};
+    const updateData: Record<string, unknown> = {};
     if (body.title !== undefined) updateData.title = body.title;
     if (body.metal !== undefined) updateData.metal = body.metal;
     if (body.quantity !== undefined) updateData.quantity = body.quantity;
@@ -96,7 +97,7 @@ export async function PUT(
 
     const item = await prisma.collectionItem.update({
       where: { id },
-      data: updateData,
+      data: updateData as Prisma.CollectionItemUpdateInput,
       include: {
         images: {
           orderBy: {

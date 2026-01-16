@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
     const { itemId } = body;
 
     // Get items to sync
-    const whereClause: any = {
+    const whereClause: Record<string, unknown> = {
       userId,
       bookValueType: 'guide_price',
       coinReferenceId: { not: null },
@@ -169,10 +169,10 @@ export async function POST(request: NextRequest) {
         message: `Synced ${items.length} items, updated ${updated}`,
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error syncing prices:', error);
 
-    if (error.message === 'Unauthorized') {
+    if (error instanceof Error && error.message === 'Unauthorized') {
       return NextResponse.json(
         {
           success: false,

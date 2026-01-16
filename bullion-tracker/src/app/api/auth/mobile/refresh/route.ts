@@ -57,9 +57,9 @@ export async function POST(request: NextRequest) {
     try {
       // First try normal verification
       decoded = jwt.verify(token, JWT_SECRET) as JWTPayload;
-    } catch (error: any) {
+    } catch (error: unknown) {
       // If token expired, check if within grace period
-      if (error.name === 'TokenExpiredError') {
+      if (error instanceof Error && error.name === 'TokenExpiredError') {
         // Decode without verification to check expiry time
         const payload = jwt.decode(token) as JWTPayload | null;
 

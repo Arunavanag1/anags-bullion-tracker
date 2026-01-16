@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
         confidenceLevel: 'high', // Since it's from PCGS official data
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error fetching price guide:', error);
 
     return NextResponse.json(
