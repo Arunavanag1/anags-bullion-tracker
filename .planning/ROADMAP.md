@@ -352,12 +352,12 @@ Plans:
 
 **Goal**: Port the radial photo gallery from web to React Native mobile app
 **Depends on**: Phase 25 (Unified Portfolio Display)
-**Research**: Likely (React Native animation libraries, gesture handling)
-**Research topics**: React Native Reanimated, react-native-gesture-handler, scroll-driven animations in RN
-**Plans**: TBD
+**Research**: Unlikely (libraries already installed: reanimated ~4.1.1, gesture-handler ~2.28.0)
+**Plans**: 2 plans
 
 Plans:
-- [ ] 26-01: TBD (run /gsd:plan-phase 26 to break down)
+- [ ] 26-01: Create RadialGallery component with scroll animation, MobilePhotoCard, integrate into CollageScreen
+- [ ] 26-02: Gesture-based ImageLightbox with swipe/pinch, responsive sizing, polish
 
 **Scope:**
 - Create RadialScrollGallery component for React Native
@@ -561,7 +561,7 @@ Plans:
 | 23. Dynamic Guide Price Integration | v1.6 | 1/1 | Complete | 2026-01-15 |
 | 24. Portfolio Value Dashboard Updates | v1.6 | 1/1 | Complete | 2026-01-15 |
 | 25. Unified Portfolio Display | v1.7 | 2/2 | Complete | 2026-01-15 |
-| 26. Mobile Radial Collage | v1.8 | 0/? | Not started | - |
+| 26. Mobile Radial Collage | v1.8 | 0/2 | Not started | - |
 | 27. Device Testing & Bug Fixes | v1.8 | 0/? | Not started | - |
 | 28. Performance & Error Handling | v1.8 | 0/? | Not started | - |
 | 29. App Store Build Configuration | v1.8 | 0/? | Not started | - |
