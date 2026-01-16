@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { getUserId } from '@/lib/auth';
-import { validationError, notFoundError, handleApiError } from '@/lib/api-errors';
+import { validationError, notFoundError, rateLimitedError, handleApiError } from '@/lib/api-errors';
+import { checkCollectionRateLimit } from '@/lib/ratelimit';
+import { sanitizeString, validatePositiveNumber, validateEnum } from '@/lib/validation';
 
 export const dynamic = 'force-dynamic';
 
@@ -45,9 +47,21 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const userId = await getUserId();
+
+    // Check rate limit
+    const rateLimit = await checkCollectionRateLimit(userId);
+    if (!rateLimit.success) {
+      throw rateLimitedError(rateLimit.reset);
+    }
+
     const body = await request.json();
 
-    const { category } = body;
+    // Validate category
+    const categoryValidation = validateEnum(body.category, ['BULLION', 'NUMISMATIC'] as const, 'category');
+    if (!categoryValidation.valid) {
+      throw validationError(categoryValidation.reason!, { allowed: ['BULLION', 'NUMISMATIC'] });
+    }
+    const category = body.category;
 
     // Build create data based on category
     const createData: any = {
@@ -59,22 +73,42 @@ export async function POST(request: NextRequest) {
       // Validate bullion required fields
       const { type, metal, weightOz, bookValueType, spotPriceAtCreation } = body;
 
-      if (!type || !metal || !weightOz || !bookValueType || spotPriceAtCreation === undefined) {
+      if (!type || !metal || weightOz === undefined || !bookValueType || spotPriceAtCreation === undefined) {
         throw validationError('Missing required bullion fields', {
           required: ['type', 'metal', 'weightOz', 'bookValueType', 'spotPriceAtCreation'],
         });
       }
 
-      createData.type = type;
+      // Validate metal type
+      const metalValidation = validateEnum(metal, ['gold', 'silver', 'platinum'] as const, 'metal');
+      if (!metalValidation.valid) {
+        throw validationError(metalValidation.reason!, { allowed: ['gold', 'silver', 'platinum'] });
+      }
+
+      // Validate numeric fields
+      const weightValidation = validatePositiveNumber(weightOz, 'weightOz');
+      if (!weightValidation.valid) {
+        throw validationError(weightValidation.reason!);
+      }
+
+      if (body.quantity !== undefined) {
+        const quantityValidation = validatePositiveNumber(body.quantity, 'quantity');
+        if (!quantityValidation.valid) {
+          throw validationError(quantityValidation.reason!);
+        }
+      }
+
+      // Sanitize string inputs
+      createData.type = sanitizeString(type, 100);
       createData.metal = metal;
       createData.quantity = body.quantity || 1;
-      createData.weightOz = weightOz;
+      createData.weightOz = Number(weightOz);
       createData.bookValueType = bookValueType;
-      createData.spotPriceAtCreation = spotPriceAtCreation;
+      createData.spotPriceAtCreation = Number(spotPriceAtCreation);
 
-      if (body.title !== undefined) createData.title = body.title;
-      if (body.customBookValue !== undefined) createData.customBookValue = body.customBookValue;
-      if (body.premiumPercent !== undefined) createData.premiumPercent = body.premiumPercent;
+      if (body.title !== undefined) createData.title = sanitizeString(body.title, 200);
+      if (body.customBookValue !== undefined) createData.customBookValue = Number(body.customBookValue);
+      if (body.premiumPercent !== undefined) createData.premiumPercent = Number(body.premiumPercent);
     } else if (category === 'NUMISMATIC') {
       // Validate numismatic required fields
       const { coinReferenceId, grade, gradingService, bookValueType, metal } = body;
@@ -112,23 +146,18 @@ export async function POST(request: NextRequest) {
       createData.title = title;
       if (finalWeightOz !== null) createData.weightOz = finalWeightOz;
 
-      if (body.certNumber !== undefined) createData.certNumber = body.certNumber;
+      if (body.certNumber !== undefined) createData.certNumber = sanitizeString(body.certNumber, 50);
       if (body.isProblemCoin !== undefined) createData.isProblemCoin = body.isProblemCoin;
-      if (body.problemType !== undefined) createData.problemType = body.problemType;
+      if (body.problemType !== undefined) createData.problemType = sanitizeString(body.problemType, 100);
       if (body.isGradeEstimated !== undefined) createData.isGradeEstimated = body.isGradeEstimated;
-      if (body.customBookValue !== undefined) createData.customBookValue = body.customBookValue;
-      if (body.numismaticValue !== undefined) createData.numismaticValue = body.numismaticValue;
-    } else {
-      throw validationError('Invalid category', {
-        allowed: ['BULLION', 'NUMISMATIC'],
-        received: category,
-      });
+      if (body.customBookValue !== undefined) createData.customBookValue = Number(body.customBookValue);
+      if (body.numismaticValue !== undefined) createData.numismaticValue = Number(body.numismaticValue);
     }
 
-    // Add common optional fields
-    if (body.notes !== undefined) createData.notes = body.notes;
+    // Add common optional fields with sanitization
+    if (body.notes !== undefined) createData.notes = sanitizeString(body.notes, 1000);
     if (body.purchaseDate) createData.purchaseDate = new Date(body.purchaseDate);
-    if (body.purchasePrice !== undefined) createData.purchasePrice = body.purchasePrice;
+    if (body.purchasePrice !== undefined) createData.purchasePrice = Number(body.purchasePrice);
     if (body.images && body.images.length > 0) {
       createData.images = {
         create: body.images.map((url: string, index: number) => ({
