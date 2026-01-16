@@ -20,6 +20,17 @@ export const authRateLimiter = redis
     })
   : null;
 
+// Collection rate limiter: 30 requests per 60 seconds per user ID
+// More permissive than auth since these are authenticated operations
+export const collectionRateLimiter = redis
+  ? new Ratelimit({
+      redis,
+      limiter: Ratelimit.slidingWindow(30, '60 s'),
+      analytics: true,
+      prefix: 'ratelimit:collection',
+    })
+  : null;
+
 // Helper to get client IP
 export function getClientIp(request: Request): string {
   const forwarded = request.headers.get('x-forwarded-for');
@@ -29,7 +40,7 @@ export function getClientIp(request: Request): string {
   return request.headers.get('x-real-ip') || 'unknown';
 }
 
-// Rate limit check helper
+// Rate limit check helper for auth routes (by IP)
 export async function checkRateLimit(
   identifier: string
 ): Promise<{ success: boolean; remaining?: number; reset?: number }> {
@@ -39,6 +50,23 @@ export async function checkRateLimit(
   }
 
   const result = await authRateLimiter.limit(identifier);
+  return {
+    success: result.success,
+    remaining: result.remaining,
+    reset: result.reset,
+  };
+}
+
+// Rate limit check helper for collection routes (by user ID)
+export async function checkCollectionRateLimit(
+  userId: string
+): Promise<{ success: boolean; remaining?: number; reset?: number }> {
+  if (!collectionRateLimiter) {
+    // No rate limiting in development without Upstash
+    return { success: true };
+  }
+
+  const result = await collectionRateLimiter.limit(userId);
   return {
     success: result.success,
     remaining: result.remaining,
