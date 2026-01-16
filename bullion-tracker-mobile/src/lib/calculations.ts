@@ -51,12 +51,34 @@ export function calculateBookValue(item: CollectionItem, currentSpotPrice: numbe
 }
 
 /**
+ * Calculate the purchase cost (cost basis) for an item
+ */
+export function calculatePurchaseCost(item: CollectionItem, currentSpotPrice: number): number {
+  const bookValueType = item.bookValueType as string;
+  const totalItemWeight = (item.weightOz || 0) * (item.quantity || 1);
+
+  // For numismatics (guide_price, custom): use purchasePrice
+  if (bookValueType === 'guide_price' || bookValueType === 'custom' || bookValueType === 'numismatic') {
+    return item.purchasePrice ?? 0;
+  }
+
+  // For bullion (spot_premium, spot): use spot at creation × weight
+  // Fall back to purchasePrice if available, otherwise current spot
+  return item.purchasePrice
+    ?? (totalItemWeight * (item.spotPriceAtCreation || currentSpotPrice));
+}
+
+/**
  * Calculate gain/loss for an item
+ * - For bullion: meltValue - purchaseCost
+ * - For numismatic: bookValue (guide/custom) - purchasePrice
  */
 export function calculateGain(item: CollectionItem, spotPrice: number): number {
-  const meltValue = calculateMeltValue(item, spotPrice);
   const bookValue = calculateBookValue(item, spotPrice);
-  return meltValue - bookValue;
+  const purchaseCost = calculatePurchaseCost(item, spotPrice);
+
+  // Return = current value - what you paid
+  return bookValue - purchaseCost;
 }
 
 /**
@@ -64,17 +86,17 @@ export function calculateGain(item: CollectionItem, spotPrice: number): number {
  */
 export function calculateGainPercentage(item: CollectionItem, spotPrice: number): number {
   const gain = calculateGain(item, spotPrice);
-  const bookValue = calculateBookValue(item, spotPrice);
-  if (bookValue === 0) return 0;
-  return (gain / bookValue) * 100;
+  const purchaseCost = calculatePurchaseCost(item, spotPrice);
+  if (purchaseCost === 0) return 0;
+  return (gain / purchaseCost) * 100;
 }
 
 /**
  * Calculate portfolio summary from collection items
  *
- * Total Return = currentValue - purchaseCost (cost basis at time of acquisition)
+ * Total Return = currentValue (bookValue) - purchaseCost
  * - For bullion: purchaseCost = spotPriceAtCreation × weight × quantity
- * - For numismatic: purchaseCost = purchasePrice or customBookValue
+ * - For numismatic: purchaseCost = purchasePrice (what you paid)
  */
 export function calculatePortfolioSummary(
   items: CollectionItem[],
@@ -100,16 +122,12 @@ export function calculatePortfolioSummary(
     totalMeltValue += meltValue;
     totalBookValue += bookValue;
 
-    // Calculate purchase cost (cost basis)
-    // For bullion: spot price at creation × weight × quantity
-    // For numismatic: purchase price or custom book value at creation
-    const totalItemWeight = (item.weightOz || 0) * (item.quantity || 1);
-    const purchaseCost = item.purchasePrice
-      || item.customBookValue
-      || (totalItemWeight * (item.spotPriceAtCreation || spotPrice));
+    // Calculate purchase cost using shared function
+    const purchaseCost = calculatePurchaseCost(item, spotPrice);
     totalPurchaseCost += purchaseCost;
 
     // weightOz is already pure weight
+    const totalItemWeight = (item.weightOz || 0) * (item.quantity || 1);
     totalWeight[metalKey] += totalItemWeight;
   });
 
