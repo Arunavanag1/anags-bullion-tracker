@@ -5,17 +5,17 @@
 See: .planning/PROJECT.md (updated 2026-01-09)
 
 **Core value:** Showcase coin photography beautifully
-**Current focus:** v1.7 Unified Portfolio Value — COMPLETE
-**Next milestone:** TBD (v1.8 or next priority)
+**Current focus:** v1.8 Mobile Deployment Readiness
+**Next milestone:** Phase 26 (Mobile Radial Collage)
 
 ## Current Position
 
-Phase: 25 of 25 (Unified Portfolio Display) — COMPLETE
-Plan: 2 of 2 in current phase (25-01, 25-02 complete)
-Status: v1.7 Unified Portfolio Value COMPLETE
-Last activity: 2026-01-15 — Completed 25-02-PLAN.md (Remove Web Dashboard Toggle)
+Phase: 26 of 30 (Mobile Radial Collage)
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-01-15 — Milestone v1.8 Mobile Deployment Readiness created
 
-Progress: ██████████ 68% (17 of 25 phases complete)
+Progress: █████████░ 57% (17 of 30 phases complete)
 
 ## Milestones Overview
 
@@ -29,6 +29,7 @@ Progress: ██████████ 68% (17 of 25 phases complete)
 | v1.5 Mobile Refactor | 17-20 | In Progress |
 | v1.6 Portfolio Valuation Model | 21-24 | COMPLETE |
 | v1.7 Unified Portfolio Value | 25 | COMPLETE |
+| v1.8 Mobile Deployment Readiness | 26-30 | In Progress |
 
 ## Performance Metrics
 
@@ -103,6 +104,13 @@ None yet.
 
 ### Roadmap Evolution
 
+- Milestone v1.8 created: Mobile Deployment Readiness, 5 phases (Phase 26-30)
+  - Phase 26: Mobile Radial Collage (port web gallery to RN)
+  - Phase 27: Device Testing & Bug Fixes
+  - Phase 28: Performance & Error Handling
+  - Phase 29: App Store Build Configuration
+  - Phase 30: Final QA & Deployment Checklist
+
 - Milestone v1.2 created: Security & Stability, 7 phases (Phase 3-9)
   - Phase 3: Security Hardening (critical vulnerabilities)
   - Phase 4: Environment Configuration
@@ -138,5 +146,5 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-01-15
-Stopped at: Completed Phase 25 (25-01-PLAN.md) - v1.7 Unified Portfolio Value milestone complete
+Stopped at: Milestone v1.8 Mobile Deployment Readiness created
 Resume file: None

@@ -9,6 +9,8 @@
 - 🚧 **v1.4 Auth Deployment** — Phases 13-16 (in progress)
 - 🚧 **v1.5 Mobile Refactor** — Phases 17-20 (in progress)
 - ✅ **v1.6 Portfolio Valuation Model** — Phases 21-24 (COMPLETE)
+- ✅ **v1.7 Unified Portfolio Value** — Phase 25 (COMPLETE)
+- 🚧 **v1.8 Mobile Deployment Readiness** — Phases 26-30 (in progress)
 
 ## Overview
 
@@ -342,6 +344,97 @@ Plans:
 - Add request caching where appropriate
 - Document API integration patterns
 
+### 🚧 v1.8 Mobile Deployment Readiness (In Progress)
+
+**Milestone Goal:** Test mobile app extensively on real devices and prepare for app store deployment
+
+#### Phase 26: Mobile Radial Collage
+
+**Goal**: Port the radial photo gallery from web to React Native mobile app
+**Depends on**: Phase 25 (Unified Portfolio Display)
+**Research**: Likely (React Native animation libraries, gesture handling)
+**Research topics**: React Native Reanimated, react-native-gesture-handler, scroll-driven animations in RN
+**Plans**: TBD
+
+Plans:
+- [ ] 26-01: TBD (run /gsd:plan-phase 26 to break down)
+
+**Scope:**
+- Create RadialScrollGallery component for React Native
+- Implement scroll-driven rotation animation (Reanimated)
+- Add CollectionPhotoCard with metal type badges
+- Implement ItemLightbox with swipe gestures
+- Responsive sizing for different screen sizes
+
+#### Phase 27: Device Testing & Bug Fixes
+
+**Goal**: Test on real iOS/Android devices, document and fix discovered issues
+**Depends on**: Phase 26
+**Research**: Unlikely (manual testing, internal patterns)
+**Plans**: TBD
+
+Plans:
+- [ ] 27-01: TBD (run /gsd:plan-phase 27 to break down)
+
+**Scope:**
+- Test all screens and flows on physical iOS device
+- Test all screens and flows on physical Android device
+- Document bugs and UI issues discovered
+- Fix critical bugs blocking deployment
+- Verify data sync works reliably
+
+#### Phase 28: Performance & Error Handling
+
+**Goal**: Optimize load times, improve error messages and recovery flows
+**Depends on**: Phase 27
+**Research**: Unlikely (internal optimization)
+**Plans**: TBD
+
+Plans:
+- [ ] 28-01: TBD (run /gsd:plan-phase 28 to break down)
+
+**Scope:**
+- Profile app startup and screen load times
+- Optimize slow operations (image loading, API calls)
+- Improve error messages for common failures
+- Add retry mechanisms for network errors
+- Handle offline scenarios gracefully
+
+#### Phase 29: App Store Build Configuration
+
+**Goal**: Configure Expo EAS Build for TestFlight and Play Store submission
+**Depends on**: Phase 28
+**Research**: Likely (Expo EAS Build, app store requirements)
+**Research topics**: EAS Build configuration, iOS provisioning, Android signing, store metadata
+**Plans**: TBD
+
+Plans:
+- [ ] 29-01: TBD (run /gsd:plan-phase 29 to break down)
+
+**Scope:**
+- Configure eas.json for production builds
+- Set up iOS provisioning profiles and certificates
+- Set up Android keystore and signing
+- Configure app icons and splash screens for stores
+- Prepare store metadata (descriptions, screenshots)
+
+#### Phase 30: Final QA & Deployment Checklist
+
+**Goal**: Complete QA pass, create deployment documentation
+**Depends on**: Phase 29
+**Research**: Unlikely (documentation and verification)
+**Plans**: TBD
+
+Plans:
+- [ ] 30-01: TBD (run /gsd:plan-phase 30 to break down)
+
+**Scope:**
+- Full regression test on production build
+- Verify all features work with production API
+- Create deployment checklist document
+- Document rollback procedures
+- Prepare for TestFlight/Beta distribution
+
 ### ✅ v1.7 Unified Portfolio Value (COMPLETE)
 
 **Milestone Goal:** Simplify portfolio display by removing spot/book toggle and showing a single unified portfolio value
@@ -468,6 +561,11 @@ Plans:
 | 23. Dynamic Guide Price Integration | v1.6 | 1/1 | Complete | 2026-01-15 |
 | 24. Portfolio Value Dashboard Updates | v1.6 | 1/1 | Complete | 2026-01-15 |
 | 25. Unified Portfolio Display | v1.7 | 2/2 | Complete | 2026-01-15 |
+| 26. Mobile Radial Collage | v1.8 | 0/? | Not started | - |
+| 27. Device Testing & Bug Fixes | v1.8 | 0/? | Not started | - |
+| 28. Performance & Error Handling | v1.8 | 0/? | Not started | - |
+| 29. App Store Build Configuration | v1.8 | 0/? | Not started | - |
+| 30. Final QA & Deployment Checklist | v1.8 | 0/? | Not started | - |
 
 ---
-*Updated: 2026-01-15 after Phase 25 completed - v1.7 milestone complete*
+*Updated: 2026-01-15 after creating v1.8 Mobile Deployment Readiness milestone*
