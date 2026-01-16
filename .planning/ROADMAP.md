@@ -109,7 +109,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 32-01: Email validation, JWT expiry hardening, refresh token, auth tests
+- [x] 32-01: Email validation, JWT expiry hardening, refresh token, auth tests
 
 #### Phase 33: API Hardening
 **Goal**: Comprehensive error handling, input validation, security headers, CORS config
@@ -159,7 +159,7 @@ Phases execute in numeric order. v1.8 and v1.9 can partially overlap (testing ca
 | 29. App Store Build | v1.8 | 0/? | Not started | - |
 | 30. Final QA | v1.8 | 0/? | Not started | - |
 | 31. Test Foundation | v1.9 | 3/3 | Complete | 2026-01-16 |
-| 32. Auth Security Audit | v1.9 | 0/1 | Not started | - |
+| 32. Auth Security Audit | v1.9 | 1/1 | Complete | 2026-01-16 |
 | 33. API Hardening | v1.9 | 0/? | Not started | - |
 | 34. Performance Review | v1.9 | 0/? | Not started | - |
 | 35. Code Quality Sweep | v1.9 | 0/? | Not started | - |

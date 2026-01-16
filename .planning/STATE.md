@@ -2,12 +2,12 @@
 
 ## Current Position
 
-Phase: 31 of 36 (Test Foundation)
-Plan: 3 of 3 in current phase
+Phase: 32 of 36 (Auth Security Audit)
+Plan: 1 of 1 in current phase
 Status: Phase complete
-Last activity: 2026-01-16 - Completed 31-03-PLAN.md
+Last activity: 2026-01-16 - Completed 32-01-PLAN.md
 
-Progress: ██░░░░░░░░ 17% (v1.9 milestone)
+Progress: ████░░░░░░ 33% (v1.9 milestone)
 
 ## Active Milestone
 
@@ -18,7 +18,7 @@ Progress: ██░░░░░░░░ 17% (v1.9 milestone)
 ## Session Continuity
 
 Last session: 2026-01-16
-Stopped at: Completed Phase 31 (validation & summary tests)
+Stopped at: Completed Phase 32 (auth security hardening)
 Resume file: None
 
 ## Accumulated Context
@@ -29,10 +29,12 @@ Resume file: None
 - Unified portfolio value (simpler UX)
 - Three valuation types (bullion, numismatic, custom)
 - Local spot price tracking (accurate 24h gains)
+- 7-day JWT tokens with refresh (Phase 32)
+- Email normalization at signup (Phase 32)
 
 ### Technical Debt Being Addressed
-- [x] No test coverage → Phase 31 (52 tests)
-- [ ] Auth vulnerabilities → Phase 32
+- [x] No test coverage → Phase 31 (76 tests)
+- [x] Auth vulnerabilities → Phase 32 (JWT expiry, email validation)
 - [ ] API security gaps → Phase 33
 - [ ] N+1 queries, no pagination → Phase 34
 - [ ] TypeScript issues, dead code → Phase 35
