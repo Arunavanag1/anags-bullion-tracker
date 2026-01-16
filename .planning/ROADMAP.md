@@ -135,10 +135,11 @@ Plans:
 **Goal**: ESLint strict mode, remove dead code, fix all TypeScript issues, document patterns
 **Depends on**: Phase 34
 **Research**: Unlikely (internal cleanup)
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 35-01: TBD
+- [ ] 35-01: Fix TypeScript strict types (replace all `any` types)
+- [ ] 35-02: Remove dead code and fix JSX escaping issues
 
 #### Phase 36: Deployment Verification
 **Goal**: Environment configs, health checks, logging, monitoring setup, deployment runbook
