@@ -16,6 +16,7 @@ import { useCollectionSummary } from '../hooks/useCoins';
 import { TopPerformers } from '../components/TopPerformers';
 import { SpotPriceBanner } from '../components/ui/SpotPriceBanner';
 import { TabBar } from '../components/ui/TabBar';
+import { PortfolioLineChart, AllocationPieChart } from '../components/charts';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Dashboard'>;
 
@@ -358,6 +359,15 @@ export function DashboardScreen({ navigation }: Props) {
 
         {/* Top Performers */}
         <TopPerformers />
+
+        {/* Charts Section */}
+        <View style={styles.chartsSection}>
+          <Text style={styles.chartsSectionTitle}>CHARTS</Text>
+          <PortfolioLineChart />
+          {spotPrices && (
+            <AllocationPieChart collection={items} spotPrices={spotPrices} />
+          )}
+        </View>
       </ScrollView>
 
       {/* Bottom Tab Bar */}
@@ -668,5 +678,14 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: Colors.textTertiary,
     marginTop: 12,
+  },
+  chartsSection: {
+    marginTop: 24,
+  },
+  chartsSectionTitle: {
+    fontSize: 13,
+    color: Colors.textSecondary,
+    marginBottom: 16,
+    letterSpacing: 0.5,
   },
 });
