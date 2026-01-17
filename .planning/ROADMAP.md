@@ -19,7 +19,8 @@ None (standard web/mobile patterns)
 - :white_check_mark: **v1.7 Unified Portfolio** - Phase 25 (shipped 2026-01-15)
 - :construction: **v1.8 Mobile Deployment** - Phases 26-30 (in progress)
 - :white_check_mark: **v1.9 Deployment Ready** - Phases 31-36 (complete 2026-01-17)
-- :clipboard: **v2.0 Mobile Charts** - Phases 37-42 (planned)
+- :construction: **v2.0 Mobile Charts** - Phases 37-42 (in progress)
+- :clipboard: **v2.1 Coin Database Expansion** - Phases 43-48 (planned)
 
 ## Phases
 
@@ -164,6 +165,68 @@ Plans:
 Plans:
 - [ ] 42-01: TBD
 
+---
+
+### :clipboard: v2.1 Coin Database Expansion (Planned)
+
+**Milestone Goal:** Expand coin reference database from ~100 to ~8,000 coins covering popular collectible series, using hybrid PCGS API + web scraping approach
+
+#### Phase 43: PCGS API Integration
+**Goal**: Implement PCGS Public API client with OAuth, rate limiting (1,000/day), and daily quota tracking
+**Depends on**: Phase 42
+**Research**: Likely (PCGS API authentication flow, endpoints)
+**Research topics**: PCGS API auth, token refresh, rate limit handling, available endpoints
+**Plans**: TBD
+
+Plans:
+- [ ] 43-01: TBD
+
+#### Phase 44: Series Priority Mapping
+**Goal**: Define target series (~8,000 coins): 20th century types, commemoratives, key early US; create scraping roadmap with priorities
+**Depends on**: Phase 43
+**Research**: Unlikely (internal planning)
+**Plans**: TBD
+
+Plans:
+- [ ] 44-01: TBD
+
+#### Phase 45: Bulk Scraper Enhancement
+**Goal**: Update existing Python scraper for new series, add NGC number cross-reference, fix any broken HTML selectors
+**Depends on**: Phase 44
+**Research**: Likely (NGC website structure, cross-reference mapping)
+**Research topics**: NGC Coin Explorer structure, PCGS-NGC number mapping
+**Plans**: TBD
+
+Plans:
+- [ ] 45-01: TBD
+
+#### Phase 46: Data Population Pipeline
+**Goal**: Run scraper for all priority series, implement incremental update tracking, monitor progress with logging
+**Depends on**: Phase 45
+**Research**: Unlikely (execution of existing infrastructure)
+**Plans**: TBD
+
+Plans:
+- [ ] 46-01: TBD
+
+#### Phase 47: Price Refresh Automation
+**Goal**: Set up Celery/cron job for weekly price updates via PCGS API (primary) with scraping fallback
+**Depends on**: Phase 46
+**Research**: Unlikely (existing Celery patterns)
+**Plans**: TBD
+
+Plans:
+- [ ] 47-01: TBD
+
+#### Phase 48: Search & Validation
+**Goal**: Optimize full-text search (tsvector), data quality validation, missing coin detection, admin reports
+**Depends on**: Phase 47
+**Research**: Unlikely (PostgreSQL patterns established)
+**Plans**: TBD
+
+Plans:
+- [ ] 48-01: TBD
+
 ## Progress
 
 **Execution Order:**
@@ -181,3 +244,9 @@ Phases execute in numeric order. v1.8 and v1.9 can partially overlap (testing ca
 | 40. Gain/Loss Bar Chart | v2.0 | 0/? | Not started | - |
 | 41. Chart Interactions | v2.0 | 0/? | Not started | - |
 | 42. Dashboard Integration | v2.0 | 0/? | Not started | - |
+| 43. PCGS API Integration | v2.1 | 0/? | Not started | - |
+| 44. Series Priority Mapping | v2.1 | 0/? | Not started | - |
+| 45. Bulk Scraper Enhancement | v2.1 | 0/? | Not started | - |
+| 46. Data Population Pipeline | v2.1 | 0/? | Not started | - |
+| 47. Price Refresh Automation | v2.1 | 0/? | Not started | - |
+| 48. Search & Validation | v2.1 | 0/? | Not started | - |

@@ -60,4 +60,11 @@ None currently.
 
 - v1.0-v1.8: Core feature development (Phases 1-30)
 - v1.9: Deployment readiness (Phases 31-36) - **SHIPPED 2026-01-17**
-- v2.0: Mobile Charts (Phases 37-42) - Next
+- v2.0: Mobile Charts (Phases 37-42) - In Progress
+- v2.1: Coin Database Expansion (Phases 43-48) - Created 2026-01-17
+
+### v2.1 Milestone Context
+- **Goal**: Expand coin reference database from ~100 to ~8,000 coins
+- **Approach**: Hybrid PCGS API (1,000 free queries/day) + web scraping
+- **Coverage**: 20th century types, commemoratives, key early US coins
+- **Current state**: 100 coins across 11 series in CoinReference table
