@@ -146,15 +146,15 @@ Plans:
 Plans:
 - [x] 40-01: GainLossBarChart with horizontal bars, color-coding, summary stats
 
-#### Phase 41: Chart Interactions
+#### Phase 41: Chart Interactions - COMPLETE
 **Goal**: Touch gestures, tooltips, zoom/pan, smooth animations, and responsive sizing
 **Depends on**: Phase 40
 **Research**: Likely (mobile-specific gesture handling)
 **Research topics**: Victory Native touch events, gesture handling, performance optimization
-**Plans**: TBD
+**Plans**: 1/1
 
 Plans:
-- [ ] 41-01: TBD
+- [x] 41-01: Touch interactions - useChartPressState, Skia indicator, interactive legend
 
 #### Phase 42: Dashboard Integration
 **Goal**: Layout charts at bottom of dashboard in scrollable section with consistent styling
@@ -242,7 +242,7 @@ Phases execute in numeric order. v1.8 and v1.9 can partially overlap (testing ca
 | 38. Portfolio Line Chart | v2.0 | 1/1 | **COMPLETE** | 2026-01-17 |
 | 39. Allocation Donut Chart | v2.0 | 1/1 | **COMPLETE** | 2026-01-17 |
 | 40. Gain/Loss Bar Chart | v2.0 | 1/1 | **COMPLETE** | 2026-01-17 |
-| 41. Chart Interactions | v2.0 | 0/? | Not started | - |
+| 41. Chart Interactions | v2.0 | 1/1 | **COMPLETE** | 2026-01-17 |
 | 42. Dashboard Integration | v2.0 | 0/? | Not started | - |
 | 43. PCGS API Integration | v2.1 | 1/1 | **COMPLETE** | 2026-01-17 |
 | 44. Series Priority Mapping | v2.1 | 1/1 | **COMPLETE** | 2026-01-17 |
