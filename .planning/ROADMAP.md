@@ -171,15 +171,15 @@ Plans:
 
 **Milestone Goal:** Expand coin reference database from ~100 to ~8,000 coins covering popular collectible series, using hybrid PCGS API + web scraping approach
 
-#### Phase 43: PCGS API Integration
+#### Phase 43: PCGS API Integration - COMPLETE
 **Goal**: Implement PCGS Public API client with OAuth, rate limiting (1,000/day), and daily quota tracking
 **Depends on**: Phase 42
 **Research**: Likely (PCGS API authentication flow, endpoints)
 **Research topics**: PCGS API auth, token refresh, rate limit handling, available endpoints
-**Plans**: 1
+**Plans**: 1/1
 
 Plans:
-- [ ] 43-01: API client with OAuth2, quota tracking, CLI test script
+- [x] 43-01: API client with OAuth2, quota tracking, CLI test script
 
 #### Phase 44: Series Priority Mapping
 **Goal**: Define target series (~8,000 coins): 20th century types, commemoratives, key early US; create scraping roadmap with priorities
@@ -244,7 +244,7 @@ Phases execute in numeric order. v1.8 and v1.9 can partially overlap (testing ca
 | 40. Gain/Loss Bar Chart | v2.0 | 0/? | Not started | - |
 | 41. Chart Interactions | v2.0 | 0/? | Not started | - |
 | 42. Dashboard Integration | v2.0 | 0/? | Not started | - |
-| 43. PCGS API Integration | v2.1 | 0/? | Not started | - |
+| 43. PCGS API Integration | v2.1 | 1/1 | **COMPLETE** | 2026-01-17 |
 | 44. Series Priority Mapping | v2.1 | 0/? | Not started | - |
 | 45. Bulk Scraper Enhancement | v2.1 | 0/? | Not started | - |
 | 46. Data Population Pipeline | v2.1 | 0/? | Not started | - |

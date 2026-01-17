@@ -2,31 +2,32 @@
 
 ## Current Position
 
-Phase: 39 of 42 (Allocation Donut Chart)
+Phase: 43 of 48 (PCGS API Integration)
 Plan: 1 of 1 in current phase - COMPLETE
-Status: Phase 39 COMPLETE
-Last activity: 2026-01-17 - Completed 39-01-PLAN.md (Victory Native allocation pie chart)
+Status: Phase 43 COMPLETE
+Last activity: 2026-01-17 - Completed 43-01-PLAN.md (PCGS API client with OAuth2)
 
-Progress: v2.0 ███░░░░░░░ 50% (3/6 phases)
+Progress: v2.1 █░░░░░░░░░ 17% (1/6 phases)
 
 ## Active Milestone
 
-**v2.0 Mobile Charts** (Phases 37-42)
+**v2.1 Coin Database Expansion** (Phases 43-48)
 - 6 phases planned
-- Focus: Interactive charts on mobile dashboard matching website functionality
-- Library: Victory Native
+- Focus: Expand coin database from ~100 to ~8,000 coins
+- Approach: Hybrid PCGS API (1,000/day) + web scraping
 
 ## Shipped Milestones
 
+- **v2.0 Mobile Charts** (2026-01-17) - Victory Native charts on mobile (Phases 37-39 complete, 40-42 pending)
 - **v1.9 Deployment Ready** (2026-01-17) - Testing, security, performance, deployment config
 - See `.planning/MILESTONES.md` for full history
 
 ## Session Continuity
 
 Last session: 2026-01-17
-Stopped at: Completed Phase 39 (Allocation Donut Chart)
+Stopped at: Completed Phase 43 (PCGS API Integration)
 Resume file: None
-Next: `/gsd:plan-phase 40` (Gain/Loss Bar Chart)
+Next: `/gsd:plan-phase 44` (Series Priority Mapping)
 
 ## Accumulated Context
 
