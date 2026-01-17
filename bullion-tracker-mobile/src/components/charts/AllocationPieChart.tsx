@@ -37,6 +37,7 @@ const CATEGORY_COLORS: Record<string, string> = {
 
 export function AllocationPieChart({ collection, spotPrices }: AllocationPieChartProps) {
   const [viewMode, setViewMode] = useState<ViewMode>('metal');
+  const [selectedSegment, setSelectedSegment] = useState<string | null>(null);
 
   const { chartData, totalValue } = useMemo(() => {
     if (!collection || collection.length === 0) {
@@ -143,17 +144,42 @@ export function AllocationPieChart({ collection, spotPrices }: AllocationPieChar
         )}
       </ChartContainer>
 
-      {/* Legend */}
+      {/* Legend - Interactive */}
       {chartData.length > 0 && (
         <View style={styles.legend}>
           {chartData.map((item) => (
-            <View key={item.label} style={styles.legendItem}>
+            <TouchableOpacity
+              key={item.label}
+              style={[
+                styles.legendItem,
+                selectedSegment === item.label && styles.legendItemSelected,
+              ]}
+              onPress={() => setSelectedSegment(
+                selectedSegment === item.label ? null : item.label
+              )}
+            >
               <View style={[styles.legendDot, { backgroundColor: item.color }]} />
-              <Text style={styles.legendText}>
+              <Text style={[
+                styles.legendText,
+                selectedSegment === item.label && styles.legendTextSelected,
+              ]}>
                 {item.label} ({item.percentage.toFixed(1)}%)
               </Text>
-            </View>
+            </TouchableOpacity>
           ))}
+        </View>
+      )}
+
+      {/* Detail Card - shown when segment selected */}
+      {selectedSegment && chartData.length > 0 && (
+        <View style={styles.detailCard}>
+          <Text style={styles.detailLabel}>{selectedSegment}</Text>
+          <Text style={styles.detailValue}>
+            {formatCurrency(chartData.find(d => d.label === selectedSegment)?.value || 0)}
+          </Text>
+          <Text style={styles.detailPercent}>
+            {chartData.find(d => d.label === selectedSegment)?.percentage.toFixed(1)}% of portfolio
+          </Text>
         </View>
       )}
     </View>
@@ -220,6 +246,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  legendItemSelected: {
+    backgroundColor: Colors.bgCard,
   },
   legendDot: {
     width: 10,
@@ -229,6 +261,34 @@ const styles = StyleSheet.create({
   legendText: {
     fontSize: 12,
     color: Colors.textSecondary,
+  },
+  legendTextSelected: {
+    color: Colors.textPrimary,
+    fontWeight: '600',
+  },
+  detailCard: {
+    backgroundColor: Colors.bgSecondary,
+    borderRadius: 12,
+    padding: 16,
+    marginHorizontal: 16,
+    marginTop: 8,
+    alignItems: 'center',
+  },
+  detailLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: Colors.textPrimary,
+    marginBottom: 4,
+  },
+  detailValue: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: Colors.textPrimary,
+  },
+  detailPercent: {
+    fontSize: 12,
+    color: Colors.textSecondary,
+    marginTop: 4,
   },
   emptyContainer: {
     flex: 1,
