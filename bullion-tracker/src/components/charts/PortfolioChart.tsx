@@ -110,7 +110,7 @@ export function PortfolioChart() {
   const [scaleMode, setScaleMode] = useState<ScaleMode>('auto');
   const [customMin, setCustomMin] = useState<string>('');
   const [customMax, setCustomMax] = useState<string>('');
-  const [showScaleOptions, setShowScaleOptions] = useState(false);
+  const [_showScaleOptions, setShowScaleOptions] = useState(false);
   const [customStartDate, setCustomStartDate] = useState<string>(getDefaultDates().start);
   const [customEndDate, setCustomEndDate] = useState<string>(getDefaultDates().end);
   const chartRef = useRef<HTMLDivElement>(null);

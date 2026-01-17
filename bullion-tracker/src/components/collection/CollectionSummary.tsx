@@ -3,7 +3,7 @@
 import { usePortfolioSummary } from '@/hooks/usePortfolioSummary';
 import { useValuationBreakdown } from '@/hooks/useValuationBreakdown';
 import { useSpotPrices } from '@/hooks/useSpotPrices';
-import { formatCurrency, formatWeight, getMetalEmoji } from '@/lib/calculations';
+import { formatCurrency } from '@/lib/calculations';
 import { Card } from '@/components/ui/Card';
 import { AllocationDonutChart } from '@/components/charts/AllocationDonutChart';
 

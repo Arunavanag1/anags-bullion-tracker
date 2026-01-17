@@ -2,7 +2,7 @@
 
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/Badge';
-import type { Metal, CollectionItem, ItemizedPiece } from '@/types';
+import type { Metal, CollectionItem } from '@/types';
 
 export interface CollectionPhotoCardProps {
   item: CollectionItem;

@@ -36,7 +36,7 @@ export function RadialScrollGallery({
   mobileRadius = 220,
   startTrigger = 'top top',
   onItemSelect,
-  direction = 'ltr',
+  direction: _direction = 'ltr',
   disabled = false,
   ...props
 }: RadialScrollGalleryProps) {

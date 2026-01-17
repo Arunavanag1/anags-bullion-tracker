@@ -11,7 +11,7 @@ import { CollectionGrid } from '@/components/collection/CollectionGrid';
 import { AuthButton } from '@/components/auth/AuthButton';
 import { TopPerformers } from '@/components/TopPerformers';
 import { AllocationPieChart, GainLossBarChart } from '@/components/charts';
-import { calculateCurrentBookValue, calculateCurrentMeltValue, getPurchasePrice } from '@/lib/calculations';
+import { calculateCurrentBookValue, getPurchasePrice } from '@/lib/calculations';
 import type { TimeRange, CollectionItem } from '@/types';
 
 export default function BullionTrackerWeb() {
@@ -56,23 +56,21 @@ export default function BullionTrackerWeb() {
 
   // Calculate total values from collection using the same spot prices as charts
   // This ensures Portfolio Value card and charts always show consistent values
-  const { totalMeltValue, totalBookValue, totalCostBasis } = useMemo(() => {
+  const { totalBookValue, totalCostBasis } = useMemo(() => {
     if (!collectionData || collectionData.length === 0 || !spotPricesData) {
-      return { totalMeltValue: 0, totalBookValue: 0, totalCostBasis: 0 };
+      return { totalBookValue: 0, totalCostBasis: 0 };
     }
 
-    let melt = 0;
     let book = 0;
     let cost = 0;
 
     collectionData.forEach((item: CollectionItem) => {
       const spotPrice = spotPricesData[item.metal]?.pricePerOz || 0;
-      melt += calculateCurrentMeltValue(item, spotPrice);
       book += calculateCurrentBookValue(item, spotPrice);
       cost += getPurchasePrice(item);
     });
 
-    return { totalMeltValue: melt, totalBookValue: book, totalCostBasis: cost };
+    return { totalBookValue: book, totalCostBasis: cost };
   }, [collectionData, spotPricesData]);
 
   // Always use totalBookValue as unified portfolio value
@@ -103,7 +101,7 @@ export default function BullionTrackerWeb() {
   }, [collectionData]);
 
   const totalOz = goldOz + silverOz + platinumOz;
-  const holdings = [
+  const _holdings = [
     {
       metal: "Gold",
       oz: goldOz.toFixed(2),
@@ -263,7 +261,7 @@ export default function BullionTrackerWeb() {
               color: "#1a1a1a",
               margin: 0,
             }}>
-              {firstName}'s Stack
+              {firstName}&apos;s Stack
             </h1>
             <p style={{
               fontSize: "14px",
@@ -663,7 +661,7 @@ export default function BullionTrackerWeb() {
                 ) : (
                   <div style={{ textAlign: "center", padding: "40px", color: "#888" }}>
                     <p>No items in collection yet</p>
-                    <p style={{ fontSize: "13px", marginTop: "8px" }}>Click "+ Add Piece" to get started</p>
+                    <p style={{ fontSize: "13px", marginTop: "8px" }}>Click &quot;+ Add Piece&quot; to get started</p>
                   </div>
                 )}
               </div>
@@ -1028,7 +1026,7 @@ const MetricItem = ({ label, value, positive }: {
   </div>
 );
 
-const HoldingRow = ({ metal, oz, value, percentage, color }: {
+const _HoldingRow = ({ metal, oz, value, percentage, color }: {
   metal: string;
   oz: string;
   value: number;
@@ -1112,7 +1110,7 @@ const TimeRangeButton = ({ label, active, onClick }: {
   </button>
 );
 
-const ActionButton = ({ label, primary, onClick }: {
+const _ActionButton = ({ label, primary, onClick }: {
   label: string;
   primary?: boolean;
   onClick: () => void;

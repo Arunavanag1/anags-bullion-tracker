@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
     const userId = payload.sub;
 
     // Get portfolio summary
-    const portfolio = await prisma.collectionItem.groupBy({
+    const _portfolio = await prisma.collectionItem.groupBy({
       by: ['userId'],
       where: { userId },
       _sum: {

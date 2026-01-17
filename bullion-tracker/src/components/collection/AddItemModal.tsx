@@ -8,7 +8,6 @@ import { useSpotPrices } from '@/hooks/useSpotPrices';
 import { useCoinSearch, CoinReference } from '@/hooks/useCoinSearch';
 import { useGrades } from '@/hooks/useGrades';
 import { usePriceGuide } from '@/hooks/usePriceGuide';
-import { ConfidenceIndicator } from '@/components/numismatic/ConfidenceIndicator';
 import type { Metal, BookValueType } from '@/types';
 
 interface AddItemModalProps {
@@ -29,7 +28,7 @@ export function AddItemModal({ isOpen, onClose }: AddItemModalProps) {
   const [gradingService, setGradingService] = useState<GradingService | null>(null);
 
   // Bullion state
-  const [formType, setFormType] = useState<'itemized' | 'bulk'>('itemized');
+  const [formType, _setFormType] = useState<'itemized' | 'bulk'>('itemized');
   const [title, setTitle] = useState('');
   const [metal, setMetal] = useState<Metal>('silver');
   const [quantity, setQuantity] = useState(1);

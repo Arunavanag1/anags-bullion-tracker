@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/auth';
 import { prisma } from '@/lib/db';
-import { fetchSpotPrices } from '@/lib/prices';
 import { generateDailyPrices } from '@/lib/historical-data';
 import { calculateCurrentMeltValue, calculateCurrentBookValue } from '@/lib/calculations';
 import type { CollectionItem } from '@/types';

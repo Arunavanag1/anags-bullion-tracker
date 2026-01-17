@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo, useRef } from 'react';
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
 import { Card } from '@/components/ui/Card';
 import { CollectionItem, SpotPricesResponse } from '@/types';
 import { calculateCurrentBookValue, formatCurrency } from '@/lib/calculations';

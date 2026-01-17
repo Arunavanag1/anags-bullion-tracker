@@ -15,7 +15,7 @@ interface CollectionGridProps {
 }
 
 export function CollectionGrid({ onAddItem }: CollectionGridProps) {
-  const { data: items, isLoading, error } = useCollection();
+  const { data: items, isLoading: _isLoading, error: _error } = useCollection();
   const { data: prices } = useSpotPrices();
   const [filterMetal, setFilterMetal] = useState<Metal | 'all'>('all');
   const [filterCategory, setFilterCategory] = useState<CategoryFilter>('all');

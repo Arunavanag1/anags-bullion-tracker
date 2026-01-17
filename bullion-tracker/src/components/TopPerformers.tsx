@@ -15,7 +15,7 @@ const METAL_COLORS: Record<string, string> = {
 };
 
 export function TopPerformers() {
-  const { metals, coins, isLoading } = useTopPerformers();
+  const { metals, coins: _coins, isLoading } = useTopPerformers();
 
   if (isLoading) {
     return (
@@ -215,7 +215,7 @@ interface CoinPerformanceRowProps {
   type: 'best' | 'worst';
 }
 
-function CoinPerformanceRow({ title, grade, changePercent, priceFrom, priceTo, type }: CoinPerformanceRowProps) {
+function _CoinPerformanceRow({ title, grade, changePercent, priceFrom, priceTo, type }: CoinPerformanceRowProps) {
   const isPositive = changePercent >= 0;
 
   // Truncate title if too long

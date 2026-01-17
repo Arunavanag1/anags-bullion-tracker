@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
   let userId: string;
   try {
     userId = await getUserId();
-  } catch (error) {
+  } catch {
     // Redirect to login with return URL
     const loginUrl = new URL('/auth/signin', request.url);
     loginUrl.searchParams.set('callbackUrl', request.url);

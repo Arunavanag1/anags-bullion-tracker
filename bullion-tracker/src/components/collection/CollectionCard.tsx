@@ -6,7 +6,6 @@ import { useSpotPrices } from '@/hooks/useSpotPrices';
 import { useDeleteItem } from '@/hooks/useCollection';
 import {
   formatCurrency,
-  formatWeight,
   formatPercent,
   getMetalEmoji,
   getCalculatedValues,
@@ -38,7 +37,7 @@ export function CollectionCard({ item }: CollectionCardProps) {
   );
 
   const quantity = item.quantity ?? 1;
-  const totalWeight = (item.weightOz || 0) * quantity;
+  const _totalWeight = (item.weightOz || 0) * quantity;
   const hasImage = item.images && item.images.length > 0;
   const displayTitle = item.category === 'NUMISMATIC'
     ? item.title || 'Numismatic Coin'
