@@ -128,14 +128,14 @@ Plans:
 Plans:
 - [x] 38-01: API function, PortfolioLineChart component, time range selector
 
-#### Phase 39: Allocation Donut Chart
+#### Phase 39: Allocation Donut Chart - COMPLETE
 **Goal**: Animated pie/donut chart with metal and category toggle, replacing existing SVG implementation
 **Depends on**: Phase 38
 **Research**: Unlikely (Victory patterns established)
-**Plans**: TBD
+**Plans**: 1/1
 
 Plans:
-- [ ] 39-01: TBD
+- [x] 39-01: Victory Native PolarChart with metal/category toggle
 
 #### Phase 40: Gain/Loss Bar Chart
 **Goal**: Horizontal bar chart showing gain/loss by metal with color-coded positive/negative values
@@ -240,7 +240,7 @@ Phases execute in numeric order. v1.8 and v1.9 can partially overlap (testing ca
 | 31-36 | v1.9 | 12/12 | **SHIPPED** | 2026-01-17 |
 | 37. Victory Native Setup | v2.0 | 1/1 | **COMPLETE** | 2026-01-17 |
 | 38. Portfolio Line Chart | v2.0 | 1/1 | **COMPLETE** | 2026-01-17 |
-| 39. Allocation Donut Chart | v2.0 | 0/? | Not started | - |
+| 39. Allocation Donut Chart | v2.0 | 1/1 | **COMPLETE** | 2026-01-17 |
 | 40. Gain/Loss Bar Chart | v2.0 | 0/? | Not started | - |
 | 41. Chart Interactions | v2.0 | 0/? | Not started | - |
 | 42. Dashboard Integration | v2.0 | 0/? | Not started | - |
