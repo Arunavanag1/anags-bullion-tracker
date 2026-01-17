@@ -160,10 +160,10 @@ Plans:
 **Goal**: Layout charts at bottom of dashboard in scrollable section with consistent styling
 **Depends on**: Phase 41
 **Research**: Unlikely (internal UI work)
-**Plans**: TBD
+**Plans**: 1/1
 
 Plans:
-- [ ] 42-01: TBD
+- [ ] 42-01: Add GainLossBarChart, organize ANALYTICS section, remove redundant allocation card
 
 ---
 
@@ -243,7 +243,7 @@ Phases execute in numeric order. v1.8 and v1.9 can partially overlap (testing ca
 | 39. Allocation Donut Chart | v2.0 | 1/1 | **COMPLETE** | 2026-01-17 |
 | 40. Gain/Loss Bar Chart | v2.0 | 1/1 | **COMPLETE** | 2026-01-17 |
 | 41. Chart Interactions | v2.0 | 1/1 | **COMPLETE** | 2026-01-17 |
-| 42. Dashboard Integration | v2.0 | 0/? | Not started | - |
+| 42. Dashboard Integration | v2.0 | 0/1 | Planned | - |
 | 43. PCGS API Integration | v2.1 | 1/1 | **COMPLETE** | 2026-01-17 |
 | 44. Series Priority Mapping | v2.1 | 1/1 | **COMPLETE** | 2026-01-17 |
 | 45. Bulk Scraper Enhancement | v2.1 | 0/? | Not started | - |
