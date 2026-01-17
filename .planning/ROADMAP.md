@@ -88,71 +88,19 @@ Plans:
 
 ---
 
-### :white_check_mark: v1.9 Deployment Ready (Complete)
+<details>
+<summary>:white_check_mark: v1.9 Deployment Ready (Phases 31-36) — SHIPPED 2026-01-17</summary>
 
-**Milestone Goal:** Vigorous code review and hardening for production deployment
-**Completed:** 2026-01-17
+See [milestones/v1.9-ROADMAP.md](milestones/v1.9-ROADMAP.md) for full details.
 
-#### Phase 31: Test Foundation
-**Goal**: Set up Vitest testing framework, write critical path tests for auth, API, and calculations
-**Depends on**: Phase 30 (or can run in parallel)
-**Research**: Unlikely (established patterns)
-**Plans**: 3 plans
+- [x] Phase 31: Test Foundation (3/3 plans) — 76 tests, Vitest setup
+- [x] Phase 32: Auth Security Audit (1/1 plan) — JWT hardening, refresh tokens
+- [x] Phase 33: API Hardening (2/2 plans) — Security headers, rate limiting
+- [x] Phase 34: Performance Review (2/2 plans) — N+1 fixes, pagination
+- [x] Phase 35: Code Quality Sweep (2/2 plans) — Strict types, dead code removal
+- [x] Phase 36: Deployment Verification (2/2 plans) — Health check, Sentry, Vercel config
 
-Plans:
-- [x] 31-01: Vitest setup and configuration
-- [x] 31-02: TDD for calculation functions (book value, melt value, purchase price)
-- [x] 31-03: TDD for validation and summary functions
-
-#### Phase 32: Auth Security Audit
-**Goal**: Review authentication flow, fix vulnerabilities, document security posture
-**Depends on**: Phase 31
-**Research**: Unlikely (internal review)
-**Plans**: 1 plan
-
-Plans:
-- [x] 32-01: Email validation, JWT expiry hardening, refresh token, auth tests
-
-#### Phase 33: API Hardening
-**Goal**: Comprehensive error handling, input validation, security headers, CORS config
-**Depends on**: Phase 32
-**Research**: Unlikely (established patterns)
-**Plans**: 2 plans
-
-Plans:
-- [x] 33-01: Security headers middleware, API error standardization
-- [x] 33-02: Input validation utilities, collection API rate limiting
-
-#### Phase 34: Performance Review
-**Goal**: Fix N+1 queries, add pagination, optimize bundle size, improve load times
-**Depends on**: Phase 33
-**Research**: Unlikely (internal optimization)
-**Plans**: 2 plans
-
-Plans:
-- [x] 34-01: Fix N+1 queries in coins/performance and sync-prices routes
-- [x] 34-02: Add pagination to collection API, configure bundle optimization
-
-#### Phase 35: Code Quality Sweep
-**Goal**: ESLint strict mode, remove dead code, fix all TypeScript issues, document patterns
-**Depends on**: Phase 34
-**Research**: Unlikely (internal cleanup)
-**Plans**: 2 plans
-
-Plans:
-- [x] 35-01: Fix TypeScript strict types (replace all `any` types)
-- [x] 35-02: Remove dead code and fix JSX escaping issues
-
-#### Phase 36: Deployment Verification
-**Goal**: Environment configs, health checks, logging, monitoring setup, deployment runbook
-**Depends on**: Phase 35
-**Research**: Likely (monitoring/logging tools)
-**Research topics**: Vercel monitoring, Sentry integration, logging best practices
-**Plans**: 2 plans
-
-Plans:
-- [x] 36-01: Health check endpoint and environment validation
-- [x] 36-02: Sentry monitoring, Vercel config, deployment runbook
+</details>
 
 ---
 
@@ -226,12 +174,7 @@ Phases execute in numeric order. v1.8 and v1.9 can partially overlap (testing ca
 | 28. Performance & Error Handling | v1.8 | 0/? | In progress | - |
 | 29. App Store Build | v1.8 | 0/? | Not started | - |
 | 30. Final QA | v1.8 | 0/? | Not started | - |
-| 31. Test Foundation | v1.9 | 3/3 | Complete | 2026-01-16 |
-| 32. Auth Security Audit | v1.9 | 1/1 | Complete | 2026-01-16 |
-| 33. API Hardening | v1.9 | 2/2 | Complete | 2026-01-16 |
-| 34. Performance Review | v1.9 | 2/2 | Complete | 2026-01-16 |
-| 35. Code Quality Sweep | v1.9 | 2/2 | Complete | 2026-01-16 |
-| 36. Deployment Verification | v1.9 | 2/2 | Complete | 2026-01-17 |
+| 31-36 | v1.9 | 12/12 | **SHIPPED** | 2026-01-17 |
 | 37. Victory Native Setup | v2.0 | 0/? | Not started | - |
 | 38. Portfolio Line Chart | v2.0 | 0/? | Not started | - |
 | 39. Allocation Donut Chart | v2.0 | 0/? | Not started | - |

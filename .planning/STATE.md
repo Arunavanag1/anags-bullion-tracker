@@ -2,55 +2,50 @@
 
 ## Current Position
 
-Phase: 36 of 36 (Deployment Verification)
-Plan: 2 of 2 in current phase
-Status: Phase 36 COMPLETE - v1.9 Milestone COMPLETE
-Last activity: 2026-01-17 - Completed 36-02-PLAN.md (Sentry, Vercel config, deployment runbook)
+Phase: Ready for Phase 37
+Plan: Not started
+Status: v1.9 SHIPPED, ready for v2.0
+Last activity: 2026-01-17 - Completed v1.9 Deployment Ready milestone
 
-Progress: ██████████ 100% (v1.9 milestone)
+Progress: v1.9 ██████████ 100% SHIPPED
 
 ## Active Milestone
 
-**v1.9 Deployment Ready** - COMPLETE
-- 6 phases (31-36) all completed
-- Focus: Code review, testing, security, performance, deployment
-
-## Upcoming Milestone
-
 **v2.0 Mobile Charts** (Phases 37-42)
-- 6 phases
+- 6 phases planned
 - Focus: Interactive charts on mobile dashboard matching website functionality
 - Library: Victory Native
+
+## Shipped Milestones
+
+- **v1.9 Deployment Ready** (2026-01-17) - Testing, security, performance, deployment config
+- See `.planning/MILESTONES.md` for full history
 
 ## Session Continuity
 
 Last session: 2026-01-17
-Stopped at: Completed Phase 36 (Deployment Verification)
+Stopped at: Completed v1.9 milestone
 Resume file: None
-Next: /gsd:complete-milestone OR Phase 37 (Victory Native Setup)
+Next: `/gsd:plan-phase 37` or `/gsd:discuss-phase 37`
 
 ## Accumulated Context
 
-### Key Decisions
-- GSAP for scroll animation (ScrollTrigger precision)
-- Cloudinary for images (CDN benefits)
-- Unified portfolio value (simpler UX)
-- Three valuation types (bullion, numismatic, custom)
-- Local spot price tracking (accurate 24h gains)
+### Key Decisions (v1.9)
 - 7-day JWT tokens with refresh (Phase 32)
 - Email normalization at signup (Phase 32)
 - CSP allows unsafe-inline for Next.js dev (Phase 33)
 - Centralized API error handling (Phase 33)
+- Cursor-based pagination (Phase 34)
 - Sentry conditionally initialized (Phase 36)
 - Vercel iad1 region as primary (Phase 36)
 
-### Technical Debt Addressed (v1.9)
-- [x] No test coverage → Phase 31 (76 tests)
-- [x] Auth vulnerabilities → Phase 32 (JWT expiry, email validation)
-- [x] API security gaps → Phase 33 (headers, validation, rate limiting)
-- [x] N+1 queries, no pagination → Phase 34 (batch queries, cursor pagination)
-- [x] TypeScript issues, dead code → Phase 35 (any types fixed, dead code removed)
-- [x] Deployment configuration → Phase 36 (health check, Sentry, Vercel config)
+### Technical Debt Resolved (v1.9)
+- ✅ 76 tests added (Phase 31)
+- ✅ Auth hardened with JWT expiry (Phase 32)
+- ✅ Security headers and rate limiting (Phase 33)
+- ✅ N+1 queries fixed, pagination added (Phase 34)
+- ✅ TypeScript strict types (Phase 35)
+- ✅ Deployment configuration complete (Phase 36)
 
 ### Known Issues
 - next-auth 5 beta may have breaking changes
@@ -64,5 +59,5 @@ None currently.
 ## Roadmap Evolution
 
 - v1.0-v1.8: Core feature development (Phases 1-30)
-- v1.9: Deployment readiness, 6 phases (Phase 31-36) - COMPLETE
-- v2.0: Mobile Charts, 6 phases (Phase 37-42) - Next
+- v1.9: Deployment readiness (Phases 31-36) - **SHIPPED 2026-01-17**
+- v2.0: Mobile Charts (Phases 37-42) - Next
