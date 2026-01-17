@@ -1,0 +1,615 @@
+{
+  "categories": [
+    {
+      "name": "Silver Eagles",
+      "slug": "silver-eagles",
+      "category_id": 833,
+      "estimated_coins": 45,
+      "year_range": "1986-present",
+      "type": "bullion",
+      "notes": "Modern bullion, high collector interest, annual releases"
+    },
+    {
+      "name": "Gold Eagles",
+      "slug": "gold-eagles",
+      "category_id": 835,
+      "estimated_coins": 160,
+      "year_range": "1986-present",
+      "type": "bullion",
+      "notes": "Modern bullion, 4 denominations per year"
+    },
+    {
+      "name": "Platinum Eagles",
+      "slug": "platinum-eagles",
+      "category_id": 838,
+      "estimated_coins": 120,
+      "year_range": "1997-present",
+      "type": "bullion",
+      "notes": "Modern bullion, less common than gold/silver"
+    },
+    {
+      "name": "Palladium Eagles",
+      "slug": "palladium-eagles",
+      "category_id": 840,
+      "estimated_coins": 12,
+      "year_range": "2017-present",
+      "type": "bullion",
+      "notes": "Newest US bullion program"
+    },
+    {
+      "name": "Morgan Dollars",
+      "slug": "morgan-dollars",
+      "category_id": 53,
+      "estimated_coins": 150,
+      "year_range": "1878-1921",
+      "type": "regular",
+      "notes": "Key classic series, extremely popular with collectors"
+    },
+    {
+      "name": "Peace Dollars",
+      "slug": "peace-dollars",
+      "category_id": 54,
+      "estimated_coins": 30,
+      "year_range": "1921-1935",
+      "type": "regular",
+      "notes": "Successor to Morgan, Art Deco design"
+    },
+    {
+      "name": "Lincoln Cents Wheat Reverse",
+      "slug": "lincoln-cents-wheat-reverse",
+      "category_id": 37,
+      "estimated_coins": 145,
+      "year_range": "1909-1958",
+      "type": "regular",
+      "notes": "Popular 20th century series, many date/mintmark varieties"
+    },
+    {
+      "name": "Lincoln Cents Memorial Reverse",
+      "slug": "lincoln-cents-memorial",
+      "category_id": 38,
+      "estimated_coins": 200,
+      "year_range": "1959-2008",
+      "type": "regular",
+      "notes": "Continuation of Lincoln cent series"
+    },
+    {
+      "name": "Lincoln Cents Shield Reverse",
+      "slug": "lincoln-cents-shield",
+      "category_id": 1038,
+      "estimated_coins": 35,
+      "year_range": "2010-present",
+      "type": "regular",
+      "notes": "Current Lincoln cent design"
+    },
+    {
+      "name": "Indian Head Cents",
+      "slug": "indian-head-cents",
+      "category_id": 36,
+      "estimated_coins": 70,
+      "year_range": "1859-1909",
+      "type": "regular",
+      "notes": "Pre-Lincoln cent design, popular with collectors"
+    },
+    {
+      "name": "Flying Eagle Cents",
+      "slug": "flying-eagle-cents",
+      "category_id": 35,
+      "estimated_coins": 8,
+      "year_range": "1856-1858",
+      "type": "regular",
+      "notes": "First small cent, short-lived series"
+    },
+    {
+      "name": "Large Cents",
+      "slug": "large-cents",
+      "category_id": 33,
+      "estimated_coins": 200,
+      "year_range": "1793-1857",
+      "type": "regular",
+      "notes": "Early US coinage, many varieties"
+    },
+    {
+      "name": "Half Cents",
+      "slug": "half-cents",
+      "category_id": 32,
+      "estimated_coins": 80,
+      "year_range": "1793-1857",
+      "type": "regular",
+      "notes": "Smallest US denomination, discontinued"
+    },
+    {
+      "name": "Jefferson Nickels",
+      "slug": "jefferson-nickels",
+      "category_id": 39,
+      "estimated_coins": 250,
+      "year_range": "1938-present",
+      "type": "regular",
+      "notes": "Long-running modern series"
+    },
+    {
+      "name": "Buffalo Nickels",
+      "slug": "buffalo-nickels",
+      "category_id": 40,
+      "estimated_coins": 75,
+      "year_range": "1913-1938",
+      "type": "regular",
+      "notes": "Iconic American design"
+    },
+    {
+      "name": "Liberty Nickels",
+      "slug": "liberty-nickels",
+      "category_id": 41,
+      "estimated_coins": 40,
+      "year_range": "1883-1912",
+      "type": "regular",
+      "notes": "V Nickel design, includes famous 1913"
+    },
+    {
+      "name": "Shield Nickels",
+      "slug": "shield-nickels",
+      "category_id": 42,
+      "estimated_coins": 30,
+      "year_range": "1866-1883",
+      "type": "regular",
+      "notes": "First 5-cent nickel coin"
+    },
+    {
+      "name": "Three Cent Nickels",
+      "slug": "three-cent-nickels",
+      "category_id": 43,
+      "estimated_coins": 25,
+      "year_range": "1865-1889",
+      "type": "regular",
+      "notes": "Unusual denomination"
+    },
+    {
+      "name": "Roosevelt Dimes",
+      "slug": "roosevelt-dimes",
+      "category_id": 44,
+      "estimated_coins": 200,
+      "year_range": "1946-present",
+      "type": "regular",
+      "notes": "Current dime design, silver 1946-1964"
+    },
+    {
+      "name": "Mercury Dimes",
+      "slug": "mercury-dimes",
+      "category_id": 45,
+      "estimated_coins": 80,
+      "year_range": "1916-1945",
+      "type": "regular",
+      "notes": "Winged Liberty Head, popular classic"
+    },
+    {
+      "name": "Barber Dimes",
+      "slug": "barber-dimes",
+      "category_id": 46,
+      "estimated_coins": 75,
+      "year_range": "1892-1916",
+      "type": "regular",
+      "notes": "Part of Barber coinage family"
+    },
+    {
+      "name": "Seated Liberty Dimes",
+      "slug": "seated-liberty-dimes",
+      "category_id": 47,
+      "estimated_coins": 150,
+      "year_range": "1837-1891",
+      "type": "regular",
+      "notes": "Long 19th century series, many varieties"
+    },
+    {
+      "name": "Bust Dimes",
+      "slug": "bust-dimes",
+      "category_id": 48,
+      "estimated_coins": 50,
+      "year_range": "1796-1837",
+      "type": "regular",
+      "notes": "Early US dimes, Draped and Capped Bust types"
+    },
+    {
+      "name": "Washington Quarters",
+      "slug": "washington-quarters",
+      "category_id": 49,
+      "estimated_coins": 180,
+      "year_range": "1932-1998",
+      "type": "regular",
+      "notes": "Pre-state quarter series, silver 1932-1964"
+    },
+    {
+      "name": "State Quarters",
+      "slug": "state-quarters",
+      "category_id": 850,
+      "estimated_coins": 112,
+      "year_range": "1999-2008",
+      "type": "regular",
+      "notes": "50 States commemorative program"
+    },
+    {
+      "name": "America the Beautiful Quarters",
+      "slug": "america-beautiful-quarters",
+      "category_id": 1040,
+      "estimated_coins": 120,
+      "year_range": "2010-2021",
+      "type": "regular",
+      "notes": "National parks and sites program"
+    },
+    {
+      "name": "American Women Quarters",
+      "slug": "american-women-quarters",
+      "category_id": 1050,
+      "estimated_coins": 25,
+      "year_range": "2022-2025",
+      "type": "regular",
+      "notes": "Current quarter program"
+    },
+    {
+      "name": "Standing Liberty Quarters",
+      "slug": "standing-liberty-quarters",
+      "category_id": 50,
+      "estimated_coins": 40,
+      "year_range": "1916-1930",
+      "type": "regular",
+      "notes": "Beautiful classic design, date wear issues"
+    },
+    {
+      "name": "Barber Quarters",
+      "slug": "barber-quarters",
+      "category_id": 51,
+      "estimated_coins": 75,
+      "year_range": "1892-1916",
+      "type": "regular",
+      "notes": "Part of Barber coinage family"
+    },
+    {
+      "name": "Seated Liberty Quarters",
+      "slug": "seated-liberty-quarters",
+      "category_id": 52,
+      "estimated_coins": 140,
+      "year_range": "1838-1891",
+      "type": "regular",
+      "notes": "Long 19th century series"
+    },
+    {
+      "name": "Bust Quarters",
+      "slug": "bust-quarters",
+      "category_id": 55,
+      "estimated_coins": 45,
+      "year_range": "1796-1838",
+      "type": "regular",
+      "notes": "Early US quarters"
+    },
+    {
+      "name": "Kennedy Half Dollars",
+      "slug": "kennedy-half-dollars",
+      "category_id": 56,
+      "estimated_coins": 140,
+      "year_range": "1964-present",
+      "type": "regular",
+      "notes": "Current half dollar, silver 1964-1970"
+    },
+    {
+      "name": "Franklin Half Dollars",
+      "slug": "franklin-half-dollars",
+      "category_id": 57,
+      "estimated_coins": 35,
+      "year_range": "1948-1963",
+      "type": "regular",
+      "notes": "Short series before Kennedy"
+    },
+    {
+      "name": "Walking Liberty Half Dollars",
+      "slug": "walking-liberty-half-dollars",
+      "category_id": 58,
+      "estimated_coins": 65,
+      "year_range": "1916-1947",
+      "type": "regular",
+      "notes": "Considered most beautiful US coin design"
+    },
+    {
+      "name": "Barber Half Dollars",
+      "slug": "barber-half-dollars",
+      "category_id": 59,
+      "estimated_coins": 75,
+      "year_range": "1892-1915",
+      "type": "regular",
+      "notes": "Part of Barber coinage family"
+    },
+    {
+      "name": "Seated Liberty Half Dollars",
+      "slug": "seated-liberty-half-dollars",
+      "category_id": 60,
+      "estimated_coins": 150,
+      "year_range": "1839-1891",
+      "type": "regular",
+      "notes": "Long 19th century series"
+    },
+    {
+      "name": "Bust Half Dollars",
+      "slug": "bust-half-dollars",
+      "category_id": 61,
+      "estimated_coins": 180,
+      "year_range": "1794-1839",
+      "type": "regular",
+      "notes": "Very popular early US series, many die varieties"
+    },
+    {
+      "name": "Eisenhower Dollars",
+      "slug": "eisenhower-dollars",
+      "category_id": 62,
+      "estimated_coins": 35,
+      "year_range": "1971-1978",
+      "type": "regular",
+      "notes": "Large dollar between Peace and SBA"
+    },
+    {
+      "name": "Susan B. Anthony Dollars",
+      "slug": "susan-b-anthony-dollars",
+      "category_id": 63,
+      "estimated_coins": 18,
+      "year_range": "1979-1999",
+      "type": "regular",
+      "notes": "Small dollar, often confused with quarter"
+    },
+    {
+      "name": "Sacagawea Dollars",
+      "slug": "sacagawea-dollars",
+      "category_id": 64,
+      "estimated_coins": 55,
+      "year_range": "2000-present",
+      "type": "regular",
+      "notes": "Golden dollar series, Native American themes"
+    },
+    {
+      "name": "Presidential Dollars",
+      "slug": "presidential-dollars",
+      "category_id": 1041,
+      "estimated_coins": 80,
+      "year_range": "2007-2020",
+      "type": "regular",
+      "notes": "US Presidents commemorative series"
+    },
+    {
+      "name": "Trade Dollars",
+      "slug": "trade-dollars",
+      "category_id": 65,
+      "estimated_coins": 20,
+      "year_range": "1873-1885",
+      "type": "regular",
+      "notes": "Made for Asian trade"
+    },
+    {
+      "name": "Seated Liberty Dollars",
+      "slug": "seated-liberty-dollars",
+      "category_id": 66,
+      "estimated_coins": 45,
+      "year_range": "1840-1873",
+      "type": "regular",
+      "notes": "19th century silver dollar"
+    },
+    {
+      "name": "Bust Dollars",
+      "slug": "bust-dollars",
+      "category_id": 67,
+      "estimated_coins": 25,
+      "year_range": "1794-1804",
+      "type": "regular",
+      "notes": "Early US silver dollars, famous 1804"
+    },
+    {
+      "name": "Gold Dollars",
+      "slug": "gold-dollars",
+      "category_id": 70,
+      "estimated_coins": 60,
+      "year_range": "1849-1889",
+      "type": "gold",
+      "notes": "Smallest US gold denomination"
+    },
+    {
+      "name": "$2.50 Liberty Quarter Eagles",
+      "slug": "quarter-eagles-liberty",
+      "category_id": 71,
+      "estimated_coins": 100,
+      "year_range": "1840-1907",
+      "type": "gold",
+      "notes": "Classic Liberty Head gold"
+    },
+    {
+      "name": "$2.50 Indian Quarter Eagles",
+      "slug": "quarter-eagles-indian",
+      "category_id": 72,
+      "estimated_coins": 25,
+      "year_range": "1908-1929",
+      "type": "gold",
+      "notes": "Incuse (sunken) design, unique"
+    },
+    {
+      "name": "$3 Gold Pieces",
+      "slug": "three-dollar-gold",
+      "category_id": 73,
+      "estimated_coins": 45,
+      "year_range": "1854-1889",
+      "type": "gold",
+      "notes": "Unusual denomination"
+    },
+    {
+      "name": "$5 Liberty Half Eagles",
+      "slug": "half-eagles-liberty",
+      "category_id": 74,
+      "estimated_coins": 160,
+      "year_range": "1839-1908",
+      "type": "gold",
+      "notes": "Classic Liberty Head gold"
+    },
+    {
+      "name": "$5 Indian Half Eagles",
+      "slug": "half-eagles-indian",
+      "category_id": 75,
+      "estimated_coins": 25,
+      "year_range": "1908-1929",
+      "type": "gold",
+      "notes": "Incuse design, matches $2.50"
+    },
+    {
+      "name": "$10 Liberty Eagles",
+      "slug": "eagles-liberty",
+      "category_id": 76,
+      "estimated_coins": 130,
+      "year_range": "1838-1907",
+      "type": "gold",
+      "notes": "Classic Liberty Head gold eagle"
+    },
+    {
+      "name": "$10 Indian Eagles",
+      "slug": "eagles-indian",
+      "category_id": 77,
+      "estimated_coins": 35,
+      "year_range": "1907-1933",
+      "type": "gold",
+      "notes": "Augustus Saint-Gaudens design"
+    },
+    {
+      "name": "$20 Liberty Double Eagles",
+      "slug": "double-eagles-liberty",
+      "category_id": 78,
+      "estimated_coins": 120,
+      "year_range": "1850-1907",
+      "type": "gold",
+      "notes": "Largest US gold denomination"
+    },
+    {
+      "name": "$20 Saint-Gaudens Double Eagles",
+      "slug": "double-eagles-saint-gaudens",
+      "category_id": 79,
+      "estimated_coins": 55,
+      "year_range": "1907-1933",
+      "type": "gold",
+      "notes": "Considered most beautiful US coin, includes 1933"
+    },
+    {
+      "name": "Early Gold - $2.50 to $10",
+      "slug": "early-gold",
+      "category_id": 80,
+      "estimated_coins": 150,
+      "year_range": "1795-1839",
+      "type": "gold",
+      "notes": "Pre-Liberty Head gold, rare"
+    },
+    {
+      "name": "Classic Commemoratives",
+      "slug": "classic-commemoratives",
+      "category_id": 100,
+      "estimated_coins": 180,
+      "year_range": "1892-1954",
+      "type": "commemorative",
+      "notes": "Early US commemorative coins, silver and gold"
+    },
+    {
+      "name": "Modern Commemoratives Silver",
+      "slug": "modern-commemoratives-silver",
+      "category_id": 101,
+      "estimated_coins": 350,
+      "year_range": "1982-present",
+      "type": "commemorative",
+      "notes": "Modern commemorative dollars"
+    },
+    {
+      "name": "Modern Commemoratives Gold",
+      "slug": "modern-commemoratives-gold",
+      "category_id": 102,
+      "estimated_coins": 120,
+      "year_range": "1984-present",
+      "type": "commemorative",
+      "notes": "Modern gold commemoratives, $5 and $10"
+    },
+    {
+      "name": "Modern Commemoratives Clad",
+      "slug": "modern-commemoratives-clad",
+      "category_id": 103,
+      "estimated_coins": 60,
+      "year_range": "1982-present",
+      "type": "commemorative",
+      "notes": "Half dollars and other clad commemoratives"
+    },
+    {
+      "name": "First Spouse Gold",
+      "slug": "first-spouse-gold",
+      "category_id": 104,
+      "estimated_coins": 45,
+      "year_range": "2007-2016",
+      "type": "commemorative",
+      "notes": "Gold coins honoring First Ladies"
+    },
+    {
+      "name": "Twenty Cent Pieces",
+      "slug": "twenty-cent-pieces",
+      "category_id": 90,
+      "estimated_coins": 10,
+      "year_range": "1875-1878",
+      "type": "regular",
+      "notes": "Short-lived denomination"
+    },
+    {
+      "name": "Three Cent Silver",
+      "slug": "three-cent-silver",
+      "category_id": 91,
+      "estimated_coins": 35,
+      "year_range": "1851-1873",
+      "type": "regular",
+      "notes": "Tiny silver coin, trimes"
+    },
+    {
+      "name": "Two Cent Pieces",
+      "slug": "two-cent-pieces",
+      "category_id": 92,
+      "estimated_coins": 15,
+      "year_range": "1864-1873",
+      "type": "regular",
+      "notes": "First US coin with IN GOD WE TRUST"
+    },
+    {
+      "name": "Half Dimes Seated",
+      "slug": "half-dimes-seated",
+      "category_id": 93,
+      "estimated_coins": 80,
+      "year_range": "1837-1873",
+      "type": "regular",
+      "notes": "Predecessor to the nickel"
+    },
+    {
+      "name": "Half Dimes Early",
+      "slug": "half-dimes-early",
+      "category_id": 94,
+      "estimated_coins": 40,
+      "year_range": "1792-1837",
+      "type": "regular",
+      "notes": "Early half dimes, Flowing Hair to Capped Bust"
+    },
+    {
+      "name": "American Gold Buffalo",
+      "slug": "gold-buffalo",
+      "category_id": 836,
+      "estimated_coins": 40,
+      "year_range": "2006-present",
+      "type": "bullion",
+      "notes": "24K gold bullion, Buffalo nickel design"
+    },
+    {
+      "name": "American Innovation Dollars",
+      "slug": "american-innovation-dollars",
+      "category_id": 1052,
+      "estimated_coins": 60,
+      "year_range": "2018-2032",
+      "type": "regular",
+      "notes": "Innovation and inventors program"
+    }
+  ],
+  "total_estimated_coins": 5775,
+  "research_date": "2026-01-17",
+  "research_notes": "Categories compiled from PCGS CoinFacts structure. Category IDs are representative based on known PCGS numbering patterns. Estimated coin counts are approximate based on date ranges and known mintages. Total target is ~8,000 coins when including all date/mintmark varieties and proofs.",
+  "sources": [
+    "https://www.pcgs.com/coinfacts",
+    "https://www.pcgs.com/prices/us",
+    "Standard US numismatic references"
+  ]
+}
