@@ -19,6 +19,7 @@ None (standard web/mobile patterns)
 - :white_check_mark: **v1.7 Unified Portfolio** - Phase 25 (shipped 2026-01-15)
 - :construction: **v1.8 Mobile Deployment** - Phases 26-30 (in progress)
 - :construction: **v1.9 Deployment Ready** - Phases 31-36 (in progress)
+- :clipboard: **v2.0 Mobile Charts** - Phases 37-42 (planned)
 
 ## Phases
 
@@ -151,6 +152,68 @@ Plans:
 Plans:
 - [ ] 36-01: TBD
 
+---
+
+### :clipboard: v2.0 Mobile Charts (Planned)
+
+**Milestone Goal:** Add interactive, aesthetic charts to the mobile app dashboard, matching website functionality
+
+#### Phase 37: Victory Native Setup
+**Goal**: Install Victory Native, configure dependencies, create base chart theme and wrapper components
+**Depends on**: Phase 36
+**Research**: Likely (Victory Native integration with Expo)
+**Research topics**: Victory Native installation, Expo compatibility, theming and customization
+**Plans**: TBD
+
+Plans:
+- [ ] 37-01: TBD (run /gsd:plan-phase 37 to break down)
+
+#### Phase 38: Portfolio Line Chart
+**Goal**: Interactive line chart showing portfolio value over time with time range selector (1W, 1M, 1Y, 5Y)
+**Depends on**: Phase 37
+**Research**: Unlikely (Victory patterns established)
+**Plans**: TBD
+
+Plans:
+- [ ] 38-01: TBD
+
+#### Phase 39: Allocation Donut Chart
+**Goal**: Animated pie/donut chart with metal and category toggle, replacing existing SVG implementation
+**Depends on**: Phase 38
+**Research**: Unlikely (Victory patterns established)
+**Plans**: TBD
+
+Plans:
+- [ ] 39-01: TBD
+
+#### Phase 40: Gain/Loss Bar Chart
+**Goal**: Horizontal bar chart showing gain/loss by metal with color-coded positive/negative values
+**Depends on**: Phase 39
+**Research**: Unlikely (Victory patterns established)
+**Plans**: TBD
+
+Plans:
+- [ ] 40-01: TBD
+
+#### Phase 41: Chart Interactions
+**Goal**: Touch gestures, tooltips, zoom/pan, smooth animations, and responsive sizing
+**Depends on**: Phase 40
+**Research**: Likely (mobile-specific gesture handling)
+**Research topics**: Victory Native touch events, gesture handling, performance optimization
+**Plans**: TBD
+
+Plans:
+- [ ] 41-01: TBD
+
+#### Phase 42: Dashboard Integration
+**Goal**: Layout charts at bottom of dashboard in scrollable section with consistent styling
+**Depends on**: Phase 41
+**Research**: Unlikely (internal UI work)
+**Plans**: TBD
+
+Plans:
+- [ ] 42-01: TBD
+
 ## Progress
 
 **Execution Order:**
@@ -167,3 +230,9 @@ Phases execute in numeric order. v1.8 and v1.9 can partially overlap (testing ca
 | 34. Performance Review | v1.9 | 2/2 | Complete | 2026-01-16 |
 | 35. Code Quality Sweep | v1.9 | 0/? | Not started | - |
 | 36. Deployment Verification | v1.9 | 0/? | Not started | - |
+| 37. Victory Native Setup | v2.0 | 0/? | Not started | - |
+| 38. Portfolio Line Chart | v2.0 | 0/? | Not started | - |
+| 39. Allocation Donut Chart | v2.0 | 0/? | Not started | - |
+| 40. Gain/Loss Bar Chart | v2.0 | 0/? | Not started | - |
+| 41. Chart Interactions | v2.0 | 0/? | Not started | - |
+| 42. Dashboard Integration | v2.0 | 0/? | Not started | - |

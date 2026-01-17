@@ -5,7 +5,7 @@
 Phase: 35 of 36 (Code Quality Sweep)
 Plan: 2 of 2 in current phase
 Status: Phase 35 COMPLETE
-Last activity: 2026-01-16 - Completed Phase 35 Plan 02 (remove dead code, fix JSX escaping)
+Last activity: 2026-01-17 - Created milestone v2.0 Mobile Charts (Phases 37-42)
 
 Progress: ████████░░ 83% (v1.9 milestone)
 
@@ -14,6 +14,13 @@ Progress: ████████░░ 83% (v1.9 milestone)
 **v1.9 Deployment Ready**
 - 6 phases (31-36)
 - Focus: Code review, testing, security, performance, deployment
+
+## Upcoming Milestone
+
+**v2.0 Mobile Charts** (Phases 37-42)
+- 6 phases
+- Focus: Interactive charts on mobile dashboard matching website functionality
+- Library: Victory Native
 
 ## Session Continuity
 
@@ -56,3 +63,4 @@ None currently.
 
 - v1.0-v1.8: Core feature development (Phases 1-30)
 - Milestone v1.9 created: Deployment readiness, 6 phases (Phase 31-36)
+- Milestone v2.0 created: Mobile Charts, 6 phases (Phase 37-42)
