@@ -108,15 +108,15 @@ See [milestones/v1.9-ROADMAP.md](milestones/v1.9-ROADMAP.md) for full details.
 
 **Milestone Goal:** Add interactive, aesthetic charts to the mobile app dashboard, matching website functionality
 
-#### Phase 37: Victory Native Setup
+#### Phase 37: Victory Native Setup - COMPLETE
 **Goal**: Install Victory Native, configure dependencies, create base chart theme and wrapper components
 **Depends on**: Phase 36
 **Research**: Likely (Victory Native integration with Expo)
 **Research topics**: Victory Native installation, Expo compatibility, theming and customization
-**Plans**: TBD
+**Plans**: 1/1
 
 Plans:
-- [ ] 37-01: TBD (run /gsd:plan-phase 37 to break down)
+- [x] 37-01: Skia dependency, chart theme, ChartContainer, TestChart
 
 #### Phase 38: Portfolio Line Chart
 **Goal**: Interactive line chart showing portfolio value over time with time range selector (1W, 1M, 1Y, 5Y)
@@ -175,7 +175,7 @@ Phases execute in numeric order. v1.8 and v1.9 can partially overlap (testing ca
 | 29. App Store Build | v1.8 | 0/? | Not started | - |
 | 30. Final QA | v1.8 | 0/? | Not started | - |
 | 31-36 | v1.9 | 12/12 | **SHIPPED** | 2026-01-17 |
-| 37. Victory Native Setup | v2.0 | 0/? | Not started | - |
+| 37. Victory Native Setup | v2.0 | 1/1 | **COMPLETE** | 2026-01-17 |
 | 38. Portfolio Line Chart | v2.0 | 0/? | Not started | - |
 | 39. Allocation Donut Chart | v2.0 | 0/? | Not started | - |
 | 40. Gain/Loss Bar Chart | v2.0 | 0/? | Not started | - |
