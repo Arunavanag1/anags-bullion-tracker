@@ -16,7 +16,7 @@ import { useCollectionSummary } from '../hooks/useCoins';
 import { TopPerformers } from '../components/TopPerformers';
 import { SpotPriceBanner } from '../components/ui/SpotPriceBanner';
 import { TabBar } from '../components/ui/TabBar';
-import { PortfolioLineChart, AllocationPieChart } from '../components/charts';
+import { PortfolioLineChart, AllocationPieChart, GainLossBarChart } from '../components/charts';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Dashboard'>;
 
@@ -360,12 +360,25 @@ export function DashboardScreen({ navigation }: Props) {
         {/* Top Performers */}
         <TopPerformers />
 
-        {/* Charts Section */}
+        {/* Analytics Section */}
         <View style={styles.chartsSection}>
-          <Text style={styles.chartsSectionTitle}>CHARTS</Text>
+          <Text style={styles.chartsSectionTitle}>ANALYTICS</Text>
+
+          {/* Portfolio Value Over Time */}
           <PortfolioLineChart />
+
+          <View style={styles.chartSpacer} />
+
+          {/* Allocation Breakdown */}
           {spotPrices && (
             <AllocationPieChart collection={items} spotPrices={spotPrices} />
+          )}
+
+          <View style={styles.chartSpacer} />
+
+          {/* Gain/Loss by Metal */}
+          {spotPrices && (
+            <GainLossBarChart collection={items} spotPrices={spotPrices} />
           )}
         </View>
       </ScrollView>
@@ -687,5 +700,8 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
     marginBottom: 16,
     letterSpacing: 0.5,
+  },
+  chartSpacer: {
+    height: 24,
   },
 });
