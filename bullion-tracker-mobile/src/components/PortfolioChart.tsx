@@ -62,10 +62,16 @@ export function PortfolioChart({ items }: PortfolioChartProps) {
           bookValue += calculateBookValue(item, spotPrice);
         });
 
+        const roundedMelt = Math.round(meltValue * 100) / 100;
+        const roundedBook = Math.round(bookValue * 100) / 100;
+
         return {
           date: formatDate(pricePoint.timestamp, timeRange),
-          meltValue: Math.round(meltValue * 100) / 100,
-          bookValue: Math.round(bookValue * 100) / 100,
+          meltValue: roundedMelt,
+          bookValue: roundedBook,
+          bullionValue: roundedMelt,
+          numismaticValue: 0,
+          totalValue: roundedMelt,
           timestamp: pricePoint.timestamp.getTime(),
         };
       });

@@ -2,7 +2,7 @@ import * as SecureStore from 'expo-secure-store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Fuse from 'fuse.js';
 import Constants from 'expo-constants';
-import type { CoinReference, ValidGrade, PriceGuideData, CollectionSummary, ItemCategory, GradingService, ProblemType, BookValueType, ValueHistoryEntry, ValuationBreakdown } from '../types';
+import type { CoinReference, ValidGrade, PriceGuideData, CollectionSummary, ItemCategory, GradingService, ProblemType, BookValueType, ValueHistoryEntry, ValuationBreakdown, HistoricalPoint } from '../types';
 
 // Fuse.js search result interface
 interface FuseResult<T> {
@@ -499,5 +499,20 @@ export const api = {
 
     const data = await response.json();
     return data.data;
+  },
+
+  /**
+   * Get portfolio value history for charts
+   * @param days - Number of days to look back (7, 30, 365, 1825)
+   */
+  async getPortfolioHistory(days: number = 30): Promise<HistoricalPoint[]> {
+    const response = await makeRequest(`/api/portfolio/history?days=${days}`);
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch portfolio history');
+    }
+
+    const data = await response.json();
+    return data.data || [];
   },
 };

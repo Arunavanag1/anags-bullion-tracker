@@ -119,14 +119,14 @@ See [milestones/v1.9-ROADMAP.md](milestones/v1.9-ROADMAP.md) for full details.
 Plans:
 - [x] 37-01: Skia dependency, chart theme, ChartContainer, TestChart
 
-#### Phase 38: Portfolio Line Chart
+#### Phase 38: Portfolio Line Chart - COMPLETE
 **Goal**: Interactive line chart showing portfolio value over time with time range selector (1W, 1M, 1Y, 5Y)
 **Depends on**: Phase 37
 **Research**: Unlikely (Victory patterns established)
-**Plans**: TBD
+**Plans**: 1/1
 
 Plans:
-- [ ] 38-01: TBD
+- [x] 38-01: API function, PortfolioLineChart component, time range selector
 
 #### Phase 39: Allocation Donut Chart
 **Goal**: Animated pie/donut chart with metal and category toggle, replacing existing SVG implementation
@@ -239,7 +239,7 @@ Phases execute in numeric order. v1.8 and v1.9 can partially overlap (testing ca
 | 30. Final QA | v1.8 | 0/? | Not started | - |
 | 31-36 | v1.9 | 12/12 | **SHIPPED** | 2026-01-17 |
 | 37. Victory Native Setup | v2.0 | 1/1 | **COMPLETE** | 2026-01-17 |
-| 38. Portfolio Line Chart | v2.0 | 0/? | Not started | - |
+| 38. Portfolio Line Chart | v2.0 | 1/1 | **COMPLETE** | 2026-01-17 |
 | 39. Allocation Donut Chart | v2.0 | 0/? | Not started | - |
 | 40. Gain/Loss Bar Chart | v2.0 | 0/? | Not started | - |
 | 41. Chart Interactions | v2.0 | 0/? | Not started | - |
