@@ -3,6 +3,12 @@ import { GeistSans } from "geist/font/sans";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/Providers";
+import { validateEnvAndLog } from "@/lib/env";
+
+// Validate environment on startup (runs once during module initialization)
+if (process.env.NODE_ENV === 'development') {
+  validateEnvAndLog();
+}
 
 const inter = Inter({
   variable: "--font-inter",
