@@ -176,10 +176,10 @@ Plans:
 **Depends on**: Phase 42
 **Research**: Likely (PCGS API authentication flow, endpoints)
 **Research topics**: PCGS API auth, token refresh, rate limit handling, available endpoints
-**Plans**: TBD
+**Plans**: 1
 
 Plans:
-- [ ] 43-01: TBD
+- [ ] 43-01: API client with OAuth2, quota tracking, CLI test script
 
 #### Phase 44: Series Priority Mapping
 **Goal**: Define target series (~8,000 coins): 20th century types, commemoratives, key early US; create scraping roadmap with priorities
