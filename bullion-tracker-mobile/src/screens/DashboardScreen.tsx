@@ -119,16 +119,6 @@ export function DashboardScreen({ navigation }: Props) {
   // Always use totalBookValue as the unified portfolio value
   const currentValue = summary ? summary.totalBookValue : 0;
 
-  // Calculate allocation percentages
-  const totalMeltValue = summary?.totalMeltValue || 1;
-  const goldValue = (summary?.totalWeight.gold || 0) * (spotPrices?.gold || 0);
-  const silverValue = (summary?.totalWeight.silver || 0) * (spotPrices?.silver || 0);
-  const platinumValue = (summary?.totalWeight.platinum || 0) * (spotPrices?.platinum || 0);
-
-  const goldPct = (goldValue / totalMeltValue) * 100;
-  const silverPct = (silverValue / totalMeltValue) * 100;
-  const platinumPct = (platinumValue / totalMeltValue) * 100;
-
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
@@ -239,54 +229,6 @@ export function DashboardScreen({ navigation }: Props) {
             </View>
           )}
         </View>
-
-        {/* Allocation Card */}
-        {summary && summary.totalMeltValue > 0 && (
-          <View style={styles.allocationCard}>
-            <Text style={styles.allocationLabel}>ALLOCATION</Text>
-
-            {/* Horizontal Bar */}
-            <View style={styles.allocationBar}>
-              {goldPct > 0 && (
-                <View style={{ width: `${goldPct}%`, backgroundColor: Colors.gold, height: '100%' }} />
-              )}
-              {silverPct > 0 && (
-                <View style={{ width: `${silverPct}%`, backgroundColor: Colors.silver, height: '100%', borderLeftWidth: 2, borderLeftColor: '#fff' }} />
-              )}
-              {platinumPct > 0 && (
-                <View style={{ width: `${platinumPct}%`, backgroundColor: Colors.platinum, height: '100%', borderLeftWidth: 2, borderLeftColor: '#fff' }} />
-              )}
-            </View>
-
-            {/* Legend */}
-            <View style={styles.allocationLegend}>
-              {goldPct > 0 && (
-                <View style={styles.legendItem}>
-                  <View style={[styles.legendDot, { backgroundColor: Colors.gold }]} />
-                  <Text style={styles.legendText}>
-                    Gold <Text style={styles.legendPct}>{goldPct.toFixed(0)}%</Text>
-                  </Text>
-                </View>
-              )}
-              {silverPct > 0 && (
-                <View style={styles.legendItem}>
-                  <View style={[styles.legendDot, { backgroundColor: Colors.silver }]} />
-                  <Text style={styles.legendText}>
-                    Silver <Text style={styles.legendPct}>{silverPct.toFixed(0)}%</Text>
-                  </Text>
-                </View>
-              )}
-              {platinumPct > 0 && (
-                <View style={styles.legendItem}>
-                  <View style={[styles.legendDot, { backgroundColor: Colors.platinum }]} />
-                  <Text style={styles.legendText}>
-                    Platinum <Text style={styles.legendPct}>{platinumPct.toFixed(0)}%</Text>
-                  </Text>
-                </View>
-              )}
-            </View>
-          </View>
-        )}
 
         {/* Category Breakdown Card */}
         {categorySummary && !summaryLoading && (categorySummary.bullionItems > 0 || categorySummary.numismaticItems > 0) && (
@@ -544,51 +486,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
-  },
-  allocationCard: {
-    backgroundColor: Colors.bgCard,
-    borderRadius: 24,
-    padding: 24,
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 20,
-    elevation: 2,
-  },
-  allocationLabel: {
-    fontSize: 13,
-    color: Colors.textSecondary,
-    marginBottom: 16,
-    letterSpacing: 0.5,
-  },
-  allocationBar: {
-    flexDirection: 'row',
-    height: 8,
-    borderRadius: 4,
-    overflow: 'hidden',
-    marginBottom: 16,
-  },
-  allocationLegend: {
-    flexDirection: 'row',
-    gap: 24,
-  },
-  legendItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  legendDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 3,
-  },
-  legendText: {
-    fontSize: 14,
-    color: Colors.textTertiary,
-  },
-  legendPct: {
-    color: '#aaa',
   },
   categoryCard: {
     backgroundColor: Colors.bgCard,
