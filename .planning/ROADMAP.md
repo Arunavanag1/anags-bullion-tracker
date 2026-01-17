@@ -181,14 +181,14 @@ Plans:
 Plans:
 - [x] 43-01: API client with OAuth2, quota tracking, CLI test script
 
-#### Phase 44: Series Priority Mapping
-**Goal**: Define target series (~8,000 coins): 20th century types, commemoratives, key early US; create scraping roadmap with priorities
+#### Phase 44: Series Priority Mapping - COMPLETE
+**Goal**: Define target series (~5,830 coins): 20th century types, commemoratives, key early US; create scraping roadmap with priorities
 **Depends on**: Phase 43
 **Research**: Unlikely (internal planning)
-**Plans**: TBD
+**Plans**: 1/1
 
 Plans:
-- [ ] 44-01: TBD
+- [x] 44-01: Research categories, expand COIN_SERIES (67 series), create SCRAPING-ROADMAP.md
 
 #### Phase 45: Bulk Scraper Enhancement
 **Goal**: Update existing Python scraper for new series, add NGC number cross-reference, fix any broken HTML selectors
@@ -245,7 +245,7 @@ Phases execute in numeric order. v1.8 and v1.9 can partially overlap (testing ca
 | 41. Chart Interactions | v2.0 | 0/? | Not started | - |
 | 42. Dashboard Integration | v2.0 | 0/? | Not started | - |
 | 43. PCGS API Integration | v2.1 | 1/1 | **COMPLETE** | 2026-01-17 |
-| 44. Series Priority Mapping | v2.1 | 0/? | Not started | - |
+| 44. Series Priority Mapping | v2.1 | 1/1 | **COMPLETE** | 2026-01-17 |
 | 45. Bulk Scraper Enhancement | v2.1 | 0/? | Not started | - |
 | 46. Data Population Pipeline | v2.1 | 0/? | Not started | - |
 | 47. Price Refresh Automation | v2.1 | 0/? | Not started | - |

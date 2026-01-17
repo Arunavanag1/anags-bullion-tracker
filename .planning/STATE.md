@@ -2,12 +2,12 @@
 
 ## Current Position
 
-Phase: 43 of 48 (PCGS API Integration)
+Phase: 44 of 48 (Series Priority Mapping)
 Plan: 1 of 1 in current phase - COMPLETE
-Status: Phase 43 COMPLETE
-Last activity: 2026-01-17 - Completed 43-01-PLAN.md (PCGS API client with OAuth2)
+Status: Phase 44 COMPLETE
+Last activity: 2026-01-17 - Completed 44-01-PLAN.md (67 series with priorities)
 
-Progress: v2.1 █░░░░░░░░░ 17% (1/6 phases)
+Progress: v2.1 ██░░░░░░░░ 33% (2/6 phases)
 
 ## Active Milestone
 
@@ -25,9 +25,9 @@ Progress: v2.1 █░░░░░░░░░ 17% (1/6 phases)
 ## Session Continuity
 
 Last session: 2026-01-17
-Stopped at: Completed Phase 43 (PCGS API Integration)
+Stopped at: Completed Phase 44 (Series Priority Mapping)
 Resume file: None
-Next: `/gsd:plan-phase 44` (Series Priority Mapping)
+Next: `/gsd:plan-phase 45` (Bulk Scraper Enhancement)
 
 ## Accumulated Context
 
@@ -65,7 +65,7 @@ None currently.
 - v2.1: Coin Database Expansion (Phases 43-48) - Created 2026-01-17
 
 ### v2.1 Milestone Context
-- **Goal**: Expand coin reference database from ~100 to ~8,000 coins
+- **Goal**: Expand coin reference database from ~100 to ~5,830 coins
 - **Approach**: Hybrid PCGS API (1,000 free queries/day) + web scraping
-- **Coverage**: 20th century types, commemoratives, key early US coins
-- **Current state**: 100 coins across 11 series in CoinReference table
+- **Coverage**: 67 series across 4 priority tiers (P0-P3)
+- **Current state**: 100 coins, 67 series defined, scraping roadmap complete
