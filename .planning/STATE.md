@@ -18,7 +18,7 @@ Progress: v2.1 █░░░░░░░░░ 17% (1/6 phases)
 
 ## Shipped Milestones
 
-- **v2.0 Mobile Charts** (2026-01-17) - Victory Native charts on mobile (Phases 37-39 complete, 40-42 pending)
+- **v2.0 Mobile Charts** (2026-01-17) - Victory Native charts on mobile (Phases 37-40 complete, 41-42 pending)
 - **v1.9 Deployment Ready** (2026-01-17) - Testing, security, performance, deployment config
 - See `.planning/MILESTONES.md` for full history
 

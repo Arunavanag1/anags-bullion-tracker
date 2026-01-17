@@ -137,14 +137,14 @@ Plans:
 Plans:
 - [x] 39-01: Victory Native PolarChart with metal/category toggle
 
-#### Phase 40: Gain/Loss Bar Chart
+#### Phase 40: Gain/Loss Bar Chart - COMPLETE
 **Goal**: Horizontal bar chart showing gain/loss by metal with color-coded positive/negative values
 **Depends on**: Phase 39
 **Research**: Unlikely (Victory patterns established)
-**Plans**: TBD
+**Plans**: 1/1
 
 Plans:
-- [ ] 40-01: TBD
+- [x] 40-01: GainLossBarChart with horizontal bars, color-coding, summary stats
 
 #### Phase 41: Chart Interactions
 **Goal**: Touch gestures, tooltips, zoom/pan, smooth animations, and responsive sizing
@@ -241,7 +241,7 @@ Phases execute in numeric order. v1.8 and v1.9 can partially overlap (testing ca
 | 37. Victory Native Setup | v2.0 | 1/1 | **COMPLETE** | 2026-01-17 |
 | 38. Portfolio Line Chart | v2.0 | 1/1 | **COMPLETE** | 2026-01-17 |
 | 39. Allocation Donut Chart | v2.0 | 1/1 | **COMPLETE** | 2026-01-17 |
-| 40. Gain/Loss Bar Chart | v2.0 | 0/? | Not started | - |
+| 40. Gain/Loss Bar Chart | v2.0 | 1/1 | **COMPLETE** | 2026-01-17 |
 | 41. Chart Interactions | v2.0 | 0/? | Not started | - |
 | 42. Dashboard Integration | v2.0 | 0/? | Not started | - |
 | 43. PCGS API Integration | v2.1 | 1/1 | **COMPLETE** | 2026-01-17 |
