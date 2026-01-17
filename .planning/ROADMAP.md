@@ -18,7 +18,7 @@ None (standard web/mobile patterns)
 - :white_check_mark: **v1.6 Portfolio Valuation** - Phases 21-24 (shipped 2026-01-15)
 - :white_check_mark: **v1.7 Unified Portfolio** - Phase 25 (shipped 2026-01-15)
 - :construction: **v1.8 Mobile Deployment** - Phases 26-30 (in progress)
-- :construction: **v1.9 Deployment Ready** - Phases 31-36 (in progress)
+- :white_check_mark: **v1.9 Deployment Ready** - Phases 31-36 (complete 2026-01-17)
 - :clipboard: **v2.0 Mobile Charts** - Phases 37-42 (planned)
 
 ## Phases
@@ -88,9 +88,10 @@ Plans:
 
 ---
 
-### :construction: v1.9 Deployment Ready (In Progress)
+### :white_check_mark: v1.9 Deployment Ready (Complete)
 
 **Milestone Goal:** Vigorous code review and hardening for production deployment
+**Completed:** 2026-01-17
 
 #### Phase 31: Test Foundation
 **Goal**: Set up Vitest testing framework, write critical path tests for auth, API, and calculations
@@ -139,18 +140,19 @@ Plans:
 **Plans**: 2 plans
 
 Plans:
-- [ ] 35-01: Fix TypeScript strict types (replace all `any` types)
-- [ ] 35-02: Remove dead code and fix JSX escaping issues
+- [x] 35-01: Fix TypeScript strict types (replace all `any` types)
+- [x] 35-02: Remove dead code and fix JSX escaping issues
 
 #### Phase 36: Deployment Verification
 **Goal**: Environment configs, health checks, logging, monitoring setup, deployment runbook
 **Depends on**: Phase 35
 **Research**: Likely (monitoring/logging tools)
 **Research topics**: Vercel monitoring, Sentry integration, logging best practices
-**Plans**: TBD
+**Plans**: 2 plans
 
 Plans:
-- [ ] 36-01: TBD
+- [x] 36-01: Health check endpoint and environment validation
+- [x] 36-02: Sentry monitoring, Vercel config, deployment runbook
 
 ---
 
@@ -228,8 +230,8 @@ Phases execute in numeric order. v1.8 and v1.9 can partially overlap (testing ca
 | 32. Auth Security Audit | v1.9 | 1/1 | Complete | 2026-01-16 |
 | 33. API Hardening | v1.9 | 2/2 | Complete | 2026-01-16 |
 | 34. Performance Review | v1.9 | 2/2 | Complete | 2026-01-16 |
-| 35. Code Quality Sweep | v1.9 | 0/? | Not started | - |
-| 36. Deployment Verification | v1.9 | 0/? | Not started | - |
+| 35. Code Quality Sweep | v1.9 | 2/2 | Complete | 2026-01-16 |
+| 36. Deployment Verification | v1.9 | 2/2 | Complete | 2026-01-17 |
 | 37. Victory Native Setup | v2.0 | 0/? | Not started | - |
 | 38. Portfolio Line Chart | v2.0 | 0/? | Not started | - |
 | 39. Allocation Donut Chart | v2.0 | 0/? | Not started | - |
