@@ -191,12 +191,11 @@ See [milestones/v2.1-ROADMAP.md](milestones/v2.1-ROADMAP.md) for full details.
 #### Phase 49: Cert Lookup API Integration
 **Goal**: Integrate PCGS Cert Verification and NGC Verify APIs for certification number lookup
 **Depends on**: Phase 48
-**Research**: Likely (external API integration)
-**Research topics**: PCGS Cert Verification API, NGC Verify API, authentication, rate limits
-**Plans**: TBD
+**Research**: Complete (see RESEARCH.md)
+**Plans**: 1/1
 
 Plans:
-- [ ] 49-01: TBD (run /gsd:plan-phase 49 to break down)
+- [ ] 49-01: API endpoint, TypeScript PCGS client, mobile integration, form autofill
 
 #### Phase 50: Autofill Form Component
 **Goal**: Create cert number input with debounced lookup, auto-populate form fields from cert data
@@ -235,6 +234,6 @@ Phases execute in numeric order. v1.8 and v1.9 can partially overlap (testing ca
 | 41. Chart Interactions | v2.0 | 1/1 | **COMPLETE** | 2026-01-17 |
 | 42. Dashboard Integration | v2.0 | 0/1 | Planned | - |
 | 43-48 | v2.1 | 6/6 | **SHIPPED** | 2026-01-18 |
-| 49. Cert Lookup API | v2.2 | 0/? | Not started | - |
+| 49. Cert Lookup API | v2.2 | 0/1 | Planned | - |
 | 50. Autofill Form Component | v2.2 | 0/? | Not started | - |
 | 51. Mobile Cert Scanner | v2.2 | 0/? | Not started | - |
