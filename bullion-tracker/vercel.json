@@ -4,6 +4,12 @@
   "outputDirectory": ".next",
   "framework": "nextjs",
   "regions": ["iad1"],
+  "crons": [
+    {
+      "path": "/api/cron/refresh-prices",
+      "schedule": "0 6 * * *"
+    }
+  ],
   "headers": [
     {
       "source": "/_next/static/(.*)",
@@ -39,6 +45,9 @@
     },
     "api/prices/seed.ts": {
       "maxDuration": 30
+    },
+    "api/cron/refresh-prices/route.ts": {
+      "maxDuration": 10
     }
   }
 }
