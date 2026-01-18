@@ -6,6 +6,9 @@ Features:
 - Multiple selector fallback chains for robustness
 - Improved retry logic with session refresh on 403
 - Better logging of which selectors matched
+- Circuit breaker for repeated failures
+- Exponential backoff with jitter
+- NGC cross-reference extraction
 """
 
 import asyncio
@@ -13,10 +16,12 @@ import random
 import re
 import logging
 import uuid
-from datetime import date
+from datetime import date, datetime
 from decimal import Decimal
 from typing import Optional, List, Dict, Any, Tuple
 from pathlib import Path
+from dataclasses import dataclass, field
+from enum import Enum
 
 import httpx
 from bs4 import BeautifulSoup, Tag
@@ -110,6 +115,100 @@ NGC_SELECTORS = [
 ]
 
 
+class ErrorType(Enum):
+    """Classification of errors for circuit breaker."""
+    NETWORK = "network"
+    RATE_LIMIT = "rate_limit"
+    AUTH = "auth"
+    PARSE = "parse"
+    SERVER = "server"
+    UNKNOWN = "unknown"
+
+
+@dataclass
+class CircuitBreakerState:
+    """State for circuit breaker pattern."""
+    failures: int = 0
+    last_failure: Optional[datetime] = None
+    is_open: bool = False
+    half_open_attempts: int = 0
+
+    # Configuration
+    failure_threshold: int = 5
+    reset_timeout_seconds: int = 60
+    half_open_max_attempts: int = 2
+
+    def record_failure(self):
+        """Record a failure and potentially open the circuit."""
+        self.failures += 1
+        self.last_failure = datetime.now()
+        if self.failures >= self.failure_threshold:
+            self.is_open = True
+            logger.warning(f"Circuit breaker OPEN after {self.failures} failures")
+
+    def record_success(self):
+        """Record a success and reset the circuit."""
+        self.failures = 0
+        self.is_open = False
+        self.half_open_attempts = 0
+
+    def can_attempt(self) -> bool:
+        """Check if a request can be attempted."""
+        if not self.is_open:
+            return True
+
+        # Check if we should try half-open
+        if self.last_failure:
+            elapsed = (datetime.now() - self.last_failure).total_seconds()
+            if elapsed >= self.reset_timeout_seconds:
+                if self.half_open_attempts < self.half_open_max_attempts:
+                    self.half_open_attempts += 1
+                    logger.info("Circuit breaker HALF-OPEN, attempting request")
+                    return True
+        return False
+
+
+def exponential_backoff_with_jitter(retry: int, base: float = 1.0, max_wait: float = 60.0) -> float:
+    """
+    Calculate exponential backoff with jitter.
+
+    Args:
+        retry: Current retry attempt (0-indexed)
+        base: Base delay in seconds
+        max_wait: Maximum wait time in seconds
+
+    Returns:
+        Wait time in seconds with jitter applied
+    """
+    # Exponential: base * 2^retry
+    exp_wait = base * (2 ** retry)
+    # Cap at max
+    capped = min(exp_wait, max_wait)
+    # Add jitter: random value between 0 and capped
+    jitter = random.uniform(0, capped * 0.5)
+    return capped + jitter
+
+
+def classify_error(status_code: int = 0, exception: Exception = None) -> ErrorType:
+    """Classify an error for circuit breaker handling."""
+    if exception:
+        if isinstance(exception, httpx.RequestError):
+            return ErrorType.NETWORK
+        if isinstance(exception, (ValueError, KeyError, AttributeError)):
+            return ErrorType.PARSE
+
+    if status_code == 429:
+        return ErrorType.RATE_LIMIT
+    if status_code in (401, 403):
+        return ErrorType.AUTH
+    if status_code >= 500:
+        return ErrorType.SERVER
+    if status_code >= 400:
+        return ErrorType.UNKNOWN
+
+    return ErrorType.UNKNOWN
+
+
 class PCGSScraper:
     """Enhanced PCGS scraper with session management and selector fallbacks."""
 
@@ -119,12 +218,15 @@ class PCGSScraper:
         self._session_cookies: Dict[str, str] = {}
         self._session_refresh_count = 0
         self.client = self._create_client()
+        self._circuit_breaker = CircuitBreakerState()
+        self._start_time = datetime.now()
         self.stats = {
             'coins_scraped': 0,
             'coins_failed': 0,
             'prices_scraped': 0,
             'selectors_matched': {},  # Track which selectors work
-            'http_errors': {},  # Track error types
+            'http_errors': {},  # Track error types by classification
+            'circuit_breaker_opens': 0,
         }
 
     def _create_client(self) -> httpx.AsyncClient:
@@ -175,11 +277,16 @@ class PCGSScraper:
 
     async def _polite_request(self, url: str, retry: int = 0) -> Tuple[Optional[str], int]:
         """
-        Make a request with rate limiting, retries, and session management.
+        Make a request with rate limiting, retries, circuit breaker, and session management.
 
         Returns:
             Tuple of (html_content or None, status_code)
         """
+        # Check circuit breaker
+        if not self._circuit_breaker.can_attempt():
+            logger.warning(f"Circuit breaker OPEN, skipping request: {url}")
+            return None, 503  # Service unavailable
+
         # Random delay between requests (polite scraping)
         delay = REQUEST_DELAY_MIN + random.random() * (REQUEST_DELAY_MAX - REQUEST_DELAY_MIN)
         await asyncio.sleep(delay)
@@ -190,10 +297,15 @@ class PCGSScraper:
 
             # Handle 403 Forbidden - try session refresh
             if status == 403:
-                self.stats['http_errors']['403'] = self.stats['http_errors'].get('403', 0) + 1
+                error_type = classify_error(status)
+                self.stats['http_errors'][error_type.value] = self.stats['http_errors'].get(error_type.value, 0) + 1
+                self._circuit_breaker.record_failure()
+
                 if retry < MAX_RETRIES:
                     logger.warning(f"Got 403 for {url}, refreshing session...")
                     await self._refresh_session()
+                    wait_time = exponential_backoff_with_jitter(retry)
+                    await asyncio.sleep(wait_time)
                     return await self._polite_request(url, retry + 1)
                 else:
                     logger.error(f"403 Forbidden after {MAX_RETRIES} retries: {url}")
@@ -201,32 +313,57 @@ class PCGSScraper:
 
             # Handle rate limiting (429)
             if status == 429:
-                self.stats['http_errors']['429'] = self.stats['http_errors'].get('429', 0) + 1
+                error_type = classify_error(status)
+                self.stats['http_errors'][error_type.value] = self.stats['http_errors'].get(error_type.value, 0) + 1
+
+                # Rate limit is not a circuit breaker failure
                 wait_time = int(response.headers.get('Retry-After', 60))
                 logger.warning(f"Rate limited, waiting {wait_time}s...")
                 await asyncio.sleep(wait_time)
                 return await self._polite_request(url, retry + 1)
 
+            # Handle server errors
+            if status >= 500:
+                error_type = classify_error(status)
+                self.stats['http_errors'][error_type.value] = self.stats['http_errors'].get(error_type.value, 0) + 1
+                self._circuit_breaker.record_failure()
+
+                if retry < MAX_RETRIES:
+                    wait_time = exponential_backoff_with_jitter(retry)
+                    logger.warning(f"Server error {status}, retrying in {wait_time:.1f}s...")
+                    await asyncio.sleep(wait_time)
+                    return await self._polite_request(url, retry + 1)
+                return None, status
+
             response.raise_for_status()
+
+            # Success - reset circuit breaker
+            self._circuit_breaker.record_success()
             return response.text, status
 
         except httpx.HTTPStatusError as e:
             status = e.response.status_code
-            self.stats['http_errors'][str(status)] = self.stats['http_errors'].get(str(status), 0) + 1
+            error_type = classify_error(status)
+            self.stats['http_errors'][error_type.value] = self.stats['http_errors'].get(error_type.value, 0) + 1
+            self._circuit_breaker.record_failure()
+
             logger.warning(f"HTTP {status} for {url}: {e}")
             if retry < MAX_RETRIES:
-                wait_time = RETRY_BACKOFF ** retry
-                logger.info(f"Retrying in {wait_time}s (attempt {retry + 1}/{MAX_RETRIES})")
+                wait_time = exponential_backoff_with_jitter(retry)
+                logger.info(f"Retrying in {wait_time:.1f}s (attempt {retry + 1}/{MAX_RETRIES})")
                 await asyncio.sleep(wait_time)
                 return await self._polite_request(url, retry + 1)
             return None, status
 
         except httpx.RequestError as e:
-            self.stats['http_errors']['network'] = self.stats['http_errors'].get('network', 0) + 1
+            error_type = classify_error(exception=e)
+            self.stats['http_errors'][error_type.value] = self.stats['http_errors'].get(error_type.value, 0) + 1
+            self._circuit_breaker.record_failure()
+
             logger.warning(f"Network error for {url}: {e}")
             if retry < MAX_RETRIES:
-                wait_time = RETRY_BACKOFF ** retry
-                logger.info(f"Retrying in {wait_time}s (attempt {retry + 1}/{MAX_RETRIES})")
+                wait_time = exponential_backoff_with_jitter(retry)
+                logger.info(f"Retrying in {wait_time:.1f}s (attempt {retry + 1}/{MAX_RETRIES})")
                 await asyncio.sleep(wait_time)
                 return await self._polite_request(url, retry + 1)
             return None, 0
@@ -561,21 +698,37 @@ class PCGSScraper:
 
     def get_stats_summary(self) -> str:
         """Get a formatted summary of scraping stats."""
+        elapsed = datetime.now() - self._start_time
+        elapsed_str = str(elapsed).split('.')[0]  # Remove microseconds
+
+        total = self.stats['coins_scraped'] + self.stats['coins_failed']
+        success_rate = (self.stats['coins_scraped'] / total * 100) if total > 0 else 0
+
         lines = [
-            "=== Scraping Statistics ===",
+            "=" * 50,
+            "           SCRAPING RUN SUMMARY",
+            "=" * 50,
+            "",
+            f"Duration: {elapsed_str}",
             f"Coins scraped: {self.stats['coins_scraped']}",
             f"Coins failed: {self.stats['coins_failed']}",
+            f"Success rate: {success_rate:.1f}%",
             f"Prices scraped: {self.stats['prices_scraped']}",
+            "",
+            "--- Session & Network ---",
             f"Session refreshes: {self._session_refresh_count}",
+            f"Circuit breaker opens: {self.stats['circuit_breaker_opens']}",
         ]
 
         if self.stats['http_errors']:
-            lines.append("\nHTTP Errors:")
-            for code, count in sorted(self.stats['http_errors'].items()):
-                lines.append(f"  {code}: {count}")
+            lines.append("")
+            lines.append("--- Errors by Type ---")
+            for error_type, count in sorted(self.stats['http_errors'].items()):
+                lines.append(f"  {error_type}: {count}")
 
         if self.stats['selectors_matched']:
-            lines.append("\nTop Selectors Used:")
+            lines.append("")
+            lines.append("--- Top Selectors ---")
             sorted_selectors = sorted(
                 self.stats['selectors_matched'].items(),
                 key=lambda x: x[1],
@@ -583,6 +736,9 @@ class PCGSScraper:
             )[:5]
             for selector, count in sorted_selectors:
                 lines.append(f"  {selector}: {count}")
+
+        lines.append("")
+        lines.append("=" * 50)
 
         return "\n".join(lines)
 
