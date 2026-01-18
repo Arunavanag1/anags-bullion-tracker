@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Switch, Image, StyleSheet, Alert } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, Switch, Image, StyleSheet, Alert, ActivityIndicator, Linking } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
 import { CoinSearchInput } from '../numismatic/CoinSearchInput';
 import { GradePicker } from '../numismatic/GradePicker';
 import { PriceGuideDisplay } from '../numismatic/PriceGuideDisplay';
+import { lookupCertNumber, CertLookupResponse, searchCoins } from '../../lib/api';
 import type { Metal, GradingService, ProblemType, CoinReference } from '../../types';
 
 /**
@@ -54,6 +55,100 @@ export function NumismaticForm({ gradingService, onSubmit, loading, initialData,
   const [notes, setNotes] = useState(initialData?.notes || '');
   const [images, setImages] = useState<string[]>(initialData?.images || []);
   const [currentGradingService, setCurrentGradingService] = useState<GradingService>(gradingService);
+
+  // Cert lookup state
+  const [certLookupLoading, setCertLookupLoading] = useState(false);
+  const [certLookupError, setCertLookupError] = useState<string | null>(null);
+  const [certLookupSuccess, setCertLookupSuccess] = useState(false);
+  const [ngcLookupUrl, setNgcLookupUrl] = useState<string | null>(null);
+
+  // Auto-lookup cert number when it changes (PCGS only)
+  const lookupCert = useCallback(async () => {
+    if (currentGradingService !== 'PCGS' || certNumber.length < 7) {
+      return;
+    }
+
+    setCertLookupLoading(true);
+    setCertLookupError(null);
+    setCertLookupSuccess(false);
+
+    try {
+      const result: CertLookupResponse = await lookupCertNumber(certNumber, 'pcgs');
+
+      if (!result.success) {
+        setCertLookupError(result.error || 'Lookup failed');
+        return;
+      }
+
+      if (result.data) {
+        // Auto-populate grade
+        if (result.data.grade) {
+          setGrade(result.data.grade);
+        }
+
+        // Auto-populate metal type
+        if (result.data.metal) {
+          setNumismaticMetal(result.data.metal as Metal);
+        }
+
+        // Auto-populate price guide value
+        if (result.data.priceGuide) {
+          setNumismaticValue(result.data.priceGuide.toString());
+          setUseCustomValue(true);
+        }
+
+        // Try to find matching coin in our database
+        if (result.data.matchedCoinId) {
+          // Fetch the matched coin to set it
+          const coins = await searchCoins(result.data.pcgsNumber.toString());
+          const matched = coins.find((c: CoinReference) => c.id === result.data!.matchedCoinId);
+          if (matched) {
+            setSelectedCoin(matched);
+          }
+        } else if (result.data.fullName) {
+          // Try searching by full name
+          const coins = await searchCoins(result.data.fullName);
+          if (coins.length > 0) {
+            setSelectedCoin(coins[0]);
+          }
+        }
+
+        setCertLookupSuccess(true);
+      }
+    } catch {
+      setCertLookupError('Network error');
+    } finally {
+      setCertLookupLoading(false);
+    }
+  }, [certNumber, currentGradingService]);
+
+  // Debounced cert lookup effect
+  useEffect(() => {
+    if (currentGradingService === 'PCGS' && certNumber.length >= 7) {
+      const timer = setTimeout(() => lookupCert(), 800);
+      return () => clearTimeout(timer);
+    } else {
+      // Reset lookup state when switching services or clearing cert
+      setCertLookupSuccess(false);
+      setCertLookupError(null);
+      setNgcLookupUrl(null);
+    }
+  }, [certNumber, currentGradingService, lookupCert]);
+
+  // Handle NGC service - set manual lookup URL
+  useEffect(() => {
+    if (currentGradingService === 'NGC' && certNumber.length >= 7) {
+      setNgcLookupUrl(`https://www.ngccoin.com/certlookup/${certNumber}/`);
+    } else {
+      setNgcLookupUrl(null);
+    }
+  }, [certNumber, currentGradingService]);
+
+  const openNgcLookup = () => {
+    if (ngcLookupUrl) {
+      Linking.openURL(ngcLookupUrl);
+    }
+  };
 
   // Update form when initialData changes (for editing)
   useEffect(() => {
@@ -161,13 +256,58 @@ export function NumismaticForm({ gradingService, onSubmit, loading, initialData,
       )}
 
       {!isRaw && (
-        <Input
-          label="Certification Number"
-          value={certNumber}
-          onChangeText={setCertNumber}
-          placeholder="e.g., 12345678"
-          keyboardType="number-pad"
-        />
+        <View style={styles.certSection}>
+          <View style={styles.certInputRow}>
+            <View style={styles.certInputWrapper}>
+              <Input
+                label={currentGradingService === 'PCGS' ? 'Certification Number (Autofill)' : 'Certification Number'}
+                value={certNumber}
+                onChangeText={setCertNumber}
+                placeholder="e.g., 12345678"
+                keyboardType="number-pad"
+              />
+            </View>
+            {certLookupLoading && (
+              <View style={styles.certStatusIcon}>
+                <ActivityIndicator size="small" color="#3B82F6" />
+              </View>
+            )}
+            {certLookupSuccess && !certLookupLoading && (
+              <View style={styles.certStatusIcon}>
+                <Text style={styles.successIcon}>✓</Text>
+              </View>
+            )}
+          </View>
+
+          {/* PCGS autofill badge */}
+          {currentGradingService === 'PCGS' && certNumber.length === 0 && (
+            <Text style={styles.autofillHint}>
+              Enter PCGS cert number to auto-populate coin details
+            </Text>
+          )}
+
+          {/* Cert lookup error */}
+          {certLookupError && (
+            <Text style={styles.certError}>{certLookupError}</Text>
+          )}
+
+          {/* Cert lookup success */}
+          {certLookupSuccess && (
+            <Text style={styles.certSuccess}>Coin details auto-filled from PCGS</Text>
+          )}
+
+          {/* NGC manual lookup prompt */}
+          {ngcLookupUrl && (
+            <View style={styles.ngcLookupContainer}>
+              <Text style={styles.ngcLookupText}>
+                NGC requires manual verification
+              </Text>
+              <TouchableOpacity style={styles.ngcLookupButton} onPress={openNgcLookup}>
+                <Text style={styles.ngcLookupButtonText}>Open NGC Lookup</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
       )}
 
       {!isRaw && (
@@ -453,5 +593,68 @@ const styles = StyleSheet.create({
   buttonContainer: {
     marginTop: 24,
     marginBottom: 20,
+  },
+  // Cert lookup styles
+  certSection: {
+    marginBottom: 16,
+  },
+  certInputRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+  },
+  certInputWrapper: {
+    flex: 1,
+  },
+  certStatusIcon: {
+    marginLeft: 8,
+    marginBottom: 16,
+    width: 24,
+    height: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  successIcon: {
+    fontSize: 18,
+    color: '#10B981',
+    fontWeight: '600',
+  },
+  autofillHint: {
+    fontSize: 12,
+    color: '#6B7280',
+    marginTop: 4,
+    fontStyle: 'italic',
+  },
+  certError: {
+    fontSize: 12,
+    color: '#EF4444',
+    marginTop: 4,
+  },
+  certSuccess: {
+    fontSize: 12,
+    color: '#10B981',
+    marginTop: 4,
+  },
+  ngcLookupContainer: {
+    backgroundColor: '#FEF3C7',
+    padding: 12,
+    borderRadius: 8,
+    marginTop: 8,
+  },
+  ngcLookupText: {
+    fontSize: 12,
+    color: '#92400E',
+    marginBottom: 8,
+  },
+  ngcLookupButton: {
+    backgroundColor: '#F59E0B',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 6,
+    alignSelf: 'flex-start',
+  },
+  ngcLookupButtonText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: 'white',
   },
 });

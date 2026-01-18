@@ -2,7 +2,33 @@ import * as SecureStore from 'expo-secure-store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Fuse from 'fuse.js';
 import Constants from 'expo-constants';
-import type { CoinReference, ValidGrade, PriceGuideData, CollectionSummary, ItemCategory, GradingService, ProblemType, BookValueType, ValueHistoryEntry, ValuationBreakdown, HistoricalPoint } from '../types';
+import type { CoinReference, ValidGrade, PriceGuideData, CollectionSummary, ItemCategory, GradingService, ProblemType, BookValueType, ValueHistoryEntry, ValuationBreakdown, HistoricalPoint, Metal } from '../types';
+
+// ===== CERT LOOKUP TYPES =====
+
+export interface CertLookupData {
+  pcgsNumber: number;
+  fullName: string;
+  year: number;
+  mintMark: string | null;
+  denomination: string;
+  grade: string;
+  gradeNumeric: number;
+  metal: Metal | null;
+  priceGuide: number | null;
+  mintage: number | null;
+  imageUrl: string | null;
+  matchedCoinId: string | null;
+}
+
+export interface CertLookupResponse {
+  success: boolean;
+  service: 'pcgs' | 'ngc';
+  requiresManualLookup?: boolean;
+  lookupUrl?: string;
+  data?: CertLookupData;
+  error?: string;
+}
 
 // Fuse.js search result interface
 interface FuseResult<T> {
@@ -185,6 +211,63 @@ function fuzzySearchCoins(coins: CoinReference[], query: string): CoinReference[
     threshold: 0.3,
   });
   return fuse.search(query).map((result: FuseResult<CoinReference>) => result.item).slice(0, 10);
+}
+
+// ===== CERT LOOKUP =====
+
+/**
+ * Look up coin data by certification number
+ *
+ * @param certNumber - Certificate number (7-8 digits for PCGS, 7 for NGC)
+ * @param service - Grading service ('pcgs' or 'ngc')
+ * @returns CertLookupResponse with coin data or manual lookup URL
+ */
+export async function lookupCertNumber(
+  certNumber: string,
+  service: 'pcgs' | 'ngc'
+): Promise<CertLookupResponse> {
+  try {
+    const response = await makeRequest('/api/coins/cert-lookup', {
+      method: 'POST',
+      body: JSON.stringify({ certNumber, service }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+
+      // Return structured error response
+      if (response.status === 404) {
+        return {
+          success: false,
+          service,
+          error: 'Certificate not found',
+        };
+      }
+
+      if (response.status === 429) {
+        return {
+          success: false,
+          service,
+          error: 'Rate limit exceeded. Please try again later.',
+        };
+      }
+
+      return {
+        success: false,
+        service,
+        error: error.error || 'Lookup failed',
+      };
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Cert lookup failed:', error);
+    return {
+      success: false,
+      service,
+      error: 'Network error. Please check your connection.',
+    };
+  }
 }
 
 // ===== PRICE GUIDE =====
@@ -428,6 +511,7 @@ export const api = {
   getCollectionSummary,
   syncCoinsCache,
   clearOldPriceCaches,
+  lookupCertNumber,
 
   // Performance
   async getMetalPerformance(): Promise<any> {
