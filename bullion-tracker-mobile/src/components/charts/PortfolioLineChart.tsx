@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { CartesianChart, Line, useChartPressState } from 'victory-native';
 import { Circle } from '@shopify/react-native-skia';
+import { useAnimatedReaction, runOnJS } from 'react-native-reanimated';
 import { ChartContainer } from './ChartContainer';
 import { ChartTheme } from '../../lib/chartTheme';
 import { Colors } from '../../lib/colors';
@@ -33,6 +34,22 @@ export function PortfolioLineChart() {
 
   // Chart press state for tooltip - victory-native handles the SharedValue internally
   const { state, isActive } = useChartPressState({ x: 0, y: { totalValue: 0 } });
+
+  // Sync the SharedValue x index to React state for tooltip display
+  useAnimatedReaction(
+    () => Math.round(state.x.value.value),
+    (currentIndex, previousIndex) => {
+      if (currentIndex !== previousIndex) {
+        runOnJS(setActivePointIndex)(currentIndex);
+      }
+    },
+    [state.x.value]
+  );
+
+  // Get the active point data for tooltip
+  const activePoint = activePointIndex !== null && data[activePointIndex]
+    ? data[activePointIndex]
+    : null;
 
   useEffect(() => {
     loadData();
@@ -131,10 +148,13 @@ export function PortfolioLineChart() {
                 </>
               )}
             </CartesianChart>
-            {/* Tooltip info - simplified approach using state.x.value directly */}
-            {isActive && data.length > 0 && (
+            {/* Tooltip showing date and value */}
+            {isActive && activePoint && (
               <View style={styles.tooltipCard}>
-                <Text style={styles.tooltipLabel}>Touch the chart to explore</Text>
+                <Text style={styles.tooltipDate}>{activePoint.date}</Text>
+                <Text style={styles.tooltipValue}>
+                  ${activePoint.totalValue.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                </Text>
               </View>
             )}
           </View>
@@ -217,10 +237,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
   },
-  tooltipLabel: {
+  tooltipDate: {
     fontSize: 11,
     color: '#fff',
     opacity: 0.8,
+  },
+  tooltipValue: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#fff',
   },
   statsContainer: {
     marginHorizontal: 16,

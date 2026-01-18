@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/auth';
+import { getUserId } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import { generateDailyPrices } from '@/lib/historical-data';
 import { calculateCurrentMeltValue, calculateCurrentBookValue } from '@/lib/calculations';
@@ -26,9 +26,10 @@ interface HistoricalPoint {
  */
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth();
-
-    if (!session?.user?.id) {
+    let userId: string;
+    try {
+      userId = await getUserId();
+    } catch {
       return NextResponse.json({ data: [] });
     }
 
@@ -57,7 +58,7 @@ export async function GET(request: NextRequest) {
     // Fetch collection items for authenticated user only
     const items = await prisma.collectionItem.findMany({
       where: {
-        userId: session.user.id,
+        userId: userId,
       },
       include: {
         images: true,

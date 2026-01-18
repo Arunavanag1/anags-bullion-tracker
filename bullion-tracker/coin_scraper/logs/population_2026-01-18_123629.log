@@ -1,0 +1,70 @@
+2026-01-18 12:36:29,287 - populate - INFO - Logging to: /Users/arunavanag/Documents/bullion_collection_tracker/bullion-tracker/coin_scraper/logs/population_2026-01-18_123629.log
+2026-01-18 12:36:29,290 - populate - INFO - ============================================================
+2026-01-18 12:36:29,290 - populate - INFO -   STARTING P0 POPULATION RUN
+2026-01-18 12:36:29,290 - populate - INFO - ============================================================
+2026-01-18 12:36:29,290 - populate - INFO - Series to scrape: 9
+2026-01-18 12:36:29,290 - populate - INFO - Estimated coins: ~835
+2026-01-18 12:36:29,290 - populate - INFO - DRY RUN MODE - no database writes
+2026-01-18 12:36:29,290 - populate - INFO - Limit: 3 coins per series
+2026-01-18 12:36:29,290 - populate - INFO - 
+2026-01-18 12:36:29,365 - populate - INFO - Initial database count: 100 coins
+2026-01-18 12:36:29,365 - populate - INFO - 
+[1/9] Silver Eagles
+2026-01-18 12:36:29,411 - populate - INFO -   Fetching series page...
+2026-01-18 12:36:33,537 - populate - WARNING -   No coins found for Silver Eagles
+2026-01-18 12:36:33,538 - populate - INFO - 
+[2/9] Gold Eagles
+2026-01-18 12:36:33,541 - populate - INFO -   Fetching series page...
+2026-01-18 12:36:37,449 - populate - WARNING -   No coins found for Gold Eagles
+2026-01-18 12:36:37,450 - populate - INFO - 
+[3/9] Platinum Eagles
+2026-01-18 12:36:37,454 - populate - INFO -   Fetching series page...
+2026-01-18 12:36:41,955 - populate - WARNING -   No coins found for Platinum Eagles
+2026-01-18 12:36:41,956 - populate - INFO - Progress: 0 scraped, 0 failed
+2026-01-18 12:36:41,956 - populate - INFO - 
+[4/9] American Gold Buffalo
+2026-01-18 12:36:41,962 - populate - INFO -   Fetching series page...
+2026-01-18 12:36:45,582 - populate - WARNING -   No coins found for American Gold Buffalo
+2026-01-18 12:36:45,582 - populate - INFO - 
+[5/9] Morgan Dollars
+2026-01-18 12:36:45,586 - populate - INFO -   Fetching series page...
+2026-01-18 12:37:03,194 - populate - WARNING -   No coins found for Morgan Dollars
+2026-01-18 12:37:03,194 - populate - INFO - 
+[6/9] Peace Dollars
+2026-01-18 12:37:03,199 - populate - INFO -   Fetching series page...
+2026-01-18 12:37:21,856 - populate - WARNING -   No coins found for Peace Dollars
+2026-01-18 12:37:21,856 - populate - INFO - Progress: 0 scraped, 0 failed
+2026-01-18 12:37:21,856 - populate - INFO - 
+[7/9] Lincoln Cents Wheat Reverse
+2026-01-18 12:37:21,864 - populate - INFO -   Fetching series page...
+2026-01-18 12:37:43,672 - populate - WARNING -   No coins found for Lincoln Cents Wheat Reverse
+2026-01-18 12:37:43,672 - populate - INFO - 
+[8/9] Mercury Dimes
+2026-01-18 12:37:43,681 - populate - INFO -   Fetching series page...
+2026-01-18 12:38:04,808 - populate - WARNING -   No coins found for Mercury Dimes
+2026-01-18 12:38:04,809 - populate - INFO - 
+[9/9] Walking Liberty Halves
+2026-01-18 12:38:04,815 - populate - INFO -   Fetching series page...
+2026-01-18 12:38:08,173 - populate - WARNING -   No coins found for Walking Liberty Halves
+2026-01-18 12:38:08,173 - populate - INFO - Progress: 0 scraped, 0 failed
+2026-01-18 12:38:08,176 - populate - INFO - 
+2026-01-18 12:38:08,176 - populate - INFO - ============================================================
+2026-01-18 12:38:08,176 - populate - INFO -         P0 POPULATION RUN COMPLETE
+2026-01-18 12:38:08,176 - populate - INFO - ============================================================
+2026-01-18 12:38:08,176 - populate - INFO - 
+2026-01-18 12:38:08,176 - populate - INFO - Duration: 0:01:38
+2026-01-18 12:38:08,176 - populate - INFO - Mode: DRY RUN
+2026-01-18 12:38:08,176 - populate - INFO - 
+2026-01-18 12:38:08,176 - populate - INFO - --- Results ---
+2026-01-18 12:38:08,176 - populate - INFO - Series processed: 9
+2026-01-18 12:38:08,176 - populate - INFO - Coins scraped: 0
+2026-01-18 12:38:08,176 - populate - INFO - Coins failed: 0
+2026-01-18 12:38:08,176 - populate - INFO - Success rate: 0.0%
+2026-01-18 12:38:08,176 - populate - INFO - 
+2026-01-18 12:38:08,176 - populate - INFO - --- Database ---
+2026-01-18 12:38:08,176 - populate - INFO - Initial count: 100
+2026-01-18 12:38:08,176 - populate - INFO - Final count: 100
+2026-01-18 12:38:08,176 - populate - INFO - New coins added: 0
+2026-01-18 12:38:08,176 - populate - INFO - 
+2026-01-18 12:38:08,176 - populate - INFO - Log file: /Users/arunavanag/Documents/bullion_collection_tracker/bullion-tracker/coin_scraper/logs/population_2026-01-18_123629.log
+2026-01-18 12:38:08,176 - populate - INFO - ============================================================
