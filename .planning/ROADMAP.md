@@ -21,6 +21,7 @@ None (standard web/mobile patterns)
 - :white_check_mark: **v1.9 Deployment Ready** - Phases 31-36 (complete 2026-01-17)
 - :construction: **v2.0 Mobile Charts** - Phases 37-42 (in progress)
 - :white_check_mark: **v2.1 Coin Database Expansion** - Phases 43-48 (shipped 2026-01-18)
+- :clipboard: **v2.2 Cert Number Autofill** - Phases 49-51 (planned)
 
 ## Phases
 
@@ -181,6 +182,41 @@ See [milestones/v2.1-ROADMAP.md](milestones/v2.1-ROADMAP.md) for full details.
 
 </details>
 
+---
+
+### :clipboard: v2.2 Cert Number Autofill (Planned)
+
+**Milestone Goal:** Add autofill functionality for coins using PCGS/NGC certification numbers, enabling quick coin lookup and form population
+
+#### Phase 49: Cert Lookup API Integration
+**Goal**: Integrate PCGS Cert Verification and NGC Verify APIs for certification number lookup
+**Depends on**: Phase 48
+**Research**: Likely (external API integration)
+**Research topics**: PCGS Cert Verification API, NGC Verify API, authentication, rate limits
+**Plans**: TBD
+
+Plans:
+- [ ] 49-01: TBD (run /gsd:plan-phase 49 to break down)
+
+#### Phase 50: Autofill Form Component
+**Goal**: Create cert number input with debounced lookup, auto-populate form fields from cert data
+**Depends on**: Phase 49
+**Research**: Unlikely (internal React patterns)
+**Plans**: TBD
+
+Plans:
+- [ ] 50-01: TBD
+
+#### Phase 51: Mobile Cert Scanner
+**Goal**: Add camera-based barcode/QR scanning and OCR for cert number extraction on mobile
+**Depends on**: Phase 50
+**Research**: Likely (Expo camera, barcode scanning, OCR)
+**Research topics**: expo-camera, expo-barcode-scanner, OCR libraries (Tesseract.js or cloud OCR)
+**Plans**: TBD
+
+Plans:
+- [ ] 51-01: TBD
+
 ## Progress
 
 **Execution Order:**
@@ -199,3 +235,6 @@ Phases execute in numeric order. v1.8 and v1.9 can partially overlap (testing ca
 | 41. Chart Interactions | v2.0 | 1/1 | **COMPLETE** | 2026-01-17 |
 | 42. Dashboard Integration | v2.0 | 0/1 | Planned | - |
 | 43-48 | v2.1 | 6/6 | **SHIPPED** | 2026-01-18 |
+| 49. Cert Lookup API | v2.2 | 0/? | Not started | - |
+| 50. Autofill Form Component | v2.2 | 0/? | Not started | - |
+| 51. Mobile Cert Scanner | v2.2 | 0/? | Not started | - |
