@@ -1,0 +1,32 @@
+2026-01-18 12:54:20,731 - price_refresh - INFO - ============================================================
+2026-01-18 12:54:20,731 - price_refresh - INFO -         PRICE REFRESH STARTING
+2026-01-18 12:54:20,731 - price_refresh - INFO - ============================================================
+2026-01-18 12:54:20,731 - price_refresh - INFO - Mode: DRY RUN
+2026-01-18 12:54:20,731 - price_refresh - INFO - API Budget: 5 coins
+2026-01-18 12:54:20,731 - price_refresh - INFO - Quota remaining: 1000
+2026-01-18 12:54:20,731 - price_refresh - INFO - 
+2026-01-18 12:54:20,789 - price_refresh - INFO - Found 5 coins needing price updates
+2026-01-18 12:54:20,836 - price_refresh - ERROR - Fatal error: PCGS credentials not set. Please set PCGS_USERNAME and PCGS_PASSWORD environment variables.
+2026-01-18 12:54:20,841 - price_refresh - INFO - 
+2026-01-18 12:54:20,841 - price_refresh - INFO - ============================================================
+2026-01-18 12:54:20,841 - price_refresh - INFO -         PRICE REFRESH COMPLETE
+2026-01-18 12:54:20,841 - price_refresh - INFO - ============================================================
+2026-01-18 12:54:20,841 - price_refresh - INFO - 
+2026-01-18 12:54:20,841 - price_refresh - INFO - Duration: 0:00:00
+2026-01-18 12:54:20,841 - price_refresh - INFO - Mode: DRY RUN
+2026-01-18 12:54:20,841 - price_refresh - INFO - 
+2026-01-18 12:54:20,841 - price_refresh - INFO - --- Results ---
+2026-01-18 12:54:20,841 - price_refresh - INFO - Price updates: 0
+2026-01-18 12:54:20,841 - price_refresh - INFO - Coins skipped: 0
+2026-01-18 12:54:20,841 - price_refresh - INFO - Failures: 0
+2026-01-18 12:54:20,841 - price_refresh - INFO - API calls made: 0
+2026-01-18 12:54:20,841 - price_refresh - INFO - 
+2026-01-18 12:54:20,841 - price_refresh - INFO - --- Quota ---
+2026-01-18 12:54:20,841 - price_refresh - INFO - Calls today: 0/1000
+2026-01-18 12:54:20,841 - price_refresh - INFO - Remaining: 1000
+2026-01-18 12:54:20,841 - price_refresh - INFO - 
+2026-01-18 12:54:20,841 - price_refresh - INFO - Log file: /Users/arunavanag/Documents/bullion_collection_tracker/bullion-tracker/coin_scraper/logs/price_refresh_2026-01-18.log
+2026-01-18 12:54:20,841 - price_refresh - INFO - ============================================================
+2026-01-18 12:54:20,841 - price_refresh - INFO - 
+2026-01-18 12:54:20,841 - price_refresh - INFO - --- Errors ---
+2026-01-18 12:54:20,841 - price_refresh - INFO - PCGS credentials not set. Please set PCGS_USERNAME and PCGS_PASSWORD environment variables.
