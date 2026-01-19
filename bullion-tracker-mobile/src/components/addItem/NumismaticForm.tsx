@@ -6,6 +6,7 @@ import { Button } from '../ui/Button';
 import { CoinSearchInput } from '../numismatic/CoinSearchInput';
 import { GradePicker } from '../numismatic/GradePicker';
 import { PriceGuideDisplay } from '../numismatic/PriceGuideDisplay';
+import { CertScanner } from './CertScanner';
 import { lookupCertNumber, CertLookupResponse, searchCoins } from '../../lib/api';
 import type { Metal, GradingService, ProblemType, CoinReference } from '../../types';
 
@@ -61,6 +62,9 @@ export function NumismaticForm({ gradingService, onSubmit, loading, initialData,
   const [certLookupError, setCertLookupError] = useState<string | null>(null);
   const [certLookupSuccess, setCertLookupSuccess] = useState(false);
   const [ngcLookupUrl, setNgcLookupUrl] = useState<string | null>(null);
+
+  // Cert scanner state
+  const [scannerVisible, setScannerVisible] = useState(false);
 
   // Auto-lookup cert number when it changes (PCGS only)
   const lookupCert = useCallback(async () => {
@@ -148,6 +152,18 @@ export function NumismaticForm({ gradingService, onSubmit, loading, initialData,
     if (ngcLookupUrl) {
       Linking.openURL(ngcLookupUrl);
     }
+  };
+
+  // Handle cert scanner result
+  const handleCertScan = (scannedCertNumber: string, service: 'pcgs' | 'ngc') => {
+    // Set cert number from scanned data
+    setCertNumber(scannedCertNumber);
+    // Set grading service based on detected service
+    setCurrentGradingService(service.toUpperCase() as GradingService);
+    // Close scanner
+    setScannerVisible(false);
+    // The existing debounced lookup will trigger automatically for PCGS
+    // For NGC, the ngcLookupUrl effect will set the manual lookup URL
   };
 
   // Update form when initialData changes (for editing)
@@ -267,6 +283,13 @@ export function NumismaticForm({ gradingService, onSubmit, loading, initialData,
                 keyboardType="number-pad"
               />
             </View>
+            {/* Scan button */}
+            <TouchableOpacity
+              style={styles.scanButton}
+              onPress={() => setScannerVisible(true)}
+            >
+              <Text style={styles.scanButtonIcon}>📷</Text>
+            </TouchableOpacity>
             {certLookupLoading && (
               <View style={styles.certStatusIcon}>
                 <ActivityIndicator size="small" color="#3B82F6" />
@@ -442,6 +465,13 @@ export function NumismaticForm({ gradingService, onSubmit, loading, initialData,
           {loading ? (isEditing ? 'Saving...' : 'Adding...') : (isEditing ? 'Save Changes' : 'Add to Collection')}
         </Button>
       </View>
+
+      {/* Cert Scanner Modal */}
+      <CertScanner
+        visible={scannerVisible}
+        onClose={() => setScannerVisible(false)}
+        onScan={handleCertScan}
+      />
     </ScrollView>
   );
 }
@@ -612,6 +642,19 @@ const styles = StyleSheet.create({
     height: 24,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  scanButton: {
+    marginLeft: 8,
+    marginBottom: 16,
+    width: 44,
+    height: 44,
+    borderRadius: 8,
+    backgroundColor: '#3B82F6',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  scanButtonIcon: {
+    fontSize: 20,
   },
   successIcon: {
     fontSize: 18,
