@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, ScrollView, RefreshControl, TouchableOpacity, Alert, StyleSheet, Platform, StatusBar } from 'react-native';
+import { View, Text, ScrollView, RefreshControl, TouchableOpacity, Alert, StyleSheet, Platform, StatusBar, Linking } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../App';
@@ -323,6 +323,23 @@ export function DashboardScreen({ navigation }: Props) {
             <GainLossBarChart collection={items} spotPrices={spotPrices} />
           )}
         </View>
+
+        {/* Footer Links - App Store Compliance */}
+        <View style={styles.footerLinks}>
+          <TouchableOpacity
+            onPress={() => Linking.openURL('https://bulliontracker.app/privacy')}
+            style={styles.footerLinkButton}
+          >
+            <Text style={styles.footerLinkText}>Privacy Policy</Text>
+          </TouchableOpacity>
+          <Text style={styles.footerDivider}>•</Text>
+          <TouchableOpacity
+            onPress={() => Linking.openURL('https://bulliontracker.app/contact')}
+            style={styles.footerLinkButton}
+          >
+            <Text style={styles.footerLinkText}>Contact & Support</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
 
       {/* Bottom Tab Bar */}
@@ -600,5 +617,25 @@ const styles = StyleSheet.create({
   },
   chartSpacer: {
     height: 24,
+  },
+  footerLinks: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: 32,
+    paddingBottom: 16,
+    gap: 12,
+  },
+  footerLinkButton: {
+    padding: 8,
+  },
+  footerLinkText: {
+    fontSize: 13,
+    color: Colors.textSecondary,
+    textDecorationLine: 'underline',
+  },
+  footerDivider: {
+    color: Colors.textTertiary,
+    fontSize: 12,
   },
 });
