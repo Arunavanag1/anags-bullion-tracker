@@ -197,14 +197,14 @@ See [milestones/v2.1-ROADMAP.md](milestones/v2.1-ROADMAP.md) for full details.
 Plans:
 - [x] 49-01: API endpoint, TypeScript PCGS client, mobile integration, form autofill
 
-#### Phase 50: Autofill Form Component
+#### Phase 50: Autofill Form Component - COMPLETE
 **Goal**: Create cert number input with debounced lookup, auto-populate form fields from cert data
 **Depends on**: Phase 49
 **Research**: Unlikely (internal React patterns)
-**Plans**: TBD
+**Plans**: 1/1
 
 Plans:
-- [ ] 50-01: TBD
+- [x] 50-01: useCertLookup hook, AddItemModal integration, NGC fallback
 
 #### Phase 51: Mobile Cert Scanner
 **Goal**: Add camera-based barcode/QR scanning and OCR for cert number extraction on mobile
@@ -235,5 +235,5 @@ Phases execute in numeric order. v1.8 and v1.9 can partially overlap (testing ca
 | 42. Dashboard Integration | v2.0 | 0/1 | Planned | - |
 | 43-48 | v2.1 | 6/6 | **SHIPPED** | 2026-01-18 |
 | 49. Cert Lookup API | v2.2 | 1/1 | **COMPLETE** | 2026-01-18 |
-| 50. Autofill Form Component | v2.2 | 0/? | Not started | - |
+| 50. Autofill Form Component | v2.2 | 1/1 | **COMPLETE** | 2026-01-18 |
 | 51. Mobile Cert Scanner | v2.2 | 0/? | Not started | - |

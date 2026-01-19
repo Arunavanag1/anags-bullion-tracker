@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Modal } from '@/components/ui/Modal';
 import { ImageUploader } from './ImageUploader';
 import { useAddItem } from '@/hooks/useCollection';
@@ -8,6 +8,7 @@ import { useSpotPrices } from '@/hooks/useSpotPrices';
 import { useCoinSearch, CoinReference } from '@/hooks/useCoinSearch';
 import { useGrades } from '@/hooks/useGrades';
 import { usePriceGuide } from '@/hooks/usePriceGuide';
+import { useCertLookup } from '@/hooks/useCertLookup';
 import type { Metal, BookValueType } from '@/types';
 
 interface AddItemModalProps {
@@ -54,6 +55,74 @@ export function AddItemModal({ isOpen, onClose }: AddItemModalProps) {
   const { data: coinResults } = useCoinSearch(coinSearch);
   const { data: grades } = useGrades();
   const { data: priceGuide, isLoading: isPriceGuideLoading } = usePriceGuide(selectedCoin?.id, grade);
+  const certLookup = useCertLookup();
+
+  // Cert lookup state
+  const [certLookupSuccess, setCertLookupSuccess] = useState(false);
+  const [ngcLookupUrl, setNgcLookupUrl] = useState<string | null>(null);
+
+  // Debounced cert lookup for PCGS
+  const performCertLookup = useCallback(async () => {
+    if (gradingService !== 'PCGS' || certNumber.length < 7) {
+      return;
+    }
+
+    setCertLookupSuccess(false);
+
+    certLookup.mutate(
+      { certNumber, service: 'pcgs' },
+      {
+        onSuccess: async (result) => {
+          if (result.success && result.data) {
+            // Auto-populate grade
+            if (result.data.grade) {
+              setGrade(result.data.grade);
+            }
+
+            // Auto-populate metal type
+            if (result.data.metal) {
+              setMetal(result.data.metal);
+            }
+
+            // Auto-populate price guide value
+            if (result.data.priceGuide) {
+              setNumismaticValue(result.data.priceGuide.toString());
+              setUseCustomValue(true);
+            }
+
+            // Try to find matching coin - search by PCGS number or full name
+            if (result.data.pcgsNumber) {
+              setCoinSearch(result.data.pcgsNumber.toString());
+            } else if (result.data.fullName) {
+              setCoinSearch(result.data.fullName);
+            }
+
+            setCertLookupSuccess(true);
+          }
+        },
+      }
+    );
+  }, [certNumber, gradingService, certLookup]);
+
+  // Debounced effect for cert lookup
+  useEffect(() => {
+    if (gradingService === 'PCGS' && certNumber.length >= 7) {
+      const timer = setTimeout(() => performCertLookup(), 800);
+      return () => clearTimeout(timer);
+    } else {
+      setCertLookupSuccess(false);
+      setNgcLookupUrl(null);
+    }
+  }, [certNumber, gradingService, performCertLookup]);
+
+  // Handle NGC service - set manual lookup URL
+  useEffect(() => {
+    if (gradingService === 'NGC' && certNumber.length >= 7) {
+      setNgcLookupUrl(`https://www.ngccoin.com/certlookup/${certNumber}/`);
+    } else {
+      setNgcLookupUrl(null);
+    }
+  }, [certNumber, gradingService]);
 
   // Auto-populate numismatic value from price guide when coin and grade are selected
   useEffect(() => {
@@ -89,6 +158,8 @@ export function AddItemModal({ isOpen, onClose }: AddItemModalProps) {
     setProblemType('cleaned');
     setUseCustomValue(false);
     setNumismaticValue('');
+    setCertLookupSuccess(false);
+    setNgcLookupUrl(null);
   };
 
   const handleClose = () => {
@@ -999,8 +1070,102 @@ export function AddItemModal({ isOpen, onClose }: AddItemModalProps) {
               {gradingService} Cert Lookup
             </h2>
             <p style={{ fontSize: '14px', color: '#666', margin: '0 0 24px 0' }}>
-              Enter certificate number (cert lookup feature coming soon - manual entry for now)
+              {gradingService === 'PCGS'
+                ? 'Enter certificate number to auto-fill coin details'
+                : 'Enter certificate number (manual lookup required)'}
             </p>
+
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ fontSize: '12px', fontWeight: '600', color: '#888', textTransform: 'uppercase', display: 'block', marginBottom: '8px' }}>
+                Certificate Number {gradingService === 'PCGS' && '(Autofill)'}
+              </label>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <input
+                  type="text"
+                  value={certNumber}
+                  onChange={(e) => setCertNumber(e.target.value)}
+                  placeholder="Enter cert number"
+                  style={{
+                    flex: 1,
+                    padding: '14px 16px',
+                    fontSize: '16px',
+                    fontFamily: 'monospace',
+                    border: '1px solid #E0E0E0',
+                    borderRadius: '10px',
+                    boxSizing: 'border-box',
+                  }}
+                />
+                {certLookup.isPending && (
+                  <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{
+                      width: '16px',
+                      height: '16px',
+                      border: '2px solid #3B82F6',
+                      borderTopColor: 'transparent',
+                      borderRadius: '50%',
+                      animation: 'spin 1s linear infinite',
+                    }} />
+                  </div>
+                )}
+                {certLookupSuccess && !certLookup.isPending && (
+                  <div style={{ width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <span style={{ color: '#22A06B', fontSize: '18px', fontWeight: '600' }}>✓</span>
+                  </div>
+                )}
+              </div>
+
+              {/* PCGS autofill hint */}
+              {gradingService === 'PCGS' && certNumber.length === 0 && (
+                <div style={{ fontSize: '12px', color: '#888', marginTop: '6px', fontStyle: 'italic' }}>
+                  Enter 7-8 digit cert number to auto-populate coin details
+                </div>
+              )}
+
+              {/* Cert lookup error */}
+              {certLookup.data && !certLookup.data.success && (
+                <div style={{ fontSize: '12px', color: '#E53E3E', marginTop: '6px' }}>
+                  {certLookup.data.error}
+                </div>
+              )}
+
+              {/* Cert lookup success */}
+              {certLookupSuccess && (
+                <div style={{ fontSize: '12px', color: '#22A06B', marginTop: '6px' }}>
+                  ✓ Coin details auto-filled from PCGS
+                </div>
+              )}
+
+              {/* NGC manual lookup prompt */}
+              {ngcLookupUrl && (
+                <div style={{
+                  background: '#FEF3C7',
+                  padding: '12px',
+                  borderRadius: '8px',
+                  marginTop: '8px',
+                }}>
+                  <div style={{ fontSize: '12px', color: '#92400E', marginBottom: '8px' }}>
+                    NGC requires manual verification
+                  </div>
+                  <a
+                    href={ngcLookupUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: 'inline-block',
+                      background: '#F59E0B',
+                      color: 'white',
+                      padding: '8px 12px',
+                      borderRadius: '6px',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    Open NGC Lookup →
+                  </a>
+                </div>
+              )}
+            </div>
 
             <div style={{ marginBottom: '16px' }}>
               <label style={{ fontSize: '12px', fontWeight: '600', color: '#888', textTransform: 'uppercase', display: 'block', marginBottom: '8px' }}>
@@ -1028,27 +1193,6 @@ export function AddItemModal({ isOpen, onClose }: AddItemModalProps) {
                   </button>
                 ))}
               </div>
-            </div>
-
-            <div style={{ marginBottom: '16px' }}>
-              <label style={{ fontSize: '12px', fontWeight: '600', color: '#888', textTransform: 'uppercase', display: 'block', marginBottom: '8px' }}>
-                Certificate Number
-              </label>
-              <input
-                type="text"
-                value={certNumber}
-                onChange={(e) => setCertNumber(e.target.value)}
-                placeholder="Enter cert number"
-                style={{
-                  width: '100%',
-                  padding: '14px 16px',
-                  fontSize: '16px',
-                  fontFamily: 'monospace',
-                  border: '1px solid #E0E0E0',
-                  borderRadius: '10px',
-                  boxSizing: 'border-box',
-                }}
-              />
             </div>
 
             <div style={{ marginBottom: '16px' }}>
