@@ -22,7 +22,7 @@ None (standard web/mobile patterns)
 - :white_check_mark: **v2.0 Mobile Charts** - Phases 37-42 (shipped 2026-01-18)
 - :white_check_mark: **v2.1 Coin Database Expansion** - Phases 43-48 (shipped 2026-01-18)
 - :white_check_mark: **v2.2 Cert Number Autofill** - Phases 49-51 (shipped 2026-01-18)
-- :white_check_mark: **v2.3 App Store Legal** - Phases 52-53 (shipped 2026-01-19)
+- :white_check_mark: **v2.3 App Store Legal** — Phases 52-53 (shipped 2026-01-19)
 
 ## Phases
 
@@ -198,27 +198,15 @@ See [milestones/v2.2-ROADMAP.md](milestones/v2.2-ROADMAP.md) for full details.
 
 ---
 
-### :white_check_mark: v2.3 App Store Legal (Shipped 2026-01-19)
+<details>
+<summary>:white_check_mark: v2.3 App Store Legal (Phases 52-53) — SHIPPED 2026-01-19</summary>
 
-**Milestone Goal:** Add privacy policy and contact/support pages required for App Store submission (Guidelines 2.1 & 5.1)
+See [milestones/v2.3-ROADMAP.md](milestones/v2.3-ROADMAP.md) for full details.
 
-#### Phase 52: Privacy Policy Page - COMPLETE
-**Goal**: Create standard privacy policy page for web and deep link from mobile
-**Depends on**: Phase 51
-**Research**: Unlikely (static content)
-**Plans**: 1/1
+- [x] Phase 52: Privacy Policy Page (1/1 plan) — Privacy policy, web footer, mobile links
+- [x] Phase 53: Contact & Support Page (1/1 plan) — Email support, response times, business hours
 
-Plans:
-- [x] 52-01: Privacy policy page, web footer, mobile links
-
-#### Phase 53: Contact & Support Page - COMPLETE
-**Goal**: Create contact/support page with email, form, and links
-**Depends on**: Phase 52
-**Research**: Unlikely (static content)
-**Plans**: 1/1
-
-Plans:
-- [x] 53-01: Contact page with email support, common topics, response times
+</details>
 
 ---
 
