@@ -2,19 +2,19 @@
 
 ## Current Position
 
-Phase: 51 of 51 (Mobile Cert Scanner) - COMPLETE
-Plan: 1 of 1 in current phase - COMPLETE
-Status: v2.2 Milestone COMPLETE
-Last activity: 2026-01-18 - Completed 51-01 (Mobile Cert Scanner)
+Phase: 42 of 51 (Dashboard Integration) - NOT STARTED
+Plan: 0 of 1 in current phase
+Status: Ready for Phase 42 planning
+Last activity: 2026-01-18 - Shipped v2.2 Cert Number Autofill
 
-Progress: v2.2 ██████████ 100% (3/3 phases)
+Progress: v2.0 █████████░ 83% (5/6 phases)
 
 ## Active Milestone
 
-**v2.2 Cert Number Autofill** (Phases 49-51)
-- 3 phases planned
-- Focus: Add autofill for coins using PCGS/NGC cert numbers
-- Approach: API integration + form component + mobile scanner
+**v2.0 Mobile Charts** (Phase 42 remaining)
+- 6 phases total, 5 complete
+- Focus: Interactive charts on mobile dashboard
+- Remaining: Phase 42 (Dashboard Integration)
 
 ## Shipped Milestones
 
@@ -27,11 +27,18 @@ Progress: v2.2 ██████████ 100% (3/3 phases)
 ## Session Continuity
 
 Last session: 2026-01-18
-Stopped at: Completed 51-01 (Mobile Cert Scanner) - v2.2 COMPLETE
+Stopped at: Shipped v2.2 Cert Number Autofill milestone
 Resume file: None
-Next: `/gsd:complete-milestone v2.2` or `/gsd:plan-phase 42` (Dashboard Integration)
+Next: `/gsd:plan-phase 42` (Dashboard Integration) to complete v2.0
 
 ## Accumulated Context
+
+### Key Decisions (v2.2)
+- TypeScript over Python for PCGS API client (Phase 49)
+- 800ms debounce for cert lookup (Phase 49, 50)
+- Mutation over Query for cert lookup - on-demand (Phase 50)
+- Multi-format barcode support for PCGS/NGC labels (Phase 51)
+- Full-screen modal for scanner UX (Phase 51)
 
 ### Key Decisions (v1.9)
 - 7-day JWT tokens with refresh (Phase 32)
@@ -63,12 +70,6 @@ None currently.
 
 - v1.0-v1.8: Core feature development (Phases 1-30)
 - v1.9: Deployment readiness (Phases 31-36) - **SHIPPED 2026-01-17**
-- v2.0: Mobile Charts (Phases 37-42) - In Progress
-- v2.1: Coin Database Expansion (Phases 43-48) - Created 2026-01-17
-
-### v2.1 Milestone Context
-- **Goal**: Expand coin reference database from ~100 to ~5,830 coins
-- **Approach**: PCGS API (1,000 free queries/day) - web scraping blocked
-- **Coverage**: 67 series across 4 priority tiers (P0-P3)
-- **Current state**: 100 coins, price refresh automation complete
-- **Phase 47**: Created refresh_prices.py + Vercel cron for automated updates
+- v2.0: Mobile Charts (Phases 37-42) - Phase 42 remaining
+- v2.1: Coin Database Expansion (Phases 43-48) - **SHIPPED 2026-01-18**
+- v2.2: Cert Number Autofill (Phases 49-51) - **SHIPPED 2026-01-18**

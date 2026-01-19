@@ -184,36 +184,16 @@ See [milestones/v2.1-ROADMAP.md](milestones/v2.1-ROADMAP.md) for full details.
 
 ---
 
-### :white_check_mark: v2.2 Cert Number Autofill (Shipped 2026-01-18)
+<details>
+<summary>:white_check_mark: v2.2 Cert Number Autofill (Phases 49-51) — SHIPPED 2026-01-18</summary>
 
-**Milestone Goal:** Add autofill functionality for coins using PCGS/NGC certification numbers, enabling quick coin lookup and form population
+See [milestones/v2.2-ROADMAP.md](milestones/v2.2-ROADMAP.md) for full details.
 
-#### Phase 49: Cert Lookup API Integration - COMPLETE
-**Goal**: Integrate PCGS Cert Verification and NGC Verify APIs for certification number lookup
-**Depends on**: Phase 48
-**Research**: Complete (see RESEARCH.md)
-**Plans**: 1/1
+- [x] Phase 49: Cert Lookup API Integration (1/1 plan) — PCGS API client, cert lookup endpoint
+- [x] Phase 50: Autofill Form Component (1/1 plan) — useCertLookup hook, web integration
+- [x] Phase 51: Mobile Cert Scanner (1/1 plan) — expo-camera barcode scanner, auto-detect service
 
-Plans:
-- [x] 49-01: API endpoint, TypeScript PCGS client, mobile integration, form autofill
-
-#### Phase 50: Autofill Form Component - COMPLETE
-**Goal**: Create cert number input with debounced lookup, auto-populate form fields from cert data
-**Depends on**: Phase 49
-**Research**: Unlikely (internal React patterns)
-**Plans**: 1/1
-
-Plans:
-- [x] 50-01: useCertLookup hook, AddItemModal integration, NGC fallback
-
-#### Phase 51: Mobile Cert Scanner - COMPLETE
-**Goal**: Add camera-based barcode/QR scanning for cert number extraction on mobile
-**Depends on**: Phase 50
-**Research**: Complete (see DISCOVERY.md)
-**Plans**: 1/1
-
-Plans:
-- [x] 51-01: CertScanner component, NumismaticForm integration, PCGS barcode + NGC QR parsing
+</details>
 
 ## Progress
 
