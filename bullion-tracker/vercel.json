@@ -40,13 +40,13 @@
     }
   ],
   "functions": {
-    "api/collection/sync-prices.ts": {
+    "src/app/api/collection/sync-prices/route.ts": {
       "maxDuration": 30
     },
-    "api/prices/seed.ts": {
+    "src/app/api/prices/seed/route.ts": {
       "maxDuration": 30
     },
-    "api/cron/refresh-prices/route.ts": {
+    "src/app/api/cron/refresh-prices/route.ts": {
       "maxDuration": 10
     }
   }

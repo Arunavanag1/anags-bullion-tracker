@@ -327,14 +327,14 @@ export function DashboardScreen({ navigation }: Props) {
         {/* Footer Links - App Store Compliance */}
         <View style={styles.footerLinks}>
           <TouchableOpacity
-            onPress={() => Linking.openURL('https://bulliontracker.app/privacy')}
+            onPress={() => Linking.openURL('https://bullion-tracker-plum.vercel.app/privacy')}
             style={styles.footerLinkButton}
           >
             <Text style={styles.footerLinkText}>Privacy Policy</Text>
           </TouchableOpacity>
           <Text style={styles.footerDivider}>•</Text>
           <TouchableOpacity
-            onPress={() => Linking.openURL('https://bulliontracker.app/contact')}
+            onPress={() => Linking.openURL('https://bullion-tracker-plum.vercel.app/contact')}
             style={styles.footerLinkButton}
           >
             <Text style={styles.footerLinkText}>Contact & Support</Text>

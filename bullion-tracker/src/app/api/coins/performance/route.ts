@@ -53,7 +53,7 @@ export async function GET() {
 
     // Filter items with valid coinReferenceId and grade
     const validItems = numismaticItems.filter(
-      (item) => item.coinReferenceId && item.grade
+      (item: typeof numismaticItems[number]) => item.coinReferenceId && item.grade
     );
 
     if (validItems.length === 0) {
