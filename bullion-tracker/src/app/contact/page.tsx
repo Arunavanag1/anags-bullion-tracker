@@ -9,7 +9,7 @@ const metadata = {
 
 export default function ContactSupportPage() {
   const appName = 'Bullion Tracker';
-  const contactEmail = 'support@bulliontracker.app';
+  const contactEmail = 'arunavaknag@berkeley.edu';
 
   return (
     <div style={{

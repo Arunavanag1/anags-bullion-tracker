@@ -10,7 +10,7 @@ const metadata = {
 export default function PrivacyPolicyPage() {
   const lastUpdated = 'January 19, 2026';
   const appName = 'Bullion Tracker';
-  const contactEmail = 'support@bulliontracker.app';
+  const contactEmail = 'arunavaknag@berkeley.edu';
 
   return (
     <div style={{
