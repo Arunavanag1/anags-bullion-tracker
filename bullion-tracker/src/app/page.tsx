@@ -914,6 +914,29 @@ export default function BullionTrackerWeb() {
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
       />
+
+      {/* Footer */}
+      <footer style={{
+        borderTop: '1px solid #E0E0E0',
+        padding: '24px 48px',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: '24px',
+        fontSize: '13px',
+        color: '#888',
+        background: '#FAFAFA',
+      }}>
+        <span>© {new Date().getFullYear()} Bullion Tracker</span>
+        <span style={{ color: '#ddd' }}>•</span>
+        <Link href="/privacy" style={{ color: '#666', textDecoration: 'none' }}>
+          Privacy Policy
+        </Link>
+        <span style={{ color: '#ddd' }}>•</span>
+        <Link href="/contact" style={{ color: '#666', textDecoration: 'none' }}>
+          Contact & Support
+        </Link>
+      </footer>
     </div>
   );
 }
