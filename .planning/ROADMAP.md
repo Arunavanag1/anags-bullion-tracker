@@ -21,7 +21,7 @@ None (standard web/mobile patterns)
 - :white_check_mark: **v1.9 Deployment Ready** - Phases 31-36 (complete 2026-01-17)
 - :construction: **v2.0 Mobile Charts** - Phases 37-42 (in progress)
 - :white_check_mark: **v2.1 Coin Database Expansion** - Phases 43-48 (shipped 2026-01-18)
-- :clipboard: **v2.2 Cert Number Autofill** - Phases 49-51 (planned)
+- :white_check_mark: **v2.2 Cert Number Autofill** - Phases 49-51 (shipped 2026-01-18)
 
 ## Phases
 
@@ -184,7 +184,7 @@ See [milestones/v2.1-ROADMAP.md](milestones/v2.1-ROADMAP.md) for full details.
 
 ---
 
-### :clipboard: v2.2 Cert Number Autofill (Planned)
+### :white_check_mark: v2.2 Cert Number Autofill (Shipped 2026-01-18)
 
 **Milestone Goal:** Add autofill functionality for coins using PCGS/NGC certification numbers, enabling quick coin lookup and form population
 
@@ -206,14 +206,14 @@ Plans:
 Plans:
 - [x] 50-01: useCertLookup hook, AddItemModal integration, NGC fallback
 
-#### Phase 51: Mobile Cert Scanner
+#### Phase 51: Mobile Cert Scanner - COMPLETE
 **Goal**: Add camera-based barcode/QR scanning for cert number extraction on mobile
 **Depends on**: Phase 50
 **Research**: Complete (see DISCOVERY.md)
 **Plans**: 1/1
 
 Plans:
-- [ ] 51-01: CertScanner component, NumismaticForm integration, PCGS barcode + NGC QR parsing
+- [x] 51-01: CertScanner component, NumismaticForm integration, PCGS barcode + NGC QR parsing
 
 ## Progress
 
@@ -233,6 +233,4 @@ Phases execute in numeric order. v1.8 and v1.9 can partially overlap (testing ca
 | 41. Chart Interactions | v2.0 | 1/1 | **COMPLETE** | 2026-01-17 |
 | 42. Dashboard Integration | v2.0 | 0/1 | Planned | - |
 | 43-48 | v2.1 | 6/6 | **SHIPPED** | 2026-01-18 |
-| 49. Cert Lookup API | v2.2 | 1/1 | **COMPLETE** | 2026-01-18 |
-| 50. Autofill Form Component | v2.2 | 1/1 | **COMPLETE** | 2026-01-18 |
-| 51. Mobile Cert Scanner | v2.2 | 0/1 | Planned | - |
+| 49-51 | v2.2 | 3/3 | **SHIPPED** | 2026-01-18 |
