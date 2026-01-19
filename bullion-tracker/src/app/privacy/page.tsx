@@ -1,6 +1,8 @@
+'use client';
+
 import Link from 'next/link';
 
-export const metadata = {
+const metadata = {
   title: 'Privacy Policy | Bullion Tracker',
   description: 'Privacy Policy for Bullion Tracker - Your precious metals collection tracking app',
 };
