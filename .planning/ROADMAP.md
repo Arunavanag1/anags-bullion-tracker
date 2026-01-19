@@ -19,7 +19,7 @@ None (standard web/mobile patterns)
 - :white_check_mark: **v1.7 Unified Portfolio** - Phase 25 (shipped 2026-01-15)
 - :construction: **v1.8 Mobile Deployment** - Phases 26-30 (in progress)
 - :white_check_mark: **v1.9 Deployment Ready** - Phases 31-36 (complete 2026-01-17)
-- :construction: **v2.0 Mobile Charts** - Phases 37-42 (in progress)
+- :white_check_mark: **v2.0 Mobile Charts** - Phases 37-42 (shipped 2026-01-18)
 - :white_check_mark: **v2.1 Coin Database Expansion** - Phases 43-48 (shipped 2026-01-18)
 - :white_check_mark: **v2.2 Cert Number Autofill** - Phases 49-51 (shipped 2026-01-18)
 
@@ -106,7 +106,7 @@ See [milestones/v1.9-ROADMAP.md](milestones/v1.9-ROADMAP.md) for full details.
 
 ---
 
-### :clipboard: v2.0 Mobile Charts (Planned)
+### :white_check_mark: v2.0 Mobile Charts (Shipped 2026-01-18)
 
 **Milestone Goal:** Add interactive, aesthetic charts to the mobile app dashboard, matching website functionality
 
@@ -157,14 +157,14 @@ Plans:
 Plans:
 - [x] 41-01: Touch interactions - useChartPressState, Skia indicator, interactive legend
 
-#### Phase 42: Dashboard Integration
+#### Phase 42: Dashboard Integration - COMPLETE
 **Goal**: Layout charts at bottom of dashboard in scrollable section with consistent styling
 **Depends on**: Phase 41
 **Research**: Unlikely (internal UI work)
 **Plans**: 1/1
 
 Plans:
-- [ ] 42-01: Add GainLossBarChart, organize ANALYTICS section, remove redundant allocation card
+- [x] 42-01: Add GainLossBarChart, organize ANALYTICS section, remove redundant allocation card
 
 ---
 
@@ -211,6 +211,6 @@ Phases execute in numeric order. v1.8 and v1.9 can partially overlap (testing ca
 | 39. Allocation Donut Chart | v2.0 | 1/1 | **COMPLETE** | 2026-01-17 |
 | 40. Gain/Loss Bar Chart | v2.0 | 1/1 | **COMPLETE** | 2026-01-17 |
 | 41. Chart Interactions | v2.0 | 1/1 | **COMPLETE** | 2026-01-17 |
-| 42. Dashboard Integration | v2.0 | 0/1 | Planned | - |
+| 42. Dashboard Integration | v2.0 | 1/1 | **COMPLETE** | 2026-01-17 |
 | 43-48 | v2.1 | 6/6 | **SHIPPED** | 2026-01-18 |
 | 49-51 | v2.2 | 3/3 | **SHIPPED** | 2026-01-18 |
