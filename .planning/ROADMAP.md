@@ -207,14 +207,13 @@ Plans:
 - [x] 50-01: useCertLookup hook, AddItemModal integration, NGC fallback
 
 #### Phase 51: Mobile Cert Scanner
-**Goal**: Add camera-based barcode/QR scanning and OCR for cert number extraction on mobile
+**Goal**: Add camera-based barcode/QR scanning for cert number extraction on mobile
 **Depends on**: Phase 50
-**Research**: Likely (Expo camera, barcode scanning, OCR)
-**Research topics**: expo-camera, expo-barcode-scanner, OCR libraries (Tesseract.js or cloud OCR)
-**Plans**: TBD
+**Research**: Complete (see DISCOVERY.md)
+**Plans**: 1/1
 
 Plans:
-- [ ] 51-01: TBD
+- [ ] 51-01: CertScanner component, NumismaticForm integration, PCGS barcode + NGC QR parsing
 
 ## Progress
 
@@ -236,4 +235,4 @@ Phases execute in numeric order. v1.8 and v1.9 can partially overlap (testing ca
 | 43-48 | v2.1 | 6/6 | **SHIPPED** | 2026-01-18 |
 | 49. Cert Lookup API | v2.2 | 1/1 | **COMPLETE** | 2026-01-18 |
 | 50. Autofill Form Component | v2.2 | 1/1 | **COMPLETE** | 2026-01-18 |
-| 51. Mobile Cert Scanner | v2.2 | 0/? | Not started | - |
+| 51. Mobile Cert Scanner | v2.2 | 0/1 | Planned | - |
