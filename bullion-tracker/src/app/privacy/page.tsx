@@ -129,14 +129,21 @@ export default function PrivacyPolicyPage() {
 
           <Section title="6. Data Sharing">
             <p>
-              We do not sell, trade, or rent your personal information to third parties. We may share
-              your information only in the following circumstances:
+              We do not sell, trade, or rent your personal information to third parties.
+            </p>
+            <p>
+              <strong>Your collection data is yours alone.</strong> We will never share, sell, or disclose
+              your precious metals collection information with any third party. Your inventory details,
+              purchase prices, and collection composition remain completely private.
+            </p>
+            <p>
+              We may share limited account information only in the following circumstances:
             </p>
             <ul>
               <li>With your explicit consent</li>
               <li>To comply with legal obligations</li>
               <li>To protect our rights and prevent fraud</li>
-              <li>With service providers who assist in operating our app (under strict confidentiality agreements)</li>
+              <li>With service providers who assist in operating our app (under strict confidentiality agreements) - these providers never have access to your collection data</li>
             </ul>
           </Section>
 
