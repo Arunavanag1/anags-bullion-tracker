@@ -202,14 +202,14 @@ See [milestones/v2.2-ROADMAP.md](milestones/v2.2-ROADMAP.md) for full details.
 
 **Milestone Goal:** Add privacy policy and contact/support pages required for App Store submission (Guidelines 2.1 & 5.1)
 
-#### Phase 52: Privacy Policy Page
+#### Phase 52: Privacy Policy Page - COMPLETE
 **Goal**: Create standard privacy policy page for web and deep link from mobile
 **Depends on**: Phase 51
 **Research**: Unlikely (static content)
-**Plans**: TBD
+**Plans**: 1/1
 
 Plans:
-- [ ] 52-01: TBD (run /gsd:plan-phase 52 to break down)
+- [x] 52-01: Privacy policy page, web footer, mobile links
 
 #### Phase 53: Contact & Support Page
 **Goal**: Create contact/support page with email, form, and links
@@ -241,5 +241,5 @@ Phases execute in numeric order. v1.8 and v1.9 can partially overlap (testing ca
 | 42. Dashboard Integration | v2.0 | 1/1 | **COMPLETE** | 2026-01-17 |
 | 43-48 | v2.1 | 6/6 | **SHIPPED** | 2026-01-18 |
 | 49-51 | v2.2 | 3/3 | **SHIPPED** | 2026-01-18 |
-| 52. Privacy Policy Page | v2.3 | 0/? | Not started | - |
+| 52. Privacy Policy Page | v2.3 | 1/1 | **COMPLETE** | 2026-01-19 |
 | 53. Contact & Support Page | v2.3 | 0/? | Not started | - |
