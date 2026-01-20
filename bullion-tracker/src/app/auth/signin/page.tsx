@@ -55,7 +55,7 @@ function SignInContent() {
               Welcome Back
             </h1>
             <p className="text-text-secondary">
-              Sign in to your Bullion Tracker account
+              Sign in to your TrakStack account
             </p>
           </div>
 

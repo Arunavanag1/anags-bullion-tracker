@@ -3,13 +3,13 @@
 import Link from 'next/link';
 
 const metadata = {
-  title: 'Privacy Policy | Bullion Tracker',
-  description: 'Privacy Policy for Bullion Tracker - Your precious metals collection tracking app',
+  title: 'Privacy Policy | TrakStack',
+  description: 'Privacy Policy for TrakStack - Your precious metals collection tracking app',
 };
 
 export default function PrivacyPolicyPage() {
   const lastUpdated = 'January 19, 2026';
-  const appName = 'Bullion Tracker';
+  const appName = 'TrakStack';
   const contactEmail = 'arunavaknag@berkeley.edu';
 
   return (

@@ -927,7 +927,7 @@ export default function BullionTrackerWeb() {
         color: '#888',
         background: '#FAFAFA',
       }}>
-        <span>© {new Date().getFullYear()} Bullion Tracker</span>
+        <span>© {new Date().getFullYear()} TrakStack</span>
         <span style={{ color: '#ddd' }}>•</span>
         <Link href="/privacy" style={{ color: '#666', textDecoration: 'none' }}>
           Privacy Policy

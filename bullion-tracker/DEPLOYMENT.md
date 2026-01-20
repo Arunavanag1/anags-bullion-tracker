@@ -1,6 +1,6 @@
-# Bullion Tracker - Deployment Guide
+# TrakStack - Deployment Guide
 
-Complete guide for deploying Bullion Tracker to production.
+Complete guide for deploying TrakStack to production.
 
 ## Prerequisites
 

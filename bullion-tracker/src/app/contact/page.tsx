@@ -3,12 +3,12 @@
 import Link from 'next/link';
 
 const metadata = {
-  title: 'Contact & Support | Bullion Tracker',
-  description: 'Contact and Support for Bullion Tracker - Your precious metals collection tracking app',
+  title: 'Contact & Support | TrakStack',
+  description: 'Contact and Support for TrakStack - Your precious metals collection tracking app',
 };
 
 export default function ContactSupportPage() {
-  const appName = 'Bullion Tracker';
+  const appName = 'TrakStack';
   const contactEmail = 'arunavaknag@berkeley.edu';
 
   return (

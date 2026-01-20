@@ -1,6 +1,6 @@
 # PCGS Coin Scraper
 
-Scraper for populating coin reference database from PCGS CoinFacts to enable numismatics tracking in the Bullion Collection Tracker.
+Scraper for populating coin reference database from PCGS CoinFacts to enable numismatics tracking in TrakStack.
 
 ## Overview
 
@@ -183,7 +183,7 @@ After running `--all`:
 - `CoinPriceGuide`: ~23,600 rows (1,180 coins × ~20 grades)
 - `ValidGrade`: 41 rows
 
-## Integration with Bullion Tracker
+## Integration with TrakStack
 
 After scraping, coins can be searched and added to collections:
 
