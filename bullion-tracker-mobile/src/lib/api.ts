@@ -54,9 +54,9 @@ function getApiUrl(): string {
   }
   // Development fallback - warn in console
   if (__DEV__) {
-    console.warn('API_URL not configured in app.json extra.apiUrl, using localhost:3001');
+    console.warn('API_URL not configured in app.json extra.apiUrl, using localhost:3000');
   }
-  return 'http://localhost:3001';
+  return 'http://localhost:3000';
 }
 
 export const API_URL = getApiUrl();
@@ -87,9 +87,9 @@ async function makeRequest(
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  // Create abort controller for timeout
+  // Create abort controller for timeout (30s for cold starts on serverless)
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+  const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
 
   try {
     const response = await fetch(`${API_URL}${endpoint}`, {

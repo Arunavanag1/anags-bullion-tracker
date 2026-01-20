@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { View, Text, ScrollView, RefreshControl, TouchableOpacity, Alert, StyleSheet, Platform, StatusBar, Linking } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -31,6 +31,7 @@ export function DashboardScreen({ navigation }: Props) {
   const [gainDisplayFormat, setGainDisplayFormatState] = useState<GainDisplayFormat>('dollar');
   const [valuationBreakdown, setValuationBreakdown] = useState<ValuationBreakdown | null>(null);
   const { data: categorySummary, isLoading: summaryLoading } = useCollectionSummary();
+  const isMountedRef = useRef(true);
 
   const handleSignOut = () => {
     Alert.alert(
@@ -49,13 +50,16 @@ export function DashboardScreen({ navigation }: Props) {
     );
   };
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       const [itemsData, gainFormat, breakdown] = await Promise.all([
         api.getCollectionItems(),
         getGainDisplayFormat(),
         api.getValuationBreakdown().catch(() => null),
       ]);
+
+      // Only update state if component is still mounted
+      if (!isMountedRef.current) return;
 
       setItems(itemsData as any);
       setGainDisplayFormatState(gainFormat);
@@ -72,30 +76,40 @@ export function DashboardScreen({ navigation }: Props) {
 
         // Calculate daily gain (change from 24h ago)
         const gain24h = await calculateDailyGain(currentValue);
-        setDailyGain(gain24h);
+        if (isMountedRef.current) setDailyGain(gain24h);
 
         // Get yesterday's value for percentage calculation
         const value24hAgo = await get24hAgoValue();
-        setYesterdayValue(value24hAgo);
+        if (isMountedRef.current) setYesterdayValue(value24hAgo);
       }
     } catch (error: any) {
+      // Ignore AbortError - it's expected when navigating away or on timeout
+      if (error instanceof Error && error.name === 'AbortError') {
+        return;
+      }
       console.error('Failed to load data:', error);
-      if (error.message?.includes('Failed to fetch')) {
+      if (isMountedRef.current && error.message?.includes('Failed to fetch')) {
         Alert.alert('Connection Error', 'Could not connect to server. Make sure the backend is running.');
       }
     } finally {
-      setLoading(false);
-      setRefreshing(false);
+      if (isMountedRef.current) {
+        setLoading(false);
+        setRefreshing(false);
+      }
     }
-  };
+  }, [spotPrices]);
 
   useEffect(() => {
+    isMountedRef.current = true;
     loadData();
     const unsubscribe = navigation.addListener('focus', () => {
       loadData();
     });
-    return unsubscribe;
-  }, [navigation]);
+    return () => {
+      isMountedRef.current = false;
+      unsubscribe();
+    };
+  }, [navigation, loadData]);
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -307,20 +321,20 @@ export function DashboardScreen({ navigation }: Props) {
           <Text style={styles.chartsSectionTitle}>ANALYTICS</Text>
 
           {/* Portfolio Value Over Time */}
-          <PortfolioLineChart />
+          <PortfolioLineChart currentPortfolioValue={currentValue} />
 
           <View style={styles.chartSpacer} />
 
           {/* Allocation Breakdown */}
           {spotPrices && (
-            <AllocationPieChart collection={items} spotPrices={spotPrices} />
+            <AllocationPieChart collection={items} spotPrices={spotPrices} totalPortfolioValue={currentValue} />
           )}
 
           <View style={styles.chartSpacer} />
 
           {/* Gain/Loss by Metal */}
           {spotPrices && (
-            <GainLossBarChart collection={items} spotPrices={spotPrices} />
+            <GainLossBarChart collection={items} spotPrices={spotPrices} totalPortfolioValue={currentValue} />
           )}
         </View>
 

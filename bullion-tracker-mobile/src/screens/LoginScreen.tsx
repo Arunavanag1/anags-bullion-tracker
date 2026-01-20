@@ -41,7 +41,7 @@ export function LoginScreen({ navigation }: Props) {
           Welcome Back
         </Text>
         <Text style={{ fontSize: 16, color: '#8B6B61', textAlign: 'center' }}>
-          Sign in to your Bullion Tracker account
+          Sign in to your TrakStack account
         </Text>
       </View>
 

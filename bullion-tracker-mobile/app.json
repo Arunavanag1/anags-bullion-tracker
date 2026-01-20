@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Bullion Tracker",
-    "slug": "bullion-tracker-mobile",
+    "name": "TrakStack",
+    "slug": "trackstack-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -14,7 +14,11 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.bulliontracker.app"
+      "bundleIdentifier": "com.trackstack.app",
+      "buildNumber": "2",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -23,21 +27,27 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.bulliontracker.app"
+      "package": "com.trackstack.app",
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
-      "apiUrl": "http://10.0.0.146:3000",
-      "metalPriceApiKey": "de370593eb772aeca103b27bb7c8c226"
+      "apiUrl": "https://bullion-tracker-plum.vercel.app",
+      "metalPriceApiKey": "de370593eb772aeca103b27bb7c8c226",
+      "eas": {
+        "projectId": "434c39cc-3a97-4d3d-8553-b2882aa52a77"
+      }
     },
     "plugins": [
       [
         "expo-image-picker",
         {
-          "photosPermission": "Allow Bullion Tracker to access your photos to add images of your bullion items.",
-          "cameraPermission": "Allow Bullion Tracker to use your camera to take photos of your bullion items."
+          "photosPermission": "Allow TrakStack to access your photos to add images of your collection items.",
+          "cameraPermission": "Allow TrakStack to use your camera to take photos of your collection items."
         }
       ],
       "expo-secure-store"

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Platform, StatusBar } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -22,29 +22,44 @@ export function CollageScreen({ navigation }: Props) {
   const [refreshing, setRefreshing] = useState(false);
   const [selectedItem, setSelectedItem] = useState<CollectionItem | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const isMountedRef = useRef(true);
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       const itemsData = await api.getCollectionItems();
 
-      // Filter items that have images
-      const itemsWithImages = itemsData.filter(item => item.images && item.images.length > 0);
-      setItems(itemsWithImages);
+      // Only update state if component is still mounted
+      if (isMountedRef.current) {
+        // Filter items that have images
+        const itemsWithImages = itemsData.filter(item => item.images && item.images.length > 0);
+        setItems(itemsWithImages);
+      }
     } catch (error) {
+      // Ignore AbortError - it's expected when navigating away or on timeout
+      if (error instanceof Error && error.name === 'AbortError') {
+        return;
+      }
       console.error('Failed to load items:', error);
     } finally {
-      setLoading(false);
-      setRefreshing(false);
+      if (isMountedRef.current) {
+        setLoading(false);
+        setRefreshing(false);
+      }
     }
-  };
+  }, []);
 
   useEffect(() => {
+    isMountedRef.current = true;
+
     const unsubscribe = navigation.addListener('focus', () => {
       loadData();
     });
 
-    return unsubscribe;
-  }, [navigation]);
+    return () => {
+      isMountedRef.current = false;
+      unsubscribe();
+    };
+  }, [navigation, loadData]);
 
   const onRefresh = async () => {
     setRefreshing(true);

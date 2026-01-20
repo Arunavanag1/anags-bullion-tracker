@@ -25,7 +25,11 @@ interface ChartDataPoint {
   [key: string]: unknown;
 }
 
-export function PortfolioLineChart() {
+interface PortfolioLineChartProps {
+  currentPortfolioValue?: number;
+}
+
+export function PortfolioLineChart({ currentPortfolioValue }: PortfolioLineChartProps) {
   const [timeRange, setTimeRange] = useState<TimeRange>('1M');
   const [data, setData] = useState<ChartDataPoint[]>([]);
   const [loading, setLoading] = useState(true);
@@ -75,10 +79,11 @@ export function PortfolioLineChart() {
     }
   };
 
-  // Calculate change stats
+  // Calculate change stats - use currentPortfolioValue if provided, otherwise fall back to last data point
   const firstPoint = data[0];
   const lastPoint = data[data.length - 1];
-  const change = lastPoint && firstPoint ? lastPoint.totalValue - firstPoint.totalValue : 0;
+  const displayCurrentValue = currentPortfolioValue ?? lastPoint?.totalValue ?? 0;
+  const change = firstPoint ? displayCurrentValue - firstPoint.totalValue : 0;
   const changePercent = firstPoint?.totalValue > 0
     ? ((change / firstPoint.totalValue) * 100).toFixed(2)
     : '0.00';
@@ -182,7 +187,7 @@ export function PortfolioLineChart() {
             <View style={[styles.stat, styles.statRight]}>
               <Text style={styles.statLabel}>Current</Text>
               <Text style={[styles.statValue, { color: Colors.accentTeal }]}>
-                ${lastPoint?.totalValue.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
+                ${displayCurrentValue.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
               </Text>
             </View>
           </View>

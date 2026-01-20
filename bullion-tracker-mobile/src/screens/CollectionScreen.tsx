@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { View, Text, ScrollView, RefreshControl, TouchableOpacity, Image, Alert, StyleSheet, Platform, StatusBar } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -24,29 +24,43 @@ export function CollectionScreen({ navigation }: Props) {
   const [refreshing, setRefreshing] = useState(false);
   const [categoryFilter, setCategoryFilter] = useState<ItemCategory | 'ALL'>('ALL');
   const [expandedHistory, setExpandedHistory] = useState<string | null>(null);
+  const isMountedRef = useRef(true);
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       const itemsData = await api.getCollectionItems();
-      setItems(itemsData);
+      if (isMountedRef.current) {
+        setItems(itemsData);
+      }
     } catch (error: any) {
+      // Ignore AbortError - it's expected when navigating away or on timeout
+      if (error instanceof Error && error.name === 'AbortError') {
+        return;
+      }
       console.error('Failed to load data:', error);
-      if (error.message?.includes('Failed to fetch')) {
+      if (isMountedRef.current && error.message?.includes('Failed to fetch')) {
         Alert.alert('Connection Error', 'Could not connect to server.');
       }
     } finally {
-      setLoading(false);
-      setRefreshing(false);
+      if (isMountedRef.current) {
+        setLoading(false);
+        setRefreshing(false);
+      }
     }
-  };
+  }, []);
 
   useEffect(() => {
+    isMountedRef.current = true;
+
     const unsubscribe = navigation.addListener('focus', () => {
       loadData();
     });
 
-    return unsubscribe;
-  }, [navigation]);
+    return () => {
+      isMountedRef.current = false;
+      unsubscribe();
+    };
+  }, [navigation, loadData]);
 
   const onRefresh = async () => {
     setRefreshing(true);

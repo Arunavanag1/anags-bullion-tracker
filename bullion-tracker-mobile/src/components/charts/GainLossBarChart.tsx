@@ -11,6 +11,7 @@ interface GainLossBarChartProps {
     silver: number;
     platinum: number;
   };
+  totalPortfolioValue?: number;
 }
 
 interface MetalGainLoss {
@@ -25,7 +26,7 @@ interface MetalGainLoss {
 const POSITIVE_COLOR = Colors.positive;
 const NEGATIVE_COLOR = Colors.negative;
 
-export function GainLossBarChart({ collection, spotPrices }: GainLossBarChartProps) {
+export function GainLossBarChart({ collection, spotPrices, totalPortfolioValue }: GainLossBarChartProps) {
   const { chartData, totals } = useMemo(() => {
     if (!collection || collection.length === 0) {
       return {
@@ -153,7 +154,7 @@ export function GainLossBarChart({ collection, spotPrices }: GainLossBarChartPro
       <View style={styles.summaryContainer}>
         <View style={styles.summaryLeft}>
           <Text style={styles.summaryLabel}>Total Portfolio</Text>
-          <Text style={styles.summaryValue}>{formatCurrency(totals.currentValue)}</Text>
+          <Text style={styles.summaryValue}>{formatCurrency(totalPortfolioValue ?? totals.currentValue)}</Text>
         </View>
         <View style={styles.summaryRight}>
           <Text style={styles.summaryLabel}>Overall {isOverallPositive ? 'Gain' : 'Loss'}</Text>

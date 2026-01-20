@@ -14,6 +14,7 @@ interface AllocationPieChartProps {
     silver: number;
     platinum: number;
   };
+  totalPortfolioValue?: number;
 }
 
 interface PieDataItem {
@@ -35,7 +36,7 @@ const CATEGORY_COLORS: Record<string, string> = {
   Numismatic: '#4F46E5',
 };
 
-export function AllocationPieChart({ collection, spotPrices }: AllocationPieChartProps) {
+export function AllocationPieChart({ collection, spotPrices, totalPortfolioValue }: AllocationPieChartProps) {
   const [viewMode, setViewMode] = useState<ViewMode>('metal');
   const [selectedSegment, setSelectedSegment] = useState<string | null>(null);
 
@@ -134,7 +135,7 @@ export function AllocationPieChart({ collection, spotPrices }: AllocationPieChar
             {/* Center Label */}
             <View style={styles.centerLabel}>
               <Text style={styles.centerLabelSmall}>Total</Text>
-              <Text style={styles.centerLabelValue}>{formatCurrency(totalValue)}</Text>
+              <Text style={styles.centerLabelValue}>{formatCurrency(totalPortfolioValue ?? totalValue)}</Text>
             </View>
           </View>
         ) : (
