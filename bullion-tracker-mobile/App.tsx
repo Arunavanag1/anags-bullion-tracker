@@ -11,6 +11,7 @@ import { DashboardScreen } from './src/screens/DashboardScreen';
 import { CollectionScreen } from './src/screens/CollectionScreen';
 import { AddItemScreen } from './src/screens/AddItemScreen';
 import { CollageScreen } from './src/screens/CollageScreen';
+import { SettingsScreen } from './src/screens/SettingsScreen';
 import { ActivityIndicator, View, Text } from 'react-native';
 import { api } from './src/lib/api';
 
@@ -24,6 +25,7 @@ export type RootStackParamList = {
   Collection: undefined;
   AddItem: { itemId?: string };
   Collage: undefined;
+  Settings: undefined;
 };
 
 const AuthStack = createNativeStackNavigator<AuthStackParamList>();
@@ -90,6 +92,14 @@ function MainNavigator() {
         component={CollageScreen}
         options={{
           headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="Settings"
+        component={SettingsScreen}
+        options={{
+          title: 'Settings',
+          headerShown: true,
         }}
       />
     </Stack.Navigator>

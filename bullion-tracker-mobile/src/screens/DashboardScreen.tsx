@@ -155,6 +155,10 @@ export function DashboardScreen({ navigation }: Props) {
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 4 }}>
               <Text style={styles.lastUpdated}>Last updated just now</Text>
               <Text style={{ color: Colors.textSecondary }}>•</Text>
+              <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
+                <Text style={styles.settingsText}>Settings</Text>
+              </TouchableOpacity>
+              <Text style={{ color: Colors.textSecondary }}>•</Text>
               <TouchableOpacity onPress={handleSignOut}>
                 <Text style={styles.signOutText}>Sign Out</Text>
               </TouchableOpacity>
@@ -419,6 +423,11 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
   },
   signOutText: {
+    fontSize: 13,
+    color: Colors.textSecondary,
+    textDecorationLine: 'underline',
+  },
+  settingsText: {
     fontSize: 13,
     color: Colors.textSecondary,
     textDecorationLine: 'underline',

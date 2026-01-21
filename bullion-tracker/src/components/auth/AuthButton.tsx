@@ -91,6 +91,13 @@ export function AuthButton() {
               </p>
               <p className="text-xs text-text-secondary truncate">{session.user.email}</p>
             </div>
+            <Link
+              href="/account/settings"
+              className="block w-full text-left px-4 py-2 text-sm text-text-primary hover:bg-background-secondary transition-colors"
+              onClick={() => setShowMenu(false)}
+            >
+              Account Settings
+            </Link>
             <button
               onClick={() => signOut({ callbackUrl: '/auth/signin' })}
               className="w-full text-left px-4 py-2 text-sm text-text-primary hover:bg-background-secondary transition-colors"

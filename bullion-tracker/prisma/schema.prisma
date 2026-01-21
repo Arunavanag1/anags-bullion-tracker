@@ -21,6 +21,8 @@ model User {
   snapshots     PortfolioSnapshot[]
   accounts      Account[]
   sessions      Session[]
+  oauthAuthorizationCodes OAuthAuthorizationCode[]
+  oauthRefreshTokens      OAuthRefreshToken[]
 
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -168,6 +170,7 @@ model OAuthAuthorizationCode {
   clientId        String
   client          OAuthClient @relation(fields: [clientId], references: [clientId], onDelete: Cascade)
   userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   redirectUri     String
   scope           String
   codeChallenge   String?  // For PKCE
@@ -178,6 +181,7 @@ model OAuthAuthorizationCode {
 
   @@index([code])
   @@index([clientId])
+  @@index([userId])
 }
 
 model OAuthRefreshToken {
@@ -186,6 +190,7 @@ model OAuthRefreshToken {
   clientId    String
   client      OAuthClient @relation(fields: [clientId], references: [clientId], onDelete: Cascade)
   userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   scope       String
   expiresAt   DateTime
   createdAt   DateTime @default(now())
