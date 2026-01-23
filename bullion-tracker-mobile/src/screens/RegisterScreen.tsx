@@ -68,7 +68,7 @@ export function RegisterScreen({ navigation }: Props) {
             onChangeText={setName}
             placeholder="Your name"
             autoCapitalize="words"
-            autoComplete="name"
+            autoComplete="off"
             style={{
               backgroundColor: '#FFFFFF',
               borderWidth: 1,
