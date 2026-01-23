@@ -41,8 +41,12 @@ export function middleware(_request: NextRequest) {
     'camera=(), microphone=(), geolocation=(), interest-cohort=()'
   );
 
-  // Note: HSTS (Strict-Transport-Security) intentionally not included
-  // Should only be enabled after deployment verification on HTTPS
+  // HSTS: Enforce HTTPS for 1 year, include subdomains
+  // Safe to enable since app is deployed on Vercel (always HTTPS)
+  response.headers.set(
+    'Strict-Transport-Security',
+    'max-age=31536000; includeSubDomains'
+  );
 
   return response;
 }
