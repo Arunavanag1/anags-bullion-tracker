@@ -1,6 +1,7 @@
 import { auth } from '@/auth';
 import { headers } from 'next/headers';
 import jwt from 'jsonwebtoken';
+import { prisma } from '@/lib/db';
 
 // Fail hard if JWT secret is not configured - never use a fallback
 function getJwtSecret(): string {
@@ -47,6 +48,16 @@ export async function getUserId(): Promise<string> {
     const token = authorization.substring(7);
     try {
       const decoded = jwt.verify(token, JWT_SECRET) as JWTPayload;
+
+      // Verify user still exists in database (prevents deleted users from accessing API)
+      const user = await prisma.user.findUnique({
+        where: { id: decoded.userId },
+        select: { id: true }
+      });
+      if (!user) {
+        throw new Error('Unauthorized - User not found');
+      }
+
       return decoded.userId;
     } catch (error) {
       console.error('JWT verification failed:', error);
