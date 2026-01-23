@@ -52,7 +52,16 @@ export async function generateKeyPairForDevelopment() {
 }
 
 /**
+ * Check if running in production environment
+ */
+function isProduction(): boolean {
+  return process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
+}
+
+/**
  * Get or create RSA key pair
+ * In production, keys MUST be provided via environment variables
+ * In development, temporary keys may be generated (with warning)
  */
 async function getKeyPair() {
   if (cachedPrivateKey && cachedPublicKey) {
@@ -63,10 +72,17 @@ async function getKeyPair() {
     // Load from environment
     cachedPrivateKey = crypto.createPrivateKey(PRIVATE_KEY_PEM);
     cachedPublicKey = crypto.createPublicKey(PUBLIC_KEY_PEM);
+  } else if (isProduction()) {
+    // FAIL HARD in production - do not allow temporary keys
+    throw new Error(
+      'OAUTH_PRIVATE_KEY and OAUTH_PUBLIC_KEY environment variables are required in production. ' +
+      'Run generateKeyPairForDevelopment() to create keys, then add them to your environment.'
+    );
   } else {
-    // Generate new keys for development
+    // Generate new keys for development ONLY
     console.warn(
-      'OAUTH_PRIVATE_KEY not found in environment. Generating temporary keys for development.'
+      '⚠️ OAUTH_PRIVATE_KEY not found. Generating temporary keys for DEVELOPMENT ONLY. ' +
+      'These keys will not persist across restarts.'
     );
     const { privateKey, publicKey } = await generateKeyPair('RS256', {
       modulusLength: 2048,
