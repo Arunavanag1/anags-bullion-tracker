@@ -20,6 +20,20 @@ export function isCloudinaryConfigured(): boolean {
  *
  * @param base64Data - Base64 encoded image data (data:image/...;base64,...)
  * @returns Cloudinary URL and public ID, or null if upload fails/not configured
+ *
+ * @note KNOWN LIMITATION: The returned publicId is not stored in the database.
+ * When users delete their accounts, Cloudinary images become orphans.
+ * This is an acceptable cost tradeoff - orphaned images are a billing concern,
+ * not a security issue (images contain no PII beyond what's visible).
+ *
+ * @future Future enhancement: Add cleanup job using Cloudinary Admin API to remove
+ * images older than X days that aren't referenced in any Image record.
+ * Implementation approach:
+ * 1. List all images in 'bullion-tracker' folder via Admin API
+ * 2. For each publicId, check if any Image.url contains it
+ * 3. Delete orphaned images that are older than retention period
+ *
+ * @see src/app/api/auth/delete-account/route.ts for account deletion flow
  */
 export async function uploadToCloudinary(
   base64Data: string
