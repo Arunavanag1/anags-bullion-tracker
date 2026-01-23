@@ -1,3 +1,34 @@
+/**
+ * Account Deletion API Endpoint
+ *
+ * Permanently deletes a user account and all associated data.
+ *
+ * ## Cascade Delete Behavior (defined in prisma/schema.prisma)
+ *
+ * When the User record is deleted, the following are automatically CASCADE deleted:
+ * - Account (OAuth provider accounts like Google)
+ * - Session (user sessions)
+ * - CollectionItem (user's bullion/numismatic items)
+ *   - Image (item images, cascade via CollectionItem)
+ *   - ItemValueHistory (historical values, cascade via CollectionItem)
+ * - PortfolioSnapshot (historical portfolio data)
+ * - OAuthAuthorizationCode (FDX/Plaid auth codes)
+ * - OAuthRefreshToken (FDX/Plaid refresh tokens)
+ *
+ * ## Explicit Deletes (Defensive Programming)
+ * OAuth tokens are explicitly deleted in the transaction even though they have
+ * cascade. This is defensive programming - if cascade behavior ever changes,
+ * the explicit deletes ensure no orphaned tokens remain.
+ *
+ * ## Known Limitations
+ * - Cloudinary images become orphans (publicId not stored in DB, only URL)
+ *   This is acceptable: images contain no PII beyond what's visible,
+ *   and orphaned images are a billing concern, not a security issue.
+ *
+ * @see prisma/schema.prisma for cascade relationship definitions
+ * @see src/__tests__/api/auth/delete-account.test.ts for test coverage
+ */
+
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { getUserId } from '@/lib/auth';
@@ -83,10 +114,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Delete user and all related data in a transaction
-    // Most relations have onDelete: Cascade, but we explicitly clean up OAuth tokens
-    // to ensure no orphaned records remain
+    // See file header comment for full cascade delete documentation
     await prisma.$transaction(async (tx) => {
-      // Explicitly delete OAuth tokens (they now have cascade, but be thorough)
+      // DEFENSIVE: Explicitly delete OAuth tokens before user deletion.
+      // These have onDelete: Cascade in the schema, but explicit deletion
+      // ensures no orphaned tokens if cascade behavior ever changes.
       await tx.oAuthAuthorizationCode.deleteMany({
         where: { userId },
       });
@@ -95,7 +127,9 @@ export async function POST(request: NextRequest) {
         where: { userId },
       });
 
-      // Delete the user (cascades to items, snapshots, accounts, sessions)
+      // Delete user - triggers CASCADE delete for all related records:
+      // Account, Session, CollectionItem (->Image, ->ItemValueHistory),
+      // PortfolioSnapshot, OAuthAuthorizationCode, OAuthRefreshToken
       await tx.user.delete({
         where: { id: userId },
       });
