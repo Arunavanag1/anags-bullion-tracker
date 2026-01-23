@@ -13,13 +13,8 @@ const redis = process.env.UPSTASH_REDIS_REST_URL
     })
   : null;
 
-// Warn if rate limiting is disabled in production
-if (!redis && isProduction) {
-  console.warn(
-    '⚠️ UPSTASH_REDIS_REST_URL not configured. Rate limiting is DISABLED in production. ' +
-    'This makes the app vulnerable to brute-force attacks.'
-  );
-}
+// Runtime check flag - will be validated when rate limiting is used
+const rateLimitingDisabledInProduction = !redis && isProduction;
 
 // Auth rate limiter: 5 requests per 60 seconds per IP
 export const authRateLimiter = redis
@@ -55,6 +50,15 @@ export function getClientIp(request: Request): string {
 export async function checkRateLimit(
   identifier: string
 ): Promise<{ success: boolean; remaining?: number; reset?: number }> {
+  // Fail hard if rate limiting is disabled in production (runtime check)
+  if (rateLimitingDisabledInProduction) {
+    throw new Error(
+      'UPSTASH_REDIS_REST_URL is required in production. ' +
+      'Rate limiting protects against brute-force attacks. ' +
+      'Configure Upstash Redis or set NODE_ENV=development.'
+    );
+  }
+
   if (!authRateLimiter) {
     // No rate limiting in development without Upstash
     return { success: true };
@@ -72,6 +76,15 @@ export async function checkRateLimit(
 export async function checkCollectionRateLimit(
   userId: string
 ): Promise<{ success: boolean; remaining?: number; reset?: number }> {
+  // Fail hard if rate limiting is disabled in production (runtime check)
+  if (rateLimitingDisabledInProduction) {
+    throw new Error(
+      'UPSTASH_REDIS_REST_URL is required in production. ' +
+      'Rate limiting protects against brute-force attacks. ' +
+      'Configure Upstash Redis or set NODE_ENV=development.'
+    );
+  }
+
   if (!collectionRateLimiter) {
     // No rate limiting in development without Upstash
     return { success: true };
