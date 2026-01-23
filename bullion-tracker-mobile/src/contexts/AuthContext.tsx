@@ -2,6 +2,34 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import * as SecureStore from 'expo-secure-store';
 import { API_URL } from '../lib/api';
 
+/**
+ * AuthContext - Mobile Authentication Provider
+ *
+ * Security Architecture:
+ * ----------------------
+ * This context uses expo-secure-store for JWT token storage, which provides:
+ *
+ * 1. **Encrypted Storage**: Unlike AsyncStorage, SecureStore encrypts data using:
+ *    - iOS: Keychain Services (hardware-backed encryption)
+ *    - Android: Keystore + SharedPreferences (encrypted at rest)
+ *
+ * 2. **Keychain Accessibility**: Uses default WHEN_UNLOCKED setting, meaning:
+ *    - Tokens are only accessible when the device is unlocked
+ *    - Data is protected by device passcode/biometric
+ *    - More secure than AFTER_FIRST_UNLOCK or ALWAYS options
+ *
+ * 3. **Token Lifecycle**:
+ *    - Stored: On successful signIn (TOKEN_KEY, USER_KEY)
+ *    - Cleared: On signOut() or account deletion
+ *    - Timeout: 3s timeout on load to prevent UI hang on SecureStore issues
+ *
+ * 4. **No Sensitive Data Logging**: Error handlers log failure messages only,
+ *    never token values or credentials.
+ *
+ * Security Audit: Phase 57 (2026-01-23)
+ * @see bullion-tracker-mobile/SECURITY.md for architecture decisions
+ */
+
 interface User {
   id: string;
   email: string;
