@@ -15,6 +15,7 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (name: string, email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
+  updateUser: (updates: Partial<User>) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -125,6 +126,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  async function updateUser(updates: Partial<User>) {
+    if (!user) return;
+
+    const updatedUser = { ...user, ...updates };
+    setUser(updatedUser);
+
+    // Persist to SecureStore
+    try {
+      await SecureStore.setItemAsync(USER_KEY, JSON.stringify(updatedUser));
+    } catch (error) {
+      console.error('Failed to persist user update:', error);
+    }
+  }
+
   return (
     <AuthContext.Provider
       value={{
@@ -134,6 +149,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         signIn,
         signUp,
         signOut,
+        updateUser,
       }}
     >
       {children}

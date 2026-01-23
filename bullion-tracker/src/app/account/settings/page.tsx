@@ -1,7 +1,7 @@
 'use client';
 
 import { useSession, signOut } from 'next-auth/react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
@@ -9,13 +9,26 @@ import { Button } from '@/components/ui/Button';
 const CONFIRMATION_TEXT = 'DELETE MY ACCOUNT';
 
 export default function AccountSettingsPage() {
-  const { data: session, status } = useSession();
+  const { data: session, status, update } = useSession();
   const router = useRouter();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [password, setPassword] = useState('');
   const [confirmationText, setConfirmationText] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Name editing state
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [editedName, setEditedName] = useState('');
+  const [nameError, setNameError] = useState('');
+  const [nameSaving, setNameSaving] = useState(false);
+  const [nameSuccess, setNameSuccess] = useState(false);
+
+  useEffect(() => {
+    if (session?.user?.name) {
+      setEditedName(session.user.name);
+    }
+  }, [session?.user?.name]);
 
   // Redirect to sign in if not authenticated
   if (status === 'loading') {
@@ -32,6 +45,59 @@ export default function AccountSettingsPage() {
   }
 
   const hasPassword = true; // Assume credential users have passwords; OAuth users might not
+
+  const handleSaveName = async () => {
+    const trimmedName = editedName.trim();
+
+    if (!trimmedName) {
+      setNameError('Name cannot be empty');
+      return;
+    }
+
+    if (trimmedName.length > 100) {
+      setNameError('Name must be 100 characters or less');
+      return;
+    }
+
+    setNameError('');
+    setNameSaving(true);
+    setNameSuccess(false);
+
+    try {
+      const response = await fetch('/api/user/profile', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name: trimmedName }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setNameError(data.error || 'Failed to update name');
+        setNameSaving(false);
+        return;
+      }
+
+      // Update the session with new name
+      await update({ name: trimmedName });
+
+      setIsEditingName(false);
+      setNameSuccess(true);
+      setTimeout(() => setNameSuccess(false), 3000);
+    } catch {
+      setNameError('An error occurred. Please try again.');
+    } finally {
+      setNameSaving(false);
+    }
+  };
+
+  const handleCancelEditName = () => {
+    setIsEditingName(false);
+    setEditedName(session?.user?.name || '');
+    setNameError('');
+  };
 
   const handleDeleteAccount = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -93,11 +159,58 @@ export default function AccountSettingsPage() {
           <h2 className="text-xl font-semibold text-text-primary mb-4">Account Information</h2>
 
           <div className="space-y-4">
+            {/* Name Field */}
             <div>
               <label className="block text-sm font-medium text-text-secondary mb-1">Name</label>
-              <p className="text-text-primary">{session.user.name || 'Not set'}</p>
+              {isEditingName ? (
+                <div className="space-y-2">
+                  <input
+                    type="text"
+                    value={editedName}
+                    onChange={(e) => setEditedName(e.target.value)}
+                    className="w-full px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-primary focus:border-transparent"
+                    placeholder="Your name"
+                    autoFocus
+                  />
+                  {nameError && (
+                    <p className="text-red-600 text-sm">{nameError}</p>
+                  )}
+                  <div className="flex gap-2">
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={handleSaveName}
+                      disabled={nameSaving}
+                    >
+                      {nameSaving ? 'Saving...' : 'Save'}
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={handleCancelEditName}
+                      disabled={nameSaving}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center gap-3">
+                  <p className="text-text-primary">{session.user.name || 'Not set'}</p>
+                  <button
+                    onClick={() => setIsEditingName(true)}
+                    className="text-sm text-accent-primary hover:text-accent-secondary transition-colors"
+                  >
+                    Edit
+                  </button>
+                  {nameSuccess && (
+                    <span className="text-sm text-green-600">Saved!</span>
+                  )}
+                </div>
+              )}
             </div>
 
+            {/* Email Field (read-only) */}
             <div>
               <label className="block text-sm font-medium text-text-secondary mb-1">Email</label>
               <p className="text-text-primary">{session.user.email}</p>

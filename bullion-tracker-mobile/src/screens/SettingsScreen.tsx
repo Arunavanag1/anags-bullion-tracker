@@ -24,12 +24,78 @@ const CONFIRMATION_TEXT = 'DELETE MY ACCOUNT';
 const TOKEN_KEY = 'auth_token';
 
 export function SettingsScreen({ navigation }: Props) {
-  const { user, signOut } = useAuth();
+  const { user, signOut, updateUser } = useAuth();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [password, setPassword] = useState('');
   const [confirmationText, setConfirmationText] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Name editing state
+  const [showEditNameModal, setShowEditNameModal] = useState(false);
+  const [editedName, setEditedName] = useState(user?.name || '');
+  const [nameError, setNameError] = useState('');
+  const [nameSaving, setNameSaving] = useState(false);
+
+  const handleSaveName = async () => {
+    const trimmedName = editedName.trim();
+
+    if (!trimmedName) {
+      setNameError('Name cannot be empty');
+      return;
+    }
+
+    if (trimmedName.length > 100) {
+      setNameError('Name must be 100 characters or less');
+      return;
+    }
+
+    setNameError('');
+    setNameSaving(true);
+
+    try {
+      const token = await SecureStore.getItemAsync(TOKEN_KEY);
+
+      const response = await fetch(`${API_URL}/api/user/profile`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ name: trimmedName }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setNameError(data.error || 'Failed to update name');
+        setNameSaving(false);
+        return;
+      }
+
+      // Update local user state
+      await updateUser({ name: trimmedName });
+
+      setShowEditNameModal(false);
+      Alert.alert('Success', 'Your name has been updated.');
+    } catch (err) {
+      setNameError('An error occurred. Please try again.');
+    } finally {
+      setNameSaving(false);
+    }
+  };
+
+  const openEditNameModal = () => {
+    setEditedName(user?.name || '');
+    setNameError('');
+    setShowEditNameModal(true);
+  };
+
+  const closeEditNameModal = () => {
+    setShowEditNameModal(false);
+    setEditedName(user?.name || '');
+    setNameError('');
+  };
 
   const handleDeleteAccount = async () => {
     if (confirmationText !== CONFIRMATION_TEXT) {
@@ -100,13 +166,18 @@ export function SettingsScreen({ navigation }: Props) {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>ACCOUNT INFORMATION</Text>
           <View style={styles.card}>
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Name</Text>
-              <Text style={styles.infoValue}>{user?.name || 'Not set'}</Text>
-            </View>
+            <TouchableOpacity style={styles.infoRow} onPress={openEditNameModal}>
+              <View style={styles.infoRowContent}>
+                <Text style={styles.infoLabel}>Name</Text>
+                <Text style={styles.infoValue}>{user?.name || 'Not set'}</Text>
+              </View>
+              <Text style={styles.editText}>Edit</Text>
+            </TouchableOpacity>
             <View style={[styles.infoRow, styles.lastRow]}>
-              <Text style={styles.infoLabel}>Email</Text>
-              <Text style={styles.infoValue}>{user?.email}</Text>
+              <View style={styles.infoRowContent}>
+                <Text style={styles.infoLabel}>Email</Text>
+                <Text style={styles.infoValue}>{user?.email}</Text>
+              </View>
             </View>
           </View>
         </View>
@@ -142,6 +213,67 @@ export function SettingsScreen({ navigation }: Props) {
           </View>
         </View>
       </ScrollView>
+
+      {/* Edit Name Modal */}
+      <Modal
+        visible={showEditNameModal}
+        transparent
+        animationType="fade"
+        onRequestClose={closeEditNameModal}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Edit Name</Text>
+            <Text style={styles.modalDescription}>
+              Update your display name.
+            </Text>
+
+            {nameError ? (
+              <View style={styles.errorContainer}>
+                <Text style={styles.errorText}>{nameError}</Text>
+              </View>
+            ) : null}
+
+            <View style={styles.inputContainer}>
+              <Text style={styles.inputLabel}>Name</Text>
+              <TextInput
+                style={styles.input}
+                value={editedName}
+                onChangeText={setEditedName}
+                placeholder="Your name"
+                placeholderTextColor={Colors.textTertiary}
+                autoCapitalize="words"
+                autoFocus
+              />
+            </View>
+
+            <View style={styles.modalButtons}>
+              <TouchableOpacity
+                style={[styles.modalButton, styles.cancelButton]}
+                onPress={closeEditNameModal}
+                disabled={nameSaving}
+              >
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.modalButton,
+                  styles.saveButton,
+                  nameSaving && styles.disabledButton,
+                ]}
+                onPress={handleSaveName}
+                disabled={nameSaving}
+              >
+                {nameSaving ? (
+                  <ActivityIndicator color="white" size="small" />
+                ) : (
+                  <Text style={styles.saveButtonText}>Save</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
 
       {/* Delete Confirmation Modal */}
       <Modal
@@ -260,9 +392,15 @@ const styles = StyleSheet.create({
     borderColor: '#FCA5A5',
   },
   infoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
+  },
+  infoRowContent: {
+    flex: 1,
   },
   lastRow: {
     borderBottomWidth: 0,
@@ -275,6 +413,11 @@ const styles = StyleSheet.create({
   infoValue: {
     fontSize: 16,
     color: Colors.textPrimary,
+    fontWeight: '500',
+  },
+  editText: {
+    fontSize: 14,
+    color: Colors.accentDark,
     fontWeight: '500',
   },
   linkRow: {
@@ -390,6 +533,14 @@ const styles = StyleSheet.create({
   },
   cancelButtonText: {
     color: Colors.textPrimary,
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  saveButton: {
+    backgroundColor: Colors.accentDark,
+  },
+  saveButtonText: {
+    color: 'white',
     fontSize: 16,
     fontWeight: '600',
   },

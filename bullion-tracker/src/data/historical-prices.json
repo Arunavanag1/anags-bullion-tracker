@@ -2,7 +2,7 @@
   "metadata": {
     "description": "Historical precious metals prices - monthly averages (2020-2025)",
     "source": "Compiled from World Bank, Statista, LBMA, and Metal Price API",
-    "lastUpdated": "2026-01-18",
+    "lastUpdated": "2026-01-22",
     "unit": "USD per troy ounce"
   },
   "prices": [
@@ -112,6 +112,10 @@
     { "date": "2026-01-15", "gold": 4587, "silver": 87.70, "platinum": 2377 },
     { "date": "2026-01-16", "gold": 4590, "silver": 88.50, "platinum": 2365 },
     { "date": "2026-01-17", "gold": 4593, "silver": 89.30, "platinum": 2353 },
-    { "date": "2026-01-18", "gold": 4596, "silver": 90.12, "platinum": 2340 }
+    { "date": "2026-01-18", "gold": 4596, "silver": 90.12, "platinum": 2340 },
+    { "date": "2026-01-19", "gold": 4625, "silver": 91.50, "platinum": 2385 },
+    { "date": "2026-01-20", "gold": 4710, "silver": 92.85, "platinum": 2420 },
+    { "date": "2026-01-21", "gold": 4780, "silver": 94.10, "platinum": 2484 },
+    { "date": "2026-01-22", "gold": 4870, "silver": 95.50, "platinum": 2423 }
   ]
 }
