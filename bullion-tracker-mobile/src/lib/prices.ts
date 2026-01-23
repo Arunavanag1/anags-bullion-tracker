@@ -1,10 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Constants from 'expo-constants';
 import type { SpotPrices } from '../types';
 
-const CACHE_KEY = 'spot_prices_cache_v2'; // v2 to invalidate old cache with wrong fallback
-const CACHE_DURATION = 12 * 60 * 60 * 1000; // 12 hours
+const CACHE_KEY = 'spot_prices_cache_v3'; // v3 - fetch from backend API
+const CACHE_DURATION = 15 * 60 * 1000; // 15 minutes (backend handles longer caching)
 const ERROR_CACHE_KEY = 'api_error_timestamp';
-const ERROR_RETRY_DELAY = 5 * 60 * 1000; // Don't retry API for 5 minutes after error
+const ERROR_RETRY_DELAY = 2 * 60 * 1000; // Retry after 2 minutes on error
 
 interface CachedPrices {
   prices: SpotPrices;
@@ -12,11 +13,12 @@ interface CachedPrices {
 }
 
 /**
- * Fetch current spot prices from Metal Price API
+ * Fetch current spot prices from backend API
+ * Backend handles Metal Price API calls and caching
  */
-export async function fetchSpotPrices(apiKey: string): Promise<SpotPrices> {
+export async function fetchSpotPrices(_apiKey?: string): Promise<SpotPrices> {
   try {
-    // Check cache first
+    // Check cache first (short duration since backend handles main caching)
     const cached = await getCachedPrices();
     if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
       return cached.prices;
@@ -25,35 +27,31 @@ export async function fetchSpotPrices(apiKey: string): Promise<SpotPrices> {
     // Check if we recently had an API error
     const lastError = await getLastErrorTimestamp();
     if (lastError && Date.now() - lastError < ERROR_RETRY_DELAY) {
-      // Use cached or fallback without trying API
       if (cached) {
         return cached.prices;
       }
       return getFallbackPrices();
     }
 
-    // If no API key, skip API call and use fallback
-    if (!apiKey || apiKey.trim() === '') {
-      console.log('No API key configured - using fallback prices');
-      return getFallbackPrices();
-    }
+    // Fetch from backend API (handles Metal Price API and caching)
+    const apiUrl = Constants.expoConfig?.extra?.apiUrl || 'https://bullion-tracker-plum.vercel.app';
+    const response = await fetch(`${apiUrl}/api/prices`);
 
-    // Fetch all metals in one API call (better for rate limits)
-    const response = await fetch(
-      `https://api.metalpriceapi.com/v1/latest?api_key=${apiKey}&base=USD&currencies=XAU,XAG,XPT`
-    );
+    if (!response.ok) {
+      throw new Error(`Backend API returned ${response.status}`);
+    }
 
     const data = await response.json();
 
-    if (!data.success) {
-      throw new Error('API returned unsuccessful response');
+    if (!data.success || !data.data) {
+      throw new Error('Backend API returned unsuccessful response');
     }
 
     const prices: SpotPrices = {
-      gold: Math.round(1 / data.rates.XAU),
-      silver: Math.round((1 / data.rates.XAG) * 100) / 100,
-      platinum: Math.round(1 / data.rates.XPT),
-      lastUpdated: new Date().toISOString(),
+      gold: Math.round(data.data.gold.pricePerOz),
+      silver: Math.round(data.data.silver.pricePerOz * 100) / 100,
+      platinum: Math.round(data.data.platinum.pricePerOz),
+      lastUpdated: data.data.gold.lastUpdated,
     };
 
     // Cache the results and clear error timestamp
@@ -62,6 +60,7 @@ export async function fetchSpotPrices(apiKey: string): Promise<SpotPrices> {
 
     return prices;
   } catch (error) {
+    console.error('Failed to fetch spot prices:', error);
     // Save error timestamp to avoid spamming API
     await saveErrorTimestamp();
 
