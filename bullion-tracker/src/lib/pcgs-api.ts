@@ -116,6 +116,9 @@ function isTokenValid(): boolean {
 
 /**
  * Authenticate with PCGS API using OAuth2 password grant
+ *
+ * Note: Your PCGS account must be registered for API access at
+ * https://www.pcgs.com/publicapi before authentication will work.
  */
 export async function authenticate(): Promise<string> {
   checkCredentials();
@@ -127,20 +130,31 @@ export async function authenticate(): Promise<string> {
 
   console.log('[PCGS API] Authenticating...');
 
-  const url = `${BASE_URL}/Authentication/GetToken`;
-  const payload = {
-    userName: process.env.PCGS_USERNAME,
-    password: process.env.PCGS_PASSWORD,
-  };
+  // OAuth2 password grant uses /token endpoint with form-urlencoded body
+  const url = `${BASE_URL}/token`;
+  const body = new URLSearchParams({
+    grant_type: 'password',
+    username: process.env.PCGS_USERNAME!,
+    password: process.env.PCGS_PASSWORD!,
+  });
 
   const response = await fetch(url, {
     method: 'POST',
     headers: {
       Accept: 'application/json',
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/x-www-form-urlencoded',
     },
-    body: JSON.stringify(payload),
+    body: body.toString(),
   });
+
+  const data = await response.json();
+
+  if (response.status === 400 && data.error === 'invalid_grant') {
+    throw new AuthenticationError(
+      data.error_description || 'Invalid credentials or account not registered for API access',
+      400
+    );
+  }
 
   if (response.status === 401) {
     throw new AuthenticationError('Invalid PCGS credentials', 401);
@@ -153,7 +167,6 @@ export async function authenticate(): Promise<string> {
     );
   }
 
-  const data = await response.json();
   const accessToken = data.access_token || data.token;
 
   if (!accessToken) {

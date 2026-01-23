@@ -330,16 +330,20 @@ export async function getPriceGuide(
 
 /**
  * Get all valid grades
- * Caches indefinitely (rarely changes)
+ * Caches with version key to bust stale caches
  */
 export async function getGrades(): Promise<ValidGrade[]> {
-  const cacheKey = 'grades_cache';
+  const cacheKey = 'grades_cache_v2'; // Increment to bust old cache
 
   try {
     // Check cache first
     const cached = await AsyncStorage.getItem(cacheKey);
     if (cached) {
-      return JSON.parse(cached);
+      const parsed = JSON.parse(cached);
+      // Validate cache has expected structure
+      if (Array.isArray(parsed) && parsed.length > 0 && parsed[0].gradeCode) {
+        return parsed;
+      }
     }
 
     // Fetch from API
@@ -352,8 +356,10 @@ export async function getGrades(): Promise<ValidGrade[]> {
     const data = await response.json();
     const grades = data.data || [];
 
-    // Cache indefinitely
-    await AsyncStorage.setItem(cacheKey, JSON.stringify(grades));
+    // Only cache if we got valid data
+    if (Array.isArray(grades) && grades.length > 0) {
+      await AsyncStorage.setItem(cacheKey, JSON.stringify(grades));
+    }
 
     return grades;
   } catch (error) {

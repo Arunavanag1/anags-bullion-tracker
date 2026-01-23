@@ -262,11 +262,13 @@ export function AddItemScreen({ navigation, route }: Props) {
           category: 'NUMISMATIC' as ItemCategory,
           grade: data.grade,
           gradingService: gradingService!,
+          bookValueType: 'custom' as const, // Numismatic items use custom value
           certificationNumber: gradingService !== 'RAW' ? data.certNumber.trim() : undefined,
           isGradeEstimated: gradingService === 'RAW' ? data.isGradeEstimated : false,
           isProblemCoin: data.isProblemCoin,
           problemType: data.isProblemCoin ? data.problemType : undefined,
           numismaticValue: Number(data.numismaticValue),
+          customBookValue: Number(data.numismaticValue), // Set custom book value
           metal: data.numismaticMetal,
           purchaseDate: data.purchaseDate,
           purchasePrice: data.purchasePrice ? Number(data.purchasePrice) : undefined,

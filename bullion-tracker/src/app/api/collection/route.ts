@@ -152,34 +152,53 @@ export async function POST(request: NextRequest) {
       if (body.premiumPercent !== undefined) createData.premiumPercent = Number(body.premiumPercent);
     } else if (category === 'NUMISMATIC') {
       // Validate numismatic required fields
-      const { coinReferenceId, grade, gradingService, bookValueType, metal } = body;
+      const { coinReferenceId, grade, gradingService, bookValueType, metal, title: customTitle } = body;
 
-      if (!coinReferenceId || !grade || !gradingService || !bookValueType) {
+      // Require either coinReferenceId OR title (for custom coins)
+      if (!grade || !gradingService || !bookValueType) {
         throw validationError('Missing required numismatic fields', {
-          required: ['coinReferenceId', 'grade', 'gradingService', 'bookValueType'],
+          required: ['grade', 'gradingService', 'bookValueType'],
         });
       }
 
-      // Fetch coin reference to get metal, weight, and build title
-      const coinReference = await prisma.coinReference.findUnique({
-        where: { id: coinReferenceId },
-      });
-
-      if (!coinReference) {
-        throw notFoundError('Coin reference not found');
+      if (!coinReferenceId && !customTitle) {
+        throw validationError('Either coinReferenceId or title is required for numismatic items', {
+          required: ['coinReferenceId OR title'],
+        });
       }
 
-      // Use provided metal, or fall back to coin reference metal
-      const finalMetal = metal || coinReference.metal || 'silver';
-      const finalWeightOz = coinReference.weightOz ? parseFloat(coinReference.weightOz.toString()) : null;
+      let finalMetal = metal || 'silver';
+      let finalWeightOz: number | null = null;
+      let title: string;
 
-      // Build title: [Year] [Grading Service/RAW] [Grade] [Denomination] [Coin Name]
-      // Example: "2025 PCGS MS65 $1 Morgan Dollar"
-      const gradingLabel = gradingService === 'RAW' ? 'RAW' : gradingService;
-      const gradeLabel = body.isGradeEstimated ? `~${grade}` : grade;
-      const title = `${coinReference.year} ${gradingLabel} ${gradeLabel} ${coinReference.denomination} ${coinReference.series}`.trim();
+      if (coinReferenceId) {
+        // Fetch coin reference to get metal, weight, and build title
+        const coinReference = await prisma.coinReference.findUnique({
+          where: { id: coinReferenceId },
+        });
 
-      createData.coinReferenceId = coinReferenceId;
+        if (!coinReference) {
+          throw notFoundError('Coin reference not found');
+        }
+
+        // Use provided metal, or fall back to coin reference metal
+        finalMetal = metal || coinReference.metal || 'silver';
+        finalWeightOz = coinReference.weightOz ? parseFloat(coinReference.weightOz.toString()) : null;
+
+        // Build title: [Year] [Grading Service/RAW] [Grade] [Denomination] [Coin Name]
+        // Example: "2025 PCGS MS65 $1 Morgan Dollar"
+        const gradingLabel = gradingService === 'RAW' ? 'RAW' : gradingService;
+        const gradeLabel = body.isGradeEstimated ? `~${grade}` : grade;
+        title = `${coinReference.year} ${gradingLabel} ${gradeLabel} ${coinReference.denomination} ${coinReference.series}`.trim();
+
+        createData.coinReferenceId = coinReferenceId;
+      } else {
+        // Custom coin - use provided title and metal
+        const gradingLabel = gradingService === 'RAW' ? 'RAW' : gradingService;
+        const gradeLabel = body.isGradeEstimated ? `~${grade}` : grade;
+        title = `${gradingLabel} ${gradeLabel} ${sanitizeString(customTitle, 200)}`.trim();
+      }
+
       createData.grade = grade;
       createData.gradingService = gradingService;
       createData.bookValueType = bookValueType;
