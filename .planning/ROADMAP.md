@@ -23,6 +23,7 @@ None (standard web/mobile patterns)
 - :white_check_mark: **v2.1 Coin Database Expansion** - Phases 43-48 (shipped 2026-01-18)
 - :white_check_mark: **v2.2 Cert Number Autofill** - Phases 49-51 (shipped 2026-01-18)
 - :white_check_mark: **v2.3 App Store Legal** — Phases 52-53 (shipped 2026-01-19)
+- :construction: **v2.4 Security & Stability** — Phases 54-57 (in progress)
 
 ## Phases
 
@@ -210,6 +211,49 @@ See [milestones/v2.3-ROADMAP.md](milestones/v2.3-ROADMAP.md) for full details.
 
 ---
 
+### :construction: v2.4 Security & Stability (In Progress)
+
+**Milestone Goal:** Comprehensive security audit of authentication, data handling, and account management to ensure production readiness and user data protection.
+
+#### Phase 54: Auth Security Audit
+**Goal**: Review JWT implementation, token storage, password hashing, session management for vulnerabilities
+**Depends on**: Phase 53
+**Research**: Unlikely (internal review)
+**Plans**: TBD
+
+Plans:
+- [ ] 54-01: TBD (run /gsd:plan-phase 54 to break down)
+
+#### Phase 55: Data Security Review
+**Goal**: Audit data exposure in API responses, input validation, SQL injection prevention, sensitive data handling
+**Depends on**: Phase 54
+**Research**: Unlikely (internal review)
+**Plans**: TBD
+
+Plans:
+- [ ] 55-01: TBD
+
+#### Phase 56: Account Deletion Security
+**Goal**: Verify cascade deletes work correctly, ensure no orphaned data remains, test complete deletion flow
+**Depends on**: Phase 55
+**Research**: Unlikely (internal patterns)
+**Plans**: TBD
+
+Plans:
+- [ ] 56-01: TBD
+
+#### Phase 57: Mobile Auth Hardening
+**Goal**: Secure token storage review, evaluate biometric auth, consider certificate pinning
+**Depends on**: Phase 56
+**Research**: Likely (SecureStore best practices, certificate pinning)
+**Research topics**: Expo SecureStore security, biometric authentication options, SSL pinning in React Native
+**Plans**: TBD
+
+Plans:
+- [ ] 57-01: TBD
+
+---
+
 ## Progress
 
 **Execution Order:**
@@ -231,3 +275,7 @@ Phases execute in numeric order. v1.8 and v1.9 can partially overlap (testing ca
 | 49-51 | v2.2 | 3/3 | **SHIPPED** | 2026-01-18 |
 | 52. Privacy Policy Page | v2.3 | 1/1 | **COMPLETE** | 2026-01-19 |
 | 53. Contact & Support Page | v2.3 | 1/1 | **COMPLETE** | 2026-01-19 |
+| 54. Auth Security Audit | v2.4 | 0/? | Not started | - |
+| 55. Data Security Review | v2.4 | 0/? | Not started | - |
+| 56. Account Deletion Security | v2.4 | 0/? | Not started | - |
+| 57. Mobile Auth Hardening | v2.4 | 0/? | Not started | - |

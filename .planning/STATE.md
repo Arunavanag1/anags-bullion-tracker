@@ -2,15 +2,16 @@
 
 ## Current Position
 
-Phase: 53 of 53 (Contact & Support Page) - COMPLETE
-Plan: All plans complete
-Status: Between milestones
-Last activity: 2026-01-19 - Shipped v2.3 App Store Legal
+Phase: 54 of 57 (Auth Security Audit)
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-01-22 - Milestone v2.4 Security & Stability created
 
-Progress: All active milestones complete
+Progress: ░░░░░░░░░░ 0%
 
 ## Shipped Milestones
 
+- **v2.4 Security & Stability** (in progress) - Auth audit, data security, account deletion, mobile hardening
 - **v2.3 App Store Legal** (2026-01-19) - Privacy policy, contact page, Vercel deployment
 - **v2.2 Cert Number Autofill** (2026-01-18) - PCGS/NGC cert lookup, form autofill, mobile scanner
 - **v2.1 Coin Database Expansion** (2026-01-18) - PCGS API, search, validation
@@ -20,12 +21,16 @@ Progress: All active milestones complete
 
 ## Session Continuity
 
-Last session: 2026-01-19
-Stopped at: Completed v2.3 milestone
+Last session: 2026-01-22
+Stopped at: Milestone v2.4 initialization
 Resume file: None
-Next: Plan next milestone or continue v1.8 Mobile Deployment
+Next: Plan Phase 54 (Auth Security Audit)
 
 ## Accumulated Context
+
+### Key Decisions (v2.4)
+- 4 phases focused on security audit and hardening
+- Authentication, data security, account deletion, mobile auth
 
 ### Key Decisions (v2.3)
 - Standard privacy policy template for collection tracking app (Phase 52)
@@ -40,23 +45,6 @@ Next: Plan next milestone or continue v1.8 Mobile Deployment
 - Mutation over Query for cert lookup - on-demand (Phase 50)
 - Multi-format barcode support for PCGS/NGC labels (Phase 51)
 - Full-screen modal for scanner UX (Phase 51)
-
-### Key Decisions (v1.9)
-- 7-day JWT tokens with refresh (Phase 32)
-- Email normalization at signup (Phase 32)
-- CSP allows unsafe-inline for Next.js dev (Phase 33)
-- Centralized API error handling (Phase 33)
-- Cursor-based pagination (Phase 34)
-- Sentry conditionally initialized (Phase 36)
-- Vercel iad1 region as primary (Phase 36)
-
-### Technical Debt Resolved (v1.9)
-- 76 tests added (Phase 31)
-- Auth hardened with JWT expiry (Phase 32)
-- Security headers and rate limiting (Phase 33)
-- N+1 queries fixed, pagination added (Phase 34)
-- TypeScript strict types (Phase 35)
-- Deployment configuration complete (Phase 36)
 
 ### Known Issues
 - next-auth 5 beta may have breaking changes
@@ -75,3 +63,4 @@ None currently.
 - v2.1: Coin Database Expansion (Phases 43-48) - **SHIPPED 2026-01-18**
 - v2.2: Cert Number Autofill (Phases 49-51) - **SHIPPED 2026-01-18**
 - v2.3: App Store Legal (Phases 52-53) - **SHIPPED 2026-01-19**
+- v2.4: Security & Stability (Phases 54-57) - **IN PROGRESS**
