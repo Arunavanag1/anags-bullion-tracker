@@ -215,14 +215,14 @@ See [milestones/v2.3-ROADMAP.md](milestones/v2.3-ROADMAP.md) for full details.
 
 **Milestone Goal:** Comprehensive security audit of authentication, data handling, and account management to ensure production readiness and user data protection.
 
-#### Phase 54: Auth Security Audit
+#### Phase 54: Auth Security Audit - COMPLETE
 **Goal**: Review JWT implementation, token storage, password hashing, session management for vulnerabilities
 **Depends on**: Phase 53
 **Research**: Unlikely (internal review)
-**Plans**: TBD
+**Plans**: 1/1
 
 Plans:
-- [ ] 54-01: TBD (run /gsd:plan-phase 54 to break down)
+- [x] 54-01: JWT audit, token expiry review, password hashing, rate limiting, OAuth security, mobile storage
 
 #### Phase 55: Data Security Review
 **Goal**: Audit data exposure in API responses, input validation, SQL injection prevention, sensitive data handling
@@ -275,7 +275,7 @@ Phases execute in numeric order. v1.8 and v1.9 can partially overlap (testing ca
 | 49-51 | v2.2 | 3/3 | **SHIPPED** | 2026-01-18 |
 | 52. Privacy Policy Page | v2.3 | 1/1 | **COMPLETE** | 2026-01-19 |
 | 53. Contact & Support Page | v2.3 | 1/1 | **COMPLETE** | 2026-01-19 |
-| 54. Auth Security Audit | v2.4 | 0/? | Not started | - |
+| 54. Auth Security Audit | v2.4 | 1/1 | **COMPLETE** | 2026-01-23 |
 | 55. Data Security Review | v2.4 | 0/? | Not started | - |
 | 56. Account Deletion Security | v2.4 | 0/? | Not started | - |
 | 57. Mobile Auth Hardening | v2.4 | 0/? | Not started | - |
