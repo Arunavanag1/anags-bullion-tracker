@@ -1,6 +1,9 @@
 import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
 
+// Check if running in production
+const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
+
 // Use in-memory store for development (no Upstash account needed)
 // In production, configure UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN
 const redis = process.env.UPSTASH_REDIS_REST_URL
@@ -9,6 +12,14 @@ const redis = process.env.UPSTASH_REDIS_REST_URL
       token: process.env.UPSTASH_REDIS_REST_TOKEN!,
     })
   : null;
+
+// Warn if rate limiting is disabled in production
+if (!redis && isProduction) {
+  console.warn(
+    '⚠️ UPSTASH_REDIS_REST_URL not configured. Rate limiting is DISABLED in production. ' +
+    'This makes the app vulnerable to brute-force attacks.'
+  );
+}
 
 // Auth rate limiter: 5 requests per 60 seconds per IP
 export const authRateLimiter = redis
