@@ -23,7 +23,7 @@ None (standard web/mobile patterns)
 - :white_check_mark: **v2.1 Coin Database Expansion** - Phases 43-48 (shipped 2026-01-18)
 - :white_check_mark: **v2.2 Cert Number Autofill** - Phases 49-51 (shipped 2026-01-18)
 - :white_check_mark: **v2.3 App Store Legal** — Phases 52-53 (shipped 2026-01-19)
-- :construction: **v2.4 Security & Stability** — Phases 54-57 (in progress)
+- :white_check_mark: **v2.4 Security & Stability** — Phases 54-57 (shipped 2026-01-23)
 
 ## Phases
 
@@ -211,7 +211,7 @@ See [milestones/v2.3-ROADMAP.md](milestones/v2.3-ROADMAP.md) for full details.
 
 ---
 
-### :construction: v2.4 Security & Stability (In Progress)
+### :white_check_mark: v2.4 Security & Stability (Shipped 2026-01-23)
 
 **Milestone Goal:** Comprehensive security audit of authentication, data handling, and account management to ensure production readiness and user data protection.
 
@@ -242,15 +242,15 @@ Plans:
 Plans:
 - [x] 56-01: Cascade delete integration tests, endpoint documentation, Cloudinary limitation docs
 
-#### Phase 57: Mobile Auth Hardening
+#### Phase 57: Mobile Auth Hardening - COMPLETE
 **Goal**: Secure token storage review, evaluate biometric auth, consider certificate pinning
 **Depends on**: Phase 56
 **Research**: Likely (SecureStore best practices, certificate pinning)
 **Research topics**: Expo SecureStore security, biometric authentication options, SSL pinning in React Native
-**Plans**: TBD
+**Plans**: 1/1
 
 Plans:
-- [ ] 57-01: TBD
+- [x] 57-01: SecureStore audit, biometric decision (deferred), certificate pinning decision (skipped)
 
 ---
 
@@ -278,4 +278,4 @@ Phases execute in numeric order. v1.8 and v1.9 can partially overlap (testing ca
 | 54. Auth Security Audit | v2.4 | 1/1 | **COMPLETE** | 2026-01-23 |
 | 55. Data Security Review | v2.4 | 1/1 | **COMPLETE** | 2026-01-23 |
 | 56. Account Deletion Security | v2.4 | 1/1 | **COMPLETE** | 2026-01-23 |
-| 57. Mobile Auth Hardening | v2.4 | 0/? | Not started | - |
+| 57. Mobile Auth Hardening | v2.4 | 1/1 | **COMPLETE** | 2026-01-23 |
