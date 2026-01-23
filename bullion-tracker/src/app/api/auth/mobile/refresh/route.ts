@@ -12,8 +12,9 @@ function getJwtSecret(): string {
 }
 const JWT_SECRET = getJwtSecret();
 
-// Grace period: accept expired tokens up to 7 days old for refresh
-const GRACE_PERIOD_MS = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
+// Grace period: accept expired tokens up to 1 day old for refresh
+// Reduced from 7 days to limit exposure window for stolen tokens
+const GRACE_PERIOD_MS = 24 * 60 * 60 * 1000; // 1 day in milliseconds
 
 interface JWTPayload {
   userId: string;
