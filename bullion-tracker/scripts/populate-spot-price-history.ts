@@ -2,13 +2,28 @@
  * Script to populate the PriceHistory table with historical spot prices
  * from the historical-prices.json file.
  *
- * Run once to backfill the database: npx ts-node scripts/populate-spot-price-history.ts
+ * Run once to backfill the database: npx tsx scripts/populate-spot-price-history.ts
  */
 
+import 'dotenv/config';
 import { PrismaClient } from '@prisma/client';
-import historicalPricesData from '../src/data/historical-prices.json';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { Pool } from 'pg';
+import * as fs from 'fs';
+import * as path from 'path';
 
-const prisma = new PrismaClient();
+const connectionString = process.env.DATABASE_URL;
+if (!connectionString) {
+  throw new Error('DATABASE_URL environment variable is not set');
+}
+
+const pool = new Pool({ connectionString });
+const adapter = new PrismaPg(pool);
+
+const prisma = new PrismaClient({
+  adapter,
+  log: ['error'],
+});
 
 interface HistoricalPrice {
   date: string;
@@ -16,6 +31,9 @@ interface HistoricalPrice {
   silver: number;
   platinum: number;
 }
+
+const dataFilePath = path.join(__dirname, '../src/data/historical-prices.json');
+const historicalPricesData = JSON.parse(fs.readFileSync(dataFilePath, 'utf-8'));
 
 async function populatePriceHistory() {
   console.log('🔄 Populating PriceHistory table with historical spot prices...\n');
@@ -93,6 +111,7 @@ async function main() {
     process.exit(1);
   } finally {
     await prisma.$disconnect();
+    await pool.end();
   }
 }
 

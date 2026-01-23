@@ -20,6 +20,7 @@ import type { Metal, GradingService, ProblemType, CoinReference } from '../../ty
  */
 export interface NumismaticFormData {
   selectedCoin: CoinReference | null;
+  customCoinName: string;
   grade: string;
   certNumber: string;
   isGradeEstimated: boolean;
@@ -43,6 +44,7 @@ interface NumismaticFormProps {
 
 export function NumismaticForm({ gradingService, onSubmit, loading, initialData, isEditing = false }: NumismaticFormProps) {
   const [selectedCoin, setSelectedCoin] = useState<CoinReference | null>(initialData?.selectedCoin || null);
+  const [customCoinName, setCustomCoinName] = useState(initialData?.customCoinName || '');
   const [grade, setGrade] = useState(initialData?.grade || '');
   const [certNumber, setCertNumber] = useState(initialData?.certNumber || '');
   const [isGradeEstimated, setIsGradeEstimated] = useState(initialData?.isGradeEstimated || false);
@@ -170,6 +172,7 @@ export function NumismaticForm({ gradingService, onSubmit, loading, initialData,
   useEffect(() => {
     if (initialData) {
       setSelectedCoin(initialData.selectedCoin);
+      setCustomCoinName(initialData.customCoinName || '');
       setGrade(initialData.grade);
       setCertNumber(initialData.certNumber);
       setIsGradeEstimated(initialData.isGradeEstimated);
@@ -229,6 +232,7 @@ export function NumismaticForm({ gradingService, onSubmit, loading, initialData,
   const handleSubmit = () => {
     onSubmit({
       selectedCoin,
+      customCoinName,
       grade,
       certNumber,
       isGradeEstimated,
@@ -250,6 +254,8 @@ export function NumismaticForm({ gradingService, onSubmit, loading, initialData,
       <CoinSearchInput
         onSelect={setSelectedCoin}
         selectedCoin={selectedCoin}
+        customCoinName={customCoinName}
+        onCustomCoinNameChange={setCustomCoinName}
       />
 
       {isRaw && (

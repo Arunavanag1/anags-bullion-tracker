@@ -4,23 +4,40 @@ import { useCoinSearch } from '../../hooks/useCoins';
 import type { CoinReference } from '../../types';
 
 interface CoinSearchInputProps {
-  onSelect: (coin: CoinReference) => void;
+  onSelect: (coin: CoinReference | null) => void;
   selectedCoin: CoinReference | null;
+  customCoinName?: string;
+  onCustomCoinNameChange?: (name: string) => void;
   disabled?: boolean;
 }
 
-export function CoinSearchInput({ onSelect, selectedCoin, disabled }: CoinSearchInputProps) {
-  const [query, setQuery] = useState('');
+export function CoinSearchInput({ onSelect, selectedCoin, customCoinName, onCustomCoinNameChange, disabled }: CoinSearchInputProps) {
+  const [query, setQuery] = useState(customCoinName || '');
   const { data: results, isLoading } = useCoinSearch(query);
 
-  const handleClear = () => {
-    onSelect(null as any);
+  const handleQueryChange = (text: string) => {
+    setQuery(text);
+    if (selectedCoin) {
+      onSelect(null);
+    }
+    onCustomCoinNameChange?.(text);
+  };
+
+  const handleSelectCoin = (coin: CoinReference) => {
+    onSelect(coin);
     setQuery('');
+    onCustomCoinNameChange?.('');
+  };
+
+  const handleClear = () => {
+    onSelect(null);
+    setQuery('');
+    onCustomCoinNameChange?.('');
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>Search Coin</Text>
+      <Text style={styles.label}>Coin Name</Text>
 
       {selectedCoin ? (
         <View style={styles.selectedContainer}>
@@ -38,13 +55,14 @@ export function CoinSearchInput({ onSelect, selectedCoin, disabled }: CoinSearch
             <TextInput
               style={styles.input}
               value={query}
-              onChangeText={setQuery}
-              placeholder="e.g., 1921 morgan"
+              onChangeText={handleQueryChange}
+              placeholder="e.g., 1921 Morgan Dollar"
               placeholderTextColor="#9CA3AF"
               editable={!disabled}
             />
             {isLoading && <ActivityIndicator size="small" color="#3B82F6" style={styles.loader} />}
           </View>
+          <Text style={styles.helperText}>Type any coin name or search from our database</Text>
 
           {results.length > 0 && !selectedCoin && (
             <View style={styles.resultsContainer}>
@@ -54,10 +72,7 @@ export function CoinSearchInput({ onSelect, selectedCoin, disabled }: CoinSearch
                 renderItem={({ item, index }) => (
                   <TouchableOpacity
                     style={[styles.resultItem, index !== results.length - 1 && styles.resultBorder]}
-                    onPress={() => {
-                      onSelect(item);
-                      setQuery('');
-                    }}
+                    onPress={() => handleSelectCoin(item)}
                   >
                     <Text style={styles.resultName}>{item.fullName}</Text>
                     <Text style={styles.resultPCGS}>PCGS# {item.pcgsNumber}</Text>
@@ -101,6 +116,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 14,
     top: 14,
+  },
+  helperText: {
+    fontSize: 11,
+    color: '#6B7280',
+    marginTop: 6,
+    marginBottom: 8,
   },
   selectedContainer: {
     flexDirection: 'row',

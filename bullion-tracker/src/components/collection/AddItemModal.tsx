@@ -196,6 +196,7 @@ export function AddItemModal({ isOpen, onClose }: AddItemModalProps) {
         ...baseData,
         metal,
         coinReferenceId: selectedCoin?.id,
+        title: !selectedCoin && coinSearch ? coinSearch : undefined,
         certNumber: gradingService !== 'RAW' ? certNumber : undefined,
         grade,
         gradingService,
@@ -698,13 +699,16 @@ export function AddItemModal({ isOpen, onClose }: AddItemModalProps) {
 
             <div style={{ marginBottom: '16px' }}>
               <label style={{ fontSize: '12px', fontWeight: '600', color: '#888', textTransform: 'uppercase', display: 'block', marginBottom: '8px' }}>
-                Search Coin
+                Coin Name
               </label>
               <input
                 type="text"
                 value={coinSearch}
-                onChange={(e) => setCoinSearch(e.target.value)}
-                placeholder="e.g., 1921 morgan"
+                onChange={(e) => {
+                  setCoinSearch(e.target.value);
+                  if (selectedCoin) setSelectedCoin(null);
+                }}
+                placeholder="e.g., 1921 Morgan Dollar"
                 style={{
                   width: '100%',
                   padding: '14px 16px',
@@ -714,6 +718,9 @@ export function AddItemModal({ isOpen, onClose }: AddItemModalProps) {
                   boxSizing: 'border-box',
                 }}
               />
+              <div style={{ fontSize: '11px', color: '#888', marginTop: '6px' }}>
+                Type any coin name or search from our database
+              </div>
             </div>
 
             {selectedCoin && (
@@ -796,34 +803,36 @@ export function AddItemModal({ isOpen, onClose }: AddItemModalProps) {
               </div>
             )}
 
-            {grades && (
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{ fontSize: '12px', fontWeight: '600', color: '#888', textTransform: 'uppercase', display: 'block', marginBottom: '8px' }}>
-                  Estimated Grade
-                </label>
-                <select
-                  value={grade}
-                  onChange={(e) => setGrade(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '14px 16px',
-                    fontSize: '14px',
-                    border: '1px solid #E0E0E0',
-                    borderRadius: '10px',
-                    background: 'white',
-                  }}
-                >
-                  <option value="">Select grade...</option>
-                  {Object.entries(grades).map(([category, gradeList]) => (
-                    <optgroup key={category} label={category}>
-                      {gradeList.map(g => (
-                        <option key={g.gradeCode} value={g.gradeCode}>{g.gradeCode}</option>
-                      ))}
-                    </optgroup>
-                  ))}
-                </select>
-              </div>
-            )}
+            <div style={{ marginBottom: '16px' }}>
+              <label style={{ fontSize: '12px', fontWeight: '600', color: '#888', textTransform: 'uppercase', display: 'block', marginBottom: '8px' }}>
+                Estimated Grade
+              </label>
+              <input
+                type="text"
+                list="grade-options"
+                value={grade}
+                onChange={(e) => setGrade(e.target.value)}
+                placeholder="e.g., MS65, VF30, AU58"
+                style={{
+                  width: '100%',
+                  padding: '14px 16px',
+                  fontSize: '14px',
+                  border: '1px solid #E0E0E0',
+                  borderRadius: '10px',
+                  boxSizing: 'border-box',
+                  background: 'white',
+                }}
+              />
+              {grades && (
+                <datalist id="grade-options">
+                  {Object.entries(grades).flatMap(([, gradeList]) =>
+                    gradeList.map(g => (
+                      <option key={g.gradeCode} value={g.gradeCode} />
+                    ))
+                  )}
+                </datalist>
+              )}
+            </div>
 
             <label
               style={{

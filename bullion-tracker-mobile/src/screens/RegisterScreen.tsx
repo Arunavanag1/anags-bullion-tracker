@@ -93,6 +93,7 @@ export function RegisterScreen({ navigation }: Props) {
             keyboardType="email-address"
             autoCapitalize="none"
             autoComplete="email"
+            textContentType="emailAddress"
             style={{
               backgroundColor: '#FFFFFF',
               borderWidth: 1,
@@ -117,6 +118,7 @@ export function RegisterScreen({ navigation }: Props) {
             secureTextEntry
             autoCapitalize="none"
             autoComplete="password-new"
+            textContentType="newPassword"
             style={{
               backgroundColor: '#FFFFFF',
               borderWidth: 1,
@@ -141,6 +143,7 @@ export function RegisterScreen({ navigation }: Props) {
             secureTextEntry
             autoCapitalize="none"
             autoComplete="password-new"
+            textContentType="newPassword"
             style={{
               backgroundColor: '#FFFFFF',
               borderWidth: 1,

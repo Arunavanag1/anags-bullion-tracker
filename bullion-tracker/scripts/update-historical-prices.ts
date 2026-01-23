@@ -1,12 +1,18 @@
 /**
  * Script to update historical-prices.json with latest prices
- * Run this weekly: npm run update-prices
+ * Run this daily: npm run update-prices
+ *
+ * This script:
+ * 1. Fetches current spot prices from Metal Price API
+ * 2. Adds/updates the entry for today in historical-prices.json
+ * 3. Also updates the mobile app's historical-prices.json
  */
 
 import fs from 'fs';
 import path from 'path';
 
-const DATA_FILE = path.join(process.cwd(), 'src/data/historical-prices.json');
+const WEB_DATA_FILE = path.join(process.cwd(), 'src/data/historical-prices.json');
+const MOBILE_DATA_FILE = path.join(process.cwd(), '../bullion-tracker-mobile/src/data/historical-prices.json');
 
 async function fetchCurrentPrices() {
   const apiKey = process.env.METAL_PRICE_API_KEY;
@@ -19,24 +25,19 @@ async function fetchCurrentPrices() {
   console.log('Fetching current metal prices from API...');
 
   try {
-    // Fetch current prices for each metal
-    const [goldRes, silverRes, platinumRes] = await Promise.all([
-      fetch(`https://api.metalpriceapi.com/v1/latest?api_key=${apiKey}&base=USD&currencies=XAU`),
-      fetch(`https://api.metalpriceapi.com/v1/latest?api_key=${apiKey}&base=USD&currencies=XAG`),
-      fetch(`https://api.metalpriceapi.com/v1/latest?api_key=${apiKey}&base=USD&currencies=XPT`),
-    ]);
+    const response = await fetch(
+      `https://api.metalpriceapi.com/v1/latest?api_key=${apiKey}&base=USD&currencies=XAU,XAG,XPT`
+    );
 
-    const goldData = await goldRes.json();
-    const silverData = await silverRes.json();
-    const platinumData = await platinumRes.json();
+    const data = await response.json();
 
-    if (!goldData.success || !silverData.success || !platinumData.success) {
+    if (!data.success || !data.rates) {
       throw new Error('Failed to fetch prices from API');
     }
 
-    const goldPrice = Math.round(1 / goldData.rates.XAU);
-    const silverPrice = Math.round((1 / silverData.rates.XAG) * 100) / 100;
-    const platinumPrice = Math.round(1 / platinumData.rates.XPT);
+    const goldPrice = Math.round(1 / data.rates.XAU);
+    const silverPrice = Math.round((1 / data.rates.XAG) * 100) / 100;
+    const platinumPrice = Math.round(1 / data.rates.XPT);
 
     console.log('Current prices:');
     console.log(`  Gold: $${goldPrice}/oz`);
@@ -50,50 +51,62 @@ async function fetchCurrentPrices() {
   }
 }
 
+function updateJsonFile(filePath: string, goldPrice: number, silverPrice: number, platinumPrice: number) {
+  if (!fs.existsSync(filePath)) {
+    console.log(`  Skipping ${filePath} (file not found)`);
+    return;
+  }
+
+  const rawData = fs.readFileSync(filePath, 'utf-8');
+  const data = JSON.parse(rawData);
+
+  // Create new entry for today
+  const now = new Date();
+  const dateStr = now.toISOString().split('T')[0];
+
+  // Check if we already have an entry for today
+  const existingIndex = data.prices.findIndex((p: any) => p.date === dateStr);
+
+  const newEntry = {
+    date: dateStr,
+    gold: goldPrice,
+    silver: silverPrice,
+    platinum: platinumPrice,
+  };
+
+  if (existingIndex >= 0) {
+    console.log(`  Updating existing entry for ${dateStr}...`);
+    data.prices[existingIndex] = newEntry;
+  } else {
+    console.log(`  Adding new entry for ${dateStr}...`);
+    data.prices.push(newEntry);
+    // Sort by date
+    data.prices.sort((a: any, b: any) => a.date.localeCompare(b.date));
+  }
+
+  // Update metadata
+  data.metadata.lastUpdated = dateStr;
+
+  // Write back to file
+  fs.writeFileSync(filePath, JSON.stringify(data, null, 2) + '\n', 'utf-8');
+  console.log(`  ✅ Updated: ${filePath}`);
+}
+
 async function updateHistoricalData() {
   try {
-    // Read existing data
-    const rawData = fs.readFileSync(DATA_FILE, 'utf-8');
-    const data = JSON.parse(rawData);
-
     // Get current prices
     const { goldPrice, silverPrice, platinumPrice } = await fetchCurrentPrices();
 
-    // Create new entry for the first day of current month
-    const now = new Date();
-    const firstOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const dateStr = firstOfMonth.toISOString().split('T')[0];
+    console.log('\nUpdating historical price files...');
 
-    // Check if we already have an entry for this month
-    const existingIndex = data.prices.findIndex((p: any) => p.date === dateStr);
+    // Update web app data
+    updateJsonFile(WEB_DATA_FILE, goldPrice, silverPrice, platinumPrice);
 
-    const newEntry = {
-      date: dateStr,
-      gold: goldPrice,
-      silver: silverPrice,
-      platinum: platinumPrice,
-    };
-
-    if (existingIndex >= 0) {
-      console.log(`\nUpdating existing entry for ${dateStr}...`);
-      data.prices[existingIndex] = newEntry;
-    } else {
-      console.log(`\nAdding new entry for ${dateStr}...`);
-      data.prices.push(newEntry);
-      // Sort by date
-      data.prices.sort((a: any, b: any) => a.date.localeCompare(b.date));
-    }
-
-    // Update metadata
-    data.metadata.lastUpdated = new Date().toISOString().split('T')[0];
-
-    // Write back to file
-    fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), 'utf-8');
+    // Update mobile app data
+    updateJsonFile(MOBILE_DATA_FILE, goldPrice, silverPrice, platinumPrice);
 
     console.log('\n✅ Historical prices updated successfully!');
-    console.log(`📁 File: ${DATA_FILE}`);
-    console.log(`📅 Last updated: ${data.metadata.lastUpdated}`);
-    console.log(`📊 Total data points: ${data.prices.length}`);
+    console.log(`📅 Date: ${new Date().toISOString().split('T')[0]}`);
   } catch (error) {
     console.error('Error updating historical data:', error);
     process.exit(1);

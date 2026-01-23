@@ -8,6 +8,10 @@
     {
       "path": "/api/cron/refresh-prices",
       "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/spot-prices",
+      "schedule": "0 */8 * * *"
     }
   ],
   "headers": [
@@ -47,6 +51,9 @@
       "maxDuration": 30
     },
     "src/app/api/cron/refresh-prices/route.ts": {
+      "maxDuration": 10
+    },
+    "src/app/api/cron/spot-prices/route.ts": {
       "maxDuration": 10
     }
   }

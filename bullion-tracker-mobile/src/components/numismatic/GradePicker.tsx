@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useState, useMemo } from 'react';
+import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useGrades } from '../../hooks/useCoins';
 
@@ -12,8 +12,9 @@ interface GradePickerProps {
 
 export function GradePicker({ value, onChange, disabled, isEstimated }: GradePickerProps) {
   const { data: grades, isLoading } = useGrades();
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
-  // Group grades by category for better UX
+  // Group grades by category for picker
   const groupedGrades = grades.reduce((acc, grade) => {
     if (!acc[grade.gradeCategory]) {
       acc[grade.gradeCategory] = [];
@@ -22,11 +23,72 @@ export function GradePicker({ value, onChange, disabled, isEstimated }: GradePic
     return acc;
   }, {} as Record<string, typeof grades>);
 
+  // Filter grades for suggestions based on input
+  const suggestions = useMemo(() => {
+    if (!value || value.length < 1) return [];
+    const searchLower = value.toLowerCase();
+    return grades
+      .filter(g => g.gradeCode.toLowerCase().includes(searchLower))
+      .slice(0, 10);
+  }, [value, grades]);
+
+  // For RAW coins (isEstimated is defined), show text input with suggestions
+  if (isEstimated !== undefined) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.label}>
+          Grade {isEstimated && <Text style={styles.estimated}>(Estimated)</Text>}
+        </Text>
+
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.input}
+            value={value}
+            onChangeText={(text) => {
+              onChange(text);
+              setShowSuggestions(true);
+            }}
+            onFocus={() => setShowSuggestions(true)}
+            onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+            placeholder="e.g., MS65, VF30, AU58"
+            placeholderTextColor="#9CA3AF"
+            editable={!disabled}
+            autoCapitalize="characters"
+          />
+        </View>
+        <Text style={styles.helperText}>Type any grade or select from suggestions</Text>
+
+        {showSuggestions && suggestions.length > 0 && (
+          <View style={styles.suggestionsContainer}>
+            <FlatList
+              data={suggestions}
+              keyExtractor={(item) => item.gradeCode}
+              renderItem={({ item, index }) => (
+                <TouchableOpacity
+                  style={[styles.suggestionItem, index !== suggestions.length - 1 && styles.suggestionBorder]}
+                  onPress={() => {
+                    onChange(item.gradeCode);
+                    setShowSuggestions(false);
+                  }}
+                >
+                  <Text style={styles.suggestionText}>{item.gradeCode}</Text>
+                  <Text style={styles.suggestionCategory}>{item.gradeCategory}</Text>
+                </TouchableOpacity>
+              )}
+              style={styles.suggestionsList}
+              keyboardShouldPersistTaps="handled"
+              nestedScrollEnabled
+            />
+          </View>
+        )}
+      </View>
+    );
+  }
+
+  // For slabbed coins (PCGS/NGC), use picker dropdown
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>
-        Grade {isEstimated && <Text style={styles.estimated}>(Estimated)</Text>}
-      </Text>
+      <Text style={styles.label}>Grade</Text>
 
       {isLoading ? (
         <View style={styles.picker}>
@@ -81,6 +143,53 @@ const styles = StyleSheet.create({
   estimated: {
     color: '#F59E0B',
     fontStyle: 'italic',
+  },
+  inputContainer: {
+    position: 'relative',
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: 10,
+    padding: 14,
+    fontSize: 14,
+    backgroundColor: '#FFFFFF',
+  },
+  helperText: {
+    fontSize: 11,
+    color: '#6B7280',
+    marginTop: 6,
+  },
+  suggestionsContainer: {
+    marginTop: 8,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    borderRadius: 10,
+    maxHeight: 200,
+    backgroundColor: '#FFFFFF',
+    overflow: 'hidden',
+  },
+  suggestionsList: {
+    maxHeight: 200,
+  },
+  suggestionItem: {
+    padding: 12,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  suggestionBorder: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6',
+  },
+  suggestionText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#1F2937',
+  },
+  suggestionCategory: {
+    fontSize: 12,
+    color: '#6B7280',
   },
   pickerContainer: {
     borderWidth: 1,

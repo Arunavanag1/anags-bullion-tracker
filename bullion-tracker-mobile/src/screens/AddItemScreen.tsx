@@ -83,6 +83,7 @@ export function AddItemScreen({ navigation, route }: Props) {
 
         setNumismaticInitialData({
           selectedCoin: coinRef,
+          customCoinName: !item.coinReferenceId && item.title ? item.title : '',
           grade: item.grade || '',
           certNumber: item.certificationNumber || '',
           isGradeEstimated: item.isGradeEstimated || false,
@@ -218,12 +219,12 @@ export function AddItemScreen({ navigation, route }: Props) {
   };
 
   const handleNumismaticSubmit = async (data: NumismaticFormData) => {
-    if (!isEditing && !data.selectedCoin) {
-      Alert.alert('Error', 'Please select a coin');
+    if (!isEditing && !data.selectedCoin && !data.customCoinName?.trim()) {
+      Alert.alert('Error', 'Please enter a coin name or select from search results');
       return;
     }
     if (!data.grade) {
-      Alert.alert('Error', 'Please select a grade');
+      Alert.alert('Error', 'Please enter a grade');
       return;
     }
     if (gradingService !== 'RAW' && !data.certNumber.trim()) {
@@ -257,9 +258,8 @@ export function AddItemScreen({ navigation, route }: Props) {
         Alert.alert('Success', 'Item updated successfully');
       } else {
         // Create new item
-        const itemData = {
+        const itemData: any = {
           category: 'NUMISMATIC' as ItemCategory,
-          coinReferenceId: data.selectedCoin!.id,
           grade: data.grade,
           gradingService: gradingService!,
           certificationNumber: gradingService !== 'RAW' ? data.certNumber.trim() : undefined,
@@ -273,6 +273,13 @@ export function AddItemScreen({ navigation, route }: Props) {
           notes: data.notes.trim() || undefined,
           images: data.images,
         };
+
+        // Use selected coin ID if available, otherwise use custom coin name as title
+        if (data.selectedCoin) {
+          itemData.coinReferenceId = data.selectedCoin.id;
+        } else if (data.customCoinName?.trim()) {
+          itemData.title = data.customCoinName.trim();
+        }
 
         await api.createCollectionItem(itemData);
         Alert.alert('Success', 'Item added to collection');

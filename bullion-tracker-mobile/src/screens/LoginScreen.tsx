@@ -58,6 +58,7 @@ export function LoginScreen({ navigation }: Props) {
             keyboardType="email-address"
             autoCapitalize="none"
             autoComplete="email"
+            textContentType="emailAddress"
             style={{
               backgroundColor: '#FFFFFF',
               borderWidth: 1,
@@ -82,6 +83,7 @@ export function LoginScreen({ navigation }: Props) {
             secureTextEntry
             autoCapitalize="none"
             autoComplete="password"
+            textContentType="password"
             style={{
               backgroundColor: '#FFFFFF',
               borderWidth: 1,
