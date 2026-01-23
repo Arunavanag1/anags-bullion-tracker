@@ -224,14 +224,14 @@ See [milestones/v2.3-ROADMAP.md](milestones/v2.3-ROADMAP.md) for full details.
 Plans:
 - [x] 54-01: JWT audit, token expiry review, password hashing, rate limiting, OAuth security, mobile storage
 
-#### Phase 55: Data Security Review
+#### Phase 55: Data Security Review - COMPLETE
 **Goal**: Audit data exposure in API responses, input validation, SQL injection prevention, sensitive data handling
 **Depends on**: Phase 54
 **Research**: Unlikely (internal review)
 **Plans**: 1/1
 
 Plans:
-- [ ] 55-01: FDX authorization hardening, user existence verification, rate limit fail-hard
+- [x] 55-01: FDX authorization hardening, user existence verification, rate limit fail-hard
 
 #### Phase 56: Account Deletion Security
 **Goal**: Verify cascade deletes work correctly, ensure no orphaned data remains, test complete deletion flow
@@ -276,6 +276,6 @@ Phases execute in numeric order. v1.8 and v1.9 can partially overlap (testing ca
 | 52. Privacy Policy Page | v2.3 | 1/1 | **COMPLETE** | 2026-01-19 |
 | 53. Contact & Support Page | v2.3 | 1/1 | **COMPLETE** | 2026-01-19 |
 | 54. Auth Security Audit | v2.4 | 1/1 | **COMPLETE** | 2026-01-23 |
-| 55. Data Security Review | v2.4 | 0/1 | Planned | - |
+| 55. Data Security Review | v2.4 | 1/1 | **COMPLETE** | 2026-01-23 |
 | 56. Account Deletion Security | v2.4 | 0/? | Not started | - |
 | 57. Mobile Auth Hardening | v2.4 | 0/? | Not started | - |
