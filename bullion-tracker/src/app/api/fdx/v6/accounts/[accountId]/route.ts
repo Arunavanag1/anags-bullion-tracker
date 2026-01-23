@@ -28,8 +28,9 @@ export async function GET(
     const payload = await verifyAccessToken(token);
     const userId = payload.sub;
 
-    // Verify account belongs to user
-    if (!accountId.endsWith(userId)) {
+    // Verify account belongs to user - exact match only
+    const expectedAccountId = `bullion_${userId}`;
+    if (accountId !== expectedAccountId) {
       return NextResponse.json(
         { error: 'not_found' },
         { status: 404 }
