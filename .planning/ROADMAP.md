@@ -257,14 +257,14 @@ Plans:
 Plans:
 - [x] 60-01: API metal content fields, hook interface, integration tests
 
-#### Phase 61: Manual Metal Input UI
+#### Phase 61: Manual Metal Input UI - COMPLETE
 **Goal**: Add fallback UI for raw coins / ungraded coins - metal type selector, purity input, weight input with validation
 **Depends on**: Phase 60
 **Research**: Unlikely (internal form patterns)
 **Plans**: 1/1
 
 Plans:
-- [ ] 61-01: API metal content fields, web RAW form inputs, mobile form inputs
+- [x] 61-01: API metal content fields, web RAW form inputs, mobile form inputs
 
 #### Phase 62: Portfolio Metal Aggregation
 **Goal**: Calculate total precious metal weight across portfolio, display breakdown by metal type (gold oz, silver oz, platinum oz, etc.)
@@ -302,5 +302,5 @@ Phases execute in numeric order. v1.8 and v1.9 can partially overlap (testing ca
 | 58. Metal Content Data Model | v2.5 | 1/1 | **COMPLETE** | 2026-01-24 |
 | 59. US Historical Coinage Rules | v2.5 | 1/1 | **COMPLETE** | 2026-01-24 |
 | 60. Cert Lookup Metal Autofill | v2.5 | 1/1 | **COMPLETE** | 2026-01-24 |
-| 61. Manual Metal Input UI | v2.5 | 0/? | Not started | - |
+| 61. Manual Metal Input UI | v2.5 | 1/1 | **COMPLETE** | 2026-01-24 |
 | 62. Portfolio Metal Aggregation | v2.5 | 0/? | Not started | - |
