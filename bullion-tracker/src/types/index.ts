@@ -144,6 +144,10 @@ export interface CollectionSummary {
   totalMeltValue: number;
   totalBookValue: number;
   totalCostBasis: number;
+  // Precious metal from numismatic coins (preciousMetalOz aggregated by metal type)
+  preciousMetalGoldOz: number;
+  preciousMetalSilverOz: number;
+  preciousMetalPlatinumOz: number;
 }
 
 // Calculated Value Interface

@@ -134,6 +134,9 @@ export function calculateCollectionSummary(
     totalMeltValue: 0,
     totalBookValue: 0,
     totalCostBasis: 0,
+    preciousMetalGoldOz: 0,
+    preciousMetalSilverOz: 0,
+    preciousMetalPlatinumOz: 0,
   };
 
   items.forEach((item) => {
@@ -150,6 +153,13 @@ export function calculateCollectionSummary(
     summary.totalMeltValue += calculateCurrentMeltValue(item, spotPrice);
     summary.totalBookValue += calculateCurrentBookValue(item, spotPrice);
     summary.totalCostBasis += getPurchasePrice(item);
+
+    // Aggregate precious metal from numismatic coins
+    if (item.category === 'NUMISMATIC' && item.preciousMetalOz) {
+      if (item.metal === 'gold') summary.preciousMetalGoldOz += item.preciousMetalOz;
+      if (item.metal === 'silver') summary.preciousMetalSilverOz += item.preciousMetalOz;
+      if (item.metal === 'platinum') summary.preciousMetalPlatinumOz += item.preciousMetalOz;
+    }
   });
 
   return summary;

@@ -26,6 +26,9 @@ export async function GET() {
           totalMeltValue: 0,
           totalBookValue: 0,
           totalCostBasis: 0,
+          preciousMetalGoldOz: 0,
+          preciousMetalSilverOz: 0,
+          preciousMetalPlatinumOz: 0,
         },
       });
     }
