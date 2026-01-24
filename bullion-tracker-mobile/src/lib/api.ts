@@ -460,6 +460,8 @@ export const api = {
   },
 
   async createCollectionItem(item: Omit<CollectionItem, 'id' | 'userId' | 'createdAt' | 'updatedAt'>): Promise<CollectionItem> {
+    console.log('[API] Creating collection item:', JSON.stringify(item, null, 2));
+
     const response = await makeRequest('/api/collection', {
       method: 'POST',
       body: JSON.stringify(item),
@@ -467,7 +469,11 @@ export const api = {
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.error || 'Failed to create collection item');
+      console.error('[API] Create item error:', error);
+      const errorMsg = error.details
+        ? `${error.error}: ${JSON.stringify(error.details)}`
+        : error.error || 'Failed to create collection item';
+      throw new Error(errorMsg);
     }
 
     const data = await response.json();

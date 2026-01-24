@@ -236,6 +236,15 @@ export function AddItemScreen({ navigation, route }: Props) {
       return;
     }
 
+    console.log('[AddItem] Submitting numismatic:', {
+      selectedCoin: data.selectedCoin?.id,
+      customCoinName: data.customCoinName,
+      grade: data.grade,
+      gradingService,
+      numismaticValue: data.numismaticValue,
+      metal: data.numismaticMetal,
+    });
+
     setLoading(true);
     try {
       if (isEditing && itemId) {
