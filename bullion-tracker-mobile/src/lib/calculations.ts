@@ -110,6 +110,11 @@ export function calculatePortfolioSummary(
     silver: 0,
     platinum: 0,
   };
+  const preciousMetalWeight = {
+    gold: 0,
+    silver: 0,
+    platinum: 0,
+  };
 
   items.forEach(item => {
     const metalKey = item.metal as 'gold' | 'silver' | 'platinum';
@@ -129,6 +134,11 @@ export function calculatePortfolioSummary(
     // weightOz is already pure weight
     const totalItemWeight = (item.weightOz || 0) * (item.quantity || 1);
     totalWeight[metalKey] += totalItemWeight;
+
+    // Aggregate precious metal from numismatic coins
+    if (item.category === 'NUMISMATIC' && item.preciousMetalOz) {
+      preciousMetalWeight[metalKey] += item.preciousMetalOz;
+    }
   });
 
   // Total gain = current book value - purchase cost (what you paid)
@@ -142,6 +152,7 @@ export function calculatePortfolioSummary(
     gainPercentage,
     itemCount: items.length,
     totalWeight,
+    preciousMetalWeight,
   };
 }
 

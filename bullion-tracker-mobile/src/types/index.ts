@@ -33,6 +33,12 @@ export interface PortfolioSummary {
     silver: number;
     platinum: number;
   };
+  // Precious metal from numismatic coins (preciousMetalOz aggregated by metal type)
+  preciousMetalWeight: {
+    gold: number;
+    silver: number;
+    platinum: number;
+  };
 }
 
 export interface HistoricalPoint {
