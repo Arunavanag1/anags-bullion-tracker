@@ -7,6 +7,7 @@ import {
   RateLimitError,
   CertNotFoundError,
 } from '@/lib/pcgs-api';
+import { detectUSCoinMetalContent } from '@/lib/us-coinage-rules';
 
 export const dynamic = 'force-dynamic';
 
@@ -35,6 +36,9 @@ interface CertLookupResponse {
     mintage: number | null;
     imageUrl: string | null;
     matchedCoinId: string | null;
+    metalPurity: number | null;
+    metalWeightOz: number | null;
+    preciousMetalOz: number | null;
   };
   error?: string;
 }
@@ -130,6 +134,9 @@ export async function POST(request: NextRequest) {
       pcgsData.Obverse100ImageURL ||
       null;
 
+    // Get metal content from US coinage rules based on denomination and year
+    const metalContent = detectUSCoinMetalContent(pcgsData.Denomination, pcgsData.Year);
+
     const response: CertLookupResponse = {
       success: true,
       service: 'pcgs',
@@ -146,6 +153,9 @@ export async function POST(request: NextRequest) {
         mintage: pcgsData.Mintage,
         imageUrl,
         matchedCoinId,
+        metalPurity: metalContent?.metalPurity ?? null,
+        metalWeightOz: metalContent?.metalWeightOz ?? null,
+        preciousMetalOz: metalContent?.preciousMetalOz ?? null,
       },
     };
 
