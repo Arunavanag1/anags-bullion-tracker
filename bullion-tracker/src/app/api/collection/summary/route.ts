@@ -55,6 +55,19 @@ export async function GET(_request: NextRequest) {
       numismaticBySeries[series].count += 1;
     });
 
+    // Aggregate precious metal from numismatic coins
+    let preciousMetalGoldOz = 0;
+    let preciousMetalSilverOz = 0;
+    let preciousMetalPlatinumOz = 0;
+    numismaticItems.forEach(item => {
+      if (item.preciousMetalOz) {
+        const metalOz = Number(item.preciousMetalOz);
+        if (item.metal === 'gold') preciousMetalGoldOz += metalOz;
+        else if (item.metal === 'silver') preciousMetalSilverOz += metalOz;
+        else if (item.metal === 'platinum') preciousMetalPlatinumOz += metalOz;
+      }
+    });
+
     return NextResponse.json({
       totalValue,
       totalItems: items.length,
@@ -64,6 +77,9 @@ export async function GET(_request: NextRequest) {
       numismaticCount: numismaticItems.length,
       bullionByMetal,
       numismaticBySeries,
+      preciousMetalGoldOz,
+      preciousMetalSilverOz,
+      preciousMetalPlatinumOz,
     });
   } catch (error) {
     console.error('Collection summary error:', error);

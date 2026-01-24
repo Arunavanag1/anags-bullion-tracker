@@ -474,6 +474,132 @@ export default function BullionTrackerWeb() {
               </div>
             </div>
 
+            {/* Numismatic Metal Content Card */}
+            {collectionSummary && (
+              (collectionSummary.preciousMetalGoldOz > 0 ||
+               collectionSummary.preciousMetalSilverOz > 0 ||
+               collectionSummary.preciousMetalPlatinumOz > 0) && (
+              <div style={{
+                background: "white",
+                borderRadius: "20px",
+                padding: "28px",
+                boxShadow: "0 2px 12px rgba(0,0,0,0.06)",
+                marginBottom: "28px",
+              }}>
+                <span style={{
+                  fontSize: "12px",
+                  fontWeight: "600",
+                  color: "#888",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.5px",
+                  display: "block",
+                  marginBottom: "8px",
+                }}>
+                  Numismatic Metal Content
+                </span>
+                <p style={{
+                  fontSize: "13px",
+                  color: "#999",
+                  margin: "0 0 20px 0",
+                }}>
+                  Precious metal from graded/raw coins
+                </p>
+                <div style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(3, 1fr)",
+                  gap: "24px",
+                }}>
+                  {collectionSummary.preciousMetalGoldOz > 0 && (
+                    <div>
+                      <div style={{
+                        fontSize: "11px",
+                        color: "#888",
+                        textTransform: "uppercase",
+                        marginBottom: "4px",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "6px",
+                      }}>
+                        <span style={{
+                          width: "8px",
+                          height: "8px",
+                          borderRadius: "50%",
+                          background: "#D4AF37",
+                        }} />
+                        Gold
+                      </div>
+                      <div style={{
+                        fontSize: "20px",
+                        fontFamily: "monospace",
+                        fontWeight: "600",
+                        color: "#1a1a1a",
+                      }}>
+                        {collectionSummary.preciousMetalGoldOz.toFixed(4)} oz
+                      </div>
+                    </div>
+                  )}
+                  {collectionSummary.preciousMetalSilverOz > 0 && (
+                    <div>
+                      <div style={{
+                        fontSize: "11px",
+                        color: "#888",
+                        textTransform: "uppercase",
+                        marginBottom: "4px",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "6px",
+                      }}>
+                        <span style={{
+                          width: "8px",
+                          height: "8px",
+                          borderRadius: "50%",
+                          background: "#A8A8A8",
+                        }} />
+                        Silver
+                      </div>
+                      <div style={{
+                        fontSize: "20px",
+                        fontFamily: "monospace",
+                        fontWeight: "600",
+                        color: "#1a1a1a",
+                      }}>
+                        {collectionSummary.preciousMetalSilverOz.toFixed(4)} oz
+                      </div>
+                    </div>
+                  )}
+                  {collectionSummary.preciousMetalPlatinumOz > 0 && (
+                    <div>
+                      <div style={{
+                        fontSize: "11px",
+                        color: "#888",
+                        textTransform: "uppercase",
+                        marginBottom: "4px",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "6px",
+                      }}>
+                        <span style={{
+                          width: "8px",
+                          height: "8px",
+                          borderRadius: "50%",
+                          background: "#E5E4E2",
+                        }} />
+                        Platinum
+                      </div>
+                      <div style={{
+                        fontSize: "20px",
+                        fontFamily: "monospace",
+                        fontWeight: "600",
+                        color: "#1a1a1a",
+                      }}>
+                        {collectionSummary.preciousMetalPlatinumOz.toFixed(4)} oz
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+
             {/* Top Performers Section */}
             <TopPerformers />
 
