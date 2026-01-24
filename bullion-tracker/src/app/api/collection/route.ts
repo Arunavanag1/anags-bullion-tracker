@@ -6,6 +6,7 @@ import { validationError, notFoundError, rateLimitedError, handleApiError } from
 import { checkCollectionRateLimit } from '@/lib/ratelimit';
 import { sanitizeString, validatePositiveNumber, validateEnum } from '@/lib/validation';
 import { detectUSCoinMetalContent } from '@/lib/us-coinage-rules';
+import { calculatePreciousMetalOz } from '@/lib/metal-content';
 
 export const dynamic = 'force-dynamic';
 
@@ -217,6 +218,33 @@ export async function POST(request: NextRequest) {
         const gradingLabel = gradingService === 'RAW' ? 'RAW' : gradingService;
         const gradeLabel = body.isGradeEstimated ? `~${grade}` : grade;
         title = `${gradingLabel} ${gradeLabel} ${sanitizeString(customTitle, 200)}`.trim();
+
+        // Apply manual metal content if provided (for RAW/custom coins)
+        if (body.metalPurity !== undefined || body.metalWeightOz !== undefined) {
+          // Validate purity is 0-100 (percentage input)
+          if (body.metalPurity !== undefined) {
+            const purityNum = Number(body.metalPurity);
+            if (isNaN(purityNum) || purityNum < 0 || purityNum > 100) {
+              throw validationError('metalPurity must be between 0 and 100 (percentage)');
+            }
+            createData.metalPurity = purityNum / 100; // Convert percentage to decimal
+          }
+          // Validate weight is positive
+          if (body.metalWeightOz !== undefined) {
+            const weightNum = Number(body.metalWeightOz);
+            if (isNaN(weightNum) || weightNum <= 0) {
+              throw validationError('metalWeightOz must be a positive number');
+            }
+            createData.metalWeightOz = weightNum;
+          }
+          // Calculate precious metal oz if both provided
+          if (createData.metalPurity !== undefined && createData.metalWeightOz !== undefined) {
+            createData.preciousMetalOz = calculatePreciousMetalOz(
+              createData.metalWeightOz as number,
+              createData.metalPurity as number
+            );
+          }
+        }
       }
 
       createData.grade = grade;
