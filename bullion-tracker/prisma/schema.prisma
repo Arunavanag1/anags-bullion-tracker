@@ -81,6 +81,11 @@ model CollectionItem {
   quantity            Int      @default(1)
   weightOz            Float?   // Optional for numismatics
 
+  // Metal content for numismatics (populated by cert lookup, US coinage rules, or manual entry)
+  metalPurity         Float?   // 0.0-1.0, e.g., 0.900 for 90% silver
+  metalWeightOz       Float?   // Total coin weight in troy oz (gross weight)
+  preciousMetalOz     Float?   // Calculated: metalWeightOz × metalPurity
+
   // Numismatic fields
   coinReferenceId     String?  // FK to CoinReference
   certNumber          String?  // Grading cert number
