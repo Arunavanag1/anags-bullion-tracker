@@ -2,6 +2,9 @@
 export type Metal = 'gold' | 'silver' | 'platinum';
 export type ItemType = 'itemized' | 'bulk';
 
+// Re-export MetalContent from utility for convenience
+export type { MetalContent } from '@/lib/metal-content';
+
 /**
  * Valuation Type System:
  * - 'spot_premium': Value = spot × weight × (1 + premiumPercent%). For bullion.
@@ -28,6 +31,12 @@ export interface ItemizedPiece {
   metal: Metal;
   quantity: number;
   weightOz: number;
+
+  // Metal content for numismatics
+  metalPurity?: number;      // 0.0-1.0, e.g., 0.900 for 90% silver
+  metalWeightOz?: number;    // Total coin weight in troy oz
+  preciousMetalOz?: number;  // Calculated: metalWeightOz × metalPurity
+
   grade?: string;
   gradingService?: string;
   notes?: string;
@@ -60,6 +69,12 @@ export interface BulkWeight {
   metal: Metal;
   quantity?: number;
   weightOz: number;
+
+  // Metal content for numismatics
+  metalPurity?: number;      // 0.0-1.0, e.g., 0.900 for 90% silver
+  metalWeightOz?: number;    // Total coin weight in troy oz
+  preciousMetalOz?: number;  // Calculated: metalWeightOz × metalPurity
+
   notes?: string;
   images: string[];
   bookValueType: BookValueType;
