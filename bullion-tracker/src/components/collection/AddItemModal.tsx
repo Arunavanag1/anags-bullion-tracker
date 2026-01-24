@@ -51,6 +51,8 @@ export function AddItemModal({ isOpen, onClose }: AddItemModalProps) {
   const [problemType, setProblemType] = useState('cleaned');
   const [useCustomValue, setUseCustomValue] = useState(false);
   const [numismaticValue, setNumismaticValue] = useState('');
+  const [metalPurity, setMetalPurity] = useState('');
+  const [metalWeightOz, setMetalWeightOz] = useState('');
 
   const { data: coinResults } = useCoinSearch(coinSearch);
   const { data: grades } = useGrades();
@@ -158,6 +160,8 @@ export function AddItemModal({ isOpen, onClose }: AddItemModalProps) {
     setProblemType('cleaned');
     setUseCustomValue(false);
     setNumismaticValue('');
+    setMetalPurity('');
+    setMetalWeightOz('');
     setCertLookupSuccess(false);
     setNgcLookupUrl(null);
   };
@@ -206,6 +210,9 @@ export function AddItemModal({ isOpen, onClose }: AddItemModalProps) {
         bookValueType: useCustomValue ? 'custom' : 'guide_price',
         customBookValue: useCustomValue ? parseFloat(numismaticValue) : undefined,
         numismaticValue: !useCustomValue ? parseFloat(numismaticValue || '0') : undefined,
+        // Include manual metal content for RAW/custom coins (API handles conversion)
+        metalPurity: metalPurity ? parseFloat(metalPurity) : undefined,
+        metalWeightOz: metalWeightOz ? parseFloat(metalWeightOz) : undefined,
       };
     }
 
@@ -694,6 +701,69 @@ export function AddItemModal({ isOpen, onClose }: AddItemModalProps) {
                     {m.charAt(0).toUpperCase() + m.slice(1)}
                   </button>
                 ))}
+              </div>
+            </div>
+
+            {/* Metal Content (Optional) - for tracking precious metal weight */}
+            <div style={{ marginBottom: '16px', padding: '14px 16px', background: '#FAFAFA', borderRadius: '10px', border: '1px solid #E0E0E0' }}>
+              <div style={{ fontSize: '12px', fontWeight: '600', color: '#888', textTransform: 'uppercase', marginBottom: '12px' }}>
+                Metal Content (Optional)
+              </div>
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <div style={{ flex: 1 }}>
+                  <label style={{ fontSize: '11px', color: '#666', display: 'block', marginBottom: '4px' }}>
+                    Purity
+                  </label>
+                  <div style={{ position: 'relative' }}>
+                    <input
+                      type="number"
+                      value={metalPurity}
+                      onChange={(e) => setMetalPurity(e.target.value)}
+                      placeholder="e.g., 90"
+                      min="0"
+                      max="100"
+                      step="0.1"
+                      style={{
+                        width: '100%',
+                        padding: '10px 30px 10px 12px',
+                        fontSize: '14px',
+                        border: '1px solid #E0E0E0',
+                        borderRadius: '8px',
+                        boxSizing: 'border-box',
+                        background: 'white',
+                      }}
+                    />
+                    <span style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', color: '#888', fontSize: '14px' }}>%</span>
+                  </div>
+                </div>
+                <div style={{ flex: 1 }}>
+                  <label style={{ fontSize: '11px', color: '#666', display: 'block', marginBottom: '4px' }}>
+                    Weight
+                  </label>
+                  <div style={{ position: 'relative' }}>
+                    <input
+                      type="number"
+                      value={metalWeightOz}
+                      onChange={(e) => setMetalWeightOz(e.target.value)}
+                      placeholder="e.g., 0.7234"
+                      min="0"
+                      step="0.0001"
+                      style={{
+                        width: '100%',
+                        padding: '10px 30px 10px 12px',
+                        fontSize: '14px',
+                        border: '1px solid #E0E0E0',
+                        borderRadius: '8px',
+                        boxSizing: 'border-box',
+                        background: 'white',
+                      }}
+                    />
+                    <span style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', color: '#888', fontSize: '14px' }}>oz</span>
+                  </div>
+                </div>
+              </div>
+              <div style={{ fontSize: '10px', color: '#888', marginTop: '6px' }}>
+                For calculating precious metal value (e.g., 90% silver = 90, weight in troy oz)
               </div>
             </div>
 
