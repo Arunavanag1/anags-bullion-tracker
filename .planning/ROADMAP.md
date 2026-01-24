@@ -230,14 +230,14 @@ See [milestones/v2.4-ROADMAP.md](milestones/v2.4-ROADMAP.md) for full details.
 
 **Milestone Goal:** Automatically capture and calculate metal content for numismatic coins through multiple methodologies - cert lookup autofill, US coinage historical rules, and manual input fallback.
 
-#### Phase 58: Metal Content Data Model
+#### Phase 58: Metal Content Data Model - COMPLETE
 **Goal**: Add metal content fields to coin schema (metal type, purity %, weight in troy oz, calculated precious metal weight)
 **Depends on**: Phase 57
 **Research**: Unlikely (internal Prisma patterns)
-**Plans**: TBD
+**Plans**: 1/1
 
 Plans:
-- [ ] 58-01: TBD (run /gsd:plan-phase 58 to break down)
+- [x] 58-01: Schema fields, calculation utility, TypeScript types
 
 #### Phase 59: US Historical Coinage Rules Engine
 **Goal**: Implement automatic metal detection for US coins: pre-1965 dimes/quarters/half dollars (90% silver), pre-1933 gold denominations ($2.50, $5, $10, $20 with known gold weights)
@@ -300,7 +300,7 @@ Phases execute in numeric order. v1.8 and v1.9 can partially overlap (testing ca
 | 52. Privacy Policy Page | v2.3 | 1/1 | **COMPLETE** | 2026-01-19 |
 | 53. Contact & Support Page | v2.3 | 1/1 | **COMPLETE** | 2026-01-19 |
 | 54-57 | v2.4 | 4/4 | **SHIPPED** | 2026-01-23 |
-| 58. Metal Content Data Model | v2.5 | 0/? | Not started | - |
+| 58. Metal Content Data Model | v2.5 | 1/1 | **COMPLETE** | 2026-01-24 |
 | 59. US Historical Coinage Rules | v2.5 | 0/? | Not started | - |
 | 60. Cert Lookup Metal Autofill | v2.5 | 0/? | Not started | - |
 | 61. Manual Metal Input UI | v2.5 | 0/? | Not started | - |
