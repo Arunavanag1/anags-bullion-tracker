@@ -271,6 +271,43 @@ export function DashboardScreen({ navigation }: Props) {
           </View>
         )}
 
+        {/* Numismatic Metal Content Card */}
+        {summary && (summary.preciousMetalWeight.gold > 0 || summary.preciousMetalWeight.silver > 0 || summary.preciousMetalWeight.platinum > 0) && (
+          <View style={styles.metalContentCard}>
+            <Text style={styles.metalContentLabel}>NUMISMATIC METAL CONTENT</Text>
+            <Text style={styles.metalContentDescription}>Precious metal from graded/raw coins</Text>
+            <View style={styles.metalContentRow}>
+              {summary.preciousMetalWeight.gold > 0 && (
+                <View style={styles.metalContentItem}>
+                  <View style={styles.metalContentHeader}>
+                    <View style={[styles.metalDot, { backgroundColor: '#D4AF37' }]} />
+                    <Text style={styles.metalContentTitle}>Gold</Text>
+                  </View>
+                  <Text style={styles.metalContentValue}>{summary.preciousMetalWeight.gold.toFixed(4)} oz</Text>
+                </View>
+              )}
+              {summary.preciousMetalWeight.silver > 0 && (
+                <View style={styles.metalContentItem}>
+                  <View style={styles.metalContentHeader}>
+                    <View style={[styles.metalDot, { backgroundColor: '#A8A8A8' }]} />
+                    <Text style={styles.metalContentTitle}>Silver</Text>
+                  </View>
+                  <Text style={styles.metalContentValue}>{summary.preciousMetalWeight.silver.toFixed(4)} oz</Text>
+                </View>
+              )}
+              {summary.preciousMetalWeight.platinum > 0 && (
+                <View style={styles.metalContentItem}>
+                  <View style={styles.metalContentHeader}>
+                    <View style={[styles.metalDot, { backgroundColor: '#E5E4E2' }]} />
+                    <Text style={styles.metalContentTitle}>Platinum</Text>
+                  </View>
+                  <Text style={styles.metalContentValue}>{summary.preciousMetalWeight.platinum.toFixed(4)} oz</Text>
+                </View>
+              )}
+            </View>
+          </View>
+        )}
+
         {/* Valuation Breakdown Card */}
         {valuationBreakdown && (valuationBreakdown.spotPremium.count > 0 || valuationBreakdown.guidePrice.count > 0 || valuationBreakdown.custom.count > 0) && (
           <View style={styles.valuationCard}>
@@ -571,6 +608,59 @@ const styles = StyleSheet.create({
   categoryCount: {
     fontSize: 12,
     color: Colors.textTertiary,
+  },
+  metalContentCard: {
+    backgroundColor: Colors.bgCard,
+    borderRadius: 24,
+    padding: 24,
+    marginTop: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 20,
+    elevation: 2,
+  },
+  metalContentLabel: {
+    fontSize: 13,
+    color: Colors.textSecondary,
+    marginBottom: 4,
+    letterSpacing: 0.5,
+  },
+  metalContentDescription: {
+    fontSize: 12,
+    color: Colors.textTertiary,
+    marginBottom: 16,
+  },
+  metalContentRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 16,
+  },
+  metalContentItem: {
+    flex: 1,
+    minWidth: 80,
+  },
+  metalContentHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 4,
+  },
+  metalDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
+  metalContentTitle: {
+    fontSize: 11,
+    color: Colors.textSecondary,
+    textTransform: 'uppercase',
+  },
+  metalContentValue: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: Colors.textPrimary,
+    fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   valuationCard: {
     backgroundColor: Colors.bgCard,
