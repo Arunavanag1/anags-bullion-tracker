@@ -24,6 +24,7 @@ None (standard web/mobile patterns)
 - :white_check_mark: **v2.2 Cert Number Autofill** - Phases 49-51 (shipped 2026-01-18)
 - :white_check_mark: **v2.3 App Store Legal** — Phases 52-53 (shipped 2026-01-19)
 - :white_check_mark: **v2.4 Security & Stability** — Phases 54-57 (shipped 2026-01-23)
+- :construction: **v2.5 Numismatic Metal Content** — Phases 58-62 (in progress)
 
 ## Phases
 
@@ -211,46 +212,69 @@ See [milestones/v2.3-ROADMAP.md](milestones/v2.3-ROADMAP.md) for full details.
 
 ---
 
-### :white_check_mark: v2.4 Security & Stability (Shipped 2026-01-23)
+<details>
+<summary>:white_check_mark: v2.4 Security & Stability (Phases 54-57) — SHIPPED 2026-01-23</summary>
 
-**Milestone Goal:** Comprehensive security audit of authentication, data handling, and account management to ensure production readiness and user data protection.
+See [milestones/v2.4-ROADMAP.md](milestones/v2.4-ROADMAP.md) for full details.
 
-#### Phase 54: Auth Security Audit - COMPLETE
-**Goal**: Review JWT implementation, token storage, password hashing, session management for vulnerabilities
-**Depends on**: Phase 53
-**Research**: Unlikely (internal review)
-**Plans**: 1/1
+- [x] Phase 54: Auth Security Audit (1/1 plan) — JWT audit, token expiry, password hashing, OAuth security
+- [x] Phase 55: Data Security Review (1/1 plan) — FDX authorization, user verification, rate limiting
+- [x] Phase 56: Account Deletion Security (1/1 plan) — Cascade deletes, endpoint docs, Cloudinary limitation
+- [x] Phase 57: Mobile Auth Hardening (1/1 plan) — SecureStore audit, biometric/pinning decisions
 
-Plans:
-- [x] 54-01: JWT audit, token expiry review, password hashing, rate limiting, OAuth security, mobile storage
+</details>
 
-#### Phase 55: Data Security Review - COMPLETE
-**Goal**: Audit data exposure in API responses, input validation, SQL injection prevention, sensitive data handling
-**Depends on**: Phase 54
-**Research**: Unlikely (internal review)
-**Plans**: 1/1
+---
 
-Plans:
-- [x] 55-01: FDX authorization hardening, user existence verification, rate limit fail-hard
+### :construction: v2.5 Numismatic Metal Content (In Progress)
 
-#### Phase 56: Account Deletion Security - COMPLETE
-**Goal**: Verify cascade deletes work correctly, ensure no orphaned data remains, test complete deletion flow
-**Depends on**: Phase 55
-**Research**: Unlikely (internal patterns)
-**Plans**: 1/1
+**Milestone Goal:** Automatically capture and calculate metal content for numismatic coins through multiple methodologies - cert lookup autofill, US coinage historical rules, and manual input fallback.
+
+#### Phase 58: Metal Content Data Model
+**Goal**: Add metal content fields to coin schema (metal type, purity %, weight in troy oz, calculated precious metal weight)
+**Depends on**: Phase 57
+**Research**: Unlikely (internal Prisma patterns)
+**Plans**: TBD
 
 Plans:
-- [x] 56-01: Cascade delete integration tests, endpoint documentation, Cloudinary limitation docs
+- [ ] 58-01: TBD (run /gsd:plan-phase 58 to break down)
 
-#### Phase 57: Mobile Auth Hardening - COMPLETE
-**Goal**: Secure token storage review, evaluate biometric auth, consider certificate pinning
-**Depends on**: Phase 56
-**Research**: Likely (SecureStore best practices, certificate pinning)
-**Research topics**: Expo SecureStore security, biometric authentication options, SSL pinning in React Native
-**Plans**: 1/1
+#### Phase 59: US Historical Coinage Rules Engine
+**Goal**: Implement automatic metal detection for US coins: pre-1965 dimes/quarters/half dollars (90% silver), pre-1933 gold denominations ($2.50, $5, $10, $20 with known gold weights)
+**Depends on**: Phase 58
+**Research**: Likely (need exact metal weights for each US gold denomination)
+**Research topics**: US Mint specifications for gold coin weights, 90% silver alloy compositions
+**Plans**: TBD
 
 Plans:
-- [x] 57-01: SecureStore audit, biometric decision (deferred), certificate pinning decision (skipped)
+- [ ] 59-01: TBD
+
+#### Phase 60: Cert Lookup Metal Autofill
+**Goal**: Extend PCGS/NGC cert lookup to populate metal content when available from certification data
+**Depends on**: Phase 59
+**Research**: Unlikely (existing cert lookup patterns)
+**Plans**: TBD
+
+Plans:
+- [ ] 60-01: TBD
+
+#### Phase 61: Manual Metal Input UI
+**Goal**: Add fallback UI for raw coins / ungraded coins - metal type selector, purity input, weight input with validation
+**Depends on**: Phase 60
+**Research**: Unlikely (internal form patterns)
+**Plans**: TBD
+
+Plans:
+- [ ] 61-01: TBD
+
+#### Phase 62: Portfolio Metal Aggregation
+**Goal**: Calculate total precious metal weight across portfolio, display breakdown by metal type (gold oz, silver oz, platinum oz, etc.)
+**Depends on**: Phase 61
+**Research**: Unlikely (existing portfolio calculation patterns)
+**Plans**: TBD
+
+Plans:
+- [ ] 62-01: TBD
 
 ---
 
@@ -275,7 +299,9 @@ Phases execute in numeric order. v1.8 and v1.9 can partially overlap (testing ca
 | 49-51 | v2.2 | 3/3 | **SHIPPED** | 2026-01-18 |
 | 52. Privacy Policy Page | v2.3 | 1/1 | **COMPLETE** | 2026-01-19 |
 | 53. Contact & Support Page | v2.3 | 1/1 | **COMPLETE** | 2026-01-19 |
-| 54. Auth Security Audit | v2.4 | 1/1 | **COMPLETE** | 2026-01-23 |
-| 55. Data Security Review | v2.4 | 1/1 | **COMPLETE** | 2026-01-23 |
-| 56. Account Deletion Security | v2.4 | 1/1 | **COMPLETE** | 2026-01-23 |
-| 57. Mobile Auth Hardening | v2.4 | 1/1 | **COMPLETE** | 2026-01-23 |
+| 54-57 | v2.4 | 4/4 | **SHIPPED** | 2026-01-23 |
+| 58. Metal Content Data Model | v2.5 | 0/? | Not started | - |
+| 59. US Historical Coinage Rules | v2.5 | 0/? | Not started | - |
+| 60. Cert Lookup Metal Autofill | v2.5 | 0/? | Not started | - |
+| 61. Manual Metal Input UI | v2.5 | 0/? | Not started | - |
+| 62. Portfolio Metal Aggregation | v2.5 | 0/? | Not started | - |

@@ -2,12 +2,12 @@
 
 ## Current Position
 
-Phase: 57 of 57 (Mobile Auth Hardening)
-Plan: 1 of 1 in current phase
-Status: Milestone complete
-Last activity: 2026-01-23 - Completed 57-01-PLAN.md
+Phase: 58 of 62 (Metal Content Data Model)
+Plan: Not started
+Status: Ready to plan
+Last activity: 2026-01-23 - Milestone v2.5 created
 
-Progress: ██████████ 100% (4/4 phases in v2.4)
+Progress: ░░░░░░░░░░ 0% (0/5 phases in v2.5)
 
 ## Shipped Milestones
 
@@ -22,11 +22,17 @@ Progress: ██████████ 100% (4/4 phases in v2.4)
 ## Session Continuity
 
 Last session: 2026-01-23
-Stopped at: Completed 57-01-PLAN.md
+Stopped at: Milestone v2.5 initialization
 Resume file: None
-Next: Plan next milestone (v2.5)
+Next: Plan Phase 58 (Metal Content Data Model)
 
 ## Accumulated Context
+
+### Key Decisions (v2.5)
+- 5 phases for numismatic metal content tracking
+- Automatic detection for US historical coinage (pre-1965 silver, pre-1933 gold)
+- Integration with existing cert lookup for autofill
+- Manual fallback for raw/ungraded coins
 
 ### Key Decisions (v2.4)
 - 4 phases focused on security audit and hardening
@@ -76,3 +82,4 @@ None currently.
 - v2.2: Cert Number Autofill (Phases 49-51) - **SHIPPED 2026-01-18**
 - v2.3: App Store Legal (Phases 52-53) - **SHIPPED 2026-01-19**
 - v2.4: Security & Stability (Phases 54-57) - **SHIPPED 2026-01-23**
+- v2.5: Numismatic Metal Content (Phases 58-62) - created 2026-01-23
