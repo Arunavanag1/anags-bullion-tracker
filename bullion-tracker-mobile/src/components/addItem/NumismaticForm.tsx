@@ -32,6 +32,8 @@ export interface NumismaticFormData {
   purchaseDate: string;
   notes: string;
   images: string[];
+  metalPurity: string;
+  metalWeightOz: string;
 }
 
 interface NumismaticFormProps {
@@ -57,6 +59,8 @@ export function NumismaticForm({ gradingService, onSubmit, loading, initialData,
   const [purchaseDate, setPurchaseDate] = useState(initialData?.purchaseDate || new Date().toISOString().split('T')[0]);
   const [notes, setNotes] = useState(initialData?.notes || '');
   const [images, setImages] = useState<string[]>(initialData?.images || []);
+  const [metalPurity, setMetalPurity] = useState(initialData?.metalPurity || '');
+  const [metalWeightOz, setMetalWeightOz] = useState(initialData?.metalWeightOz || '');
   const [currentGradingService, setCurrentGradingService] = useState<GradingService>(gradingService);
 
   // Cert lookup state
@@ -184,6 +188,8 @@ export function NumismaticForm({ gradingService, onSubmit, loading, initialData,
       setPurchaseDate(initialData.purchaseDate);
       setNotes(initialData.notes);
       setImages(initialData.images || []);
+      setMetalPurity(initialData.metalPurity || '');
+      setMetalWeightOz(initialData.metalWeightOz || '');
       setUseCustomValue(true);
     }
   }, [initialData]);
@@ -244,6 +250,8 @@ export function NumismaticForm({ gradingService, onSubmit, loading, initialData,
       purchaseDate,
       notes,
       images,
+      metalPurity,
+      metalWeightOz,
     });
   };
 
@@ -274,6 +282,36 @@ export function NumismaticForm({ gradingService, onSubmit, loading, initialData,
               </TouchableOpacity>
             ))}
           </View>
+        </View>
+      )}
+
+      {/* Metal Content (Optional) - for RAW coins */}
+      {isRaw && (
+        <View style={styles.metalContentSection}>
+          <Text style={styles.label}>Metal Content (Optional)</Text>
+          <View style={styles.metalContentRow}>
+            <View style={styles.metalContentInput}>
+              <Input
+                label="Purity (%)"
+                value={metalPurity}
+                onChangeText={setMetalPurity}
+                placeholder="e.g., 90"
+                keyboardType="decimal-pad"
+              />
+            </View>
+            <View style={styles.metalContentInput}>
+              <Input
+                label="Weight (oz)"
+                value={metalWeightOz}
+                onChangeText={setMetalWeightOz}
+                placeholder="e.g., 0.7234"
+                keyboardType="decimal-pad"
+              />
+            </View>
+          </View>
+          <Text style={styles.metalContentHint}>
+            For calculating precious metal value (e.g., 90% silver = 90)
+          </Text>
         </View>
       )}
 
@@ -705,5 +743,27 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '600',
     color: 'white',
+  },
+  // Metal content styles
+  metalContentSection: {
+    marginBottom: 16,
+    padding: 12,
+    backgroundColor: '#F9FAFB',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  metalContentRow: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  metalContentInput: {
+    flex: 1,
+  },
+  metalContentHint: {
+    fontSize: 11,
+    color: '#6B7280',
+    marginTop: 4,
+    fontStyle: 'italic',
   },
 });

@@ -95,6 +95,8 @@ export function AddItemScreen({ navigation, route }: Props) {
           purchaseDate: item.purchaseDate ? new Date(item.purchaseDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
           notes: item.notes || '',
           images: item.images || [],
+          metalPurity: item.metalPurity ? (item.metalPurity * 100).toString() : '',
+          metalWeightOz: item.metalWeightOz?.toString() || '',
         });
       }
     } catch (error) {
@@ -261,6 +263,9 @@ export function AddItemScreen({ navigation, route }: Props) {
           purchasePrice: data.purchasePrice ? Number(data.purchasePrice) : undefined,
           notes: data.notes.trim() || undefined,
           images: data.images,
+          // Manual metal content for RAW coins (API expects percentage 0-100)
+          metalPurity: data.metalPurity ? Number(data.metalPurity) : undefined,
+          metalWeightOz: data.metalWeightOz ? Number(data.metalWeightOz) : undefined,
         };
 
         await api.updateCollectionItem(itemId, updateData);
@@ -283,6 +288,9 @@ export function AddItemScreen({ navigation, route }: Props) {
           purchasePrice: data.purchasePrice ? Number(data.purchasePrice) : undefined,
           notes: data.notes.trim() || undefined,
           images: data.images,
+          // Manual metal content for RAW coins (API expects percentage 0-100)
+          metalPurity: data.metalPurity ? Number(data.metalPurity) : undefined,
+          metalWeightOz: data.metalWeightOz ? Number(data.metalWeightOz) : undefined,
         };
 
         // Use selected coin ID if available, otherwise use custom coin name as title

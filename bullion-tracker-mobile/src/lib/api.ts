@@ -142,6 +142,11 @@ export interface CollectionItem {
   isProblemCoin?: boolean;
   problemType?: ProblemType;
   numismaticValue?: number;
+
+  // Metal content fields (for numismatic coins)
+  metalPurity?: number;
+  metalWeightOz?: number;
+  preciousMetalOz?: number;
 }
 
 // ===== COIN SEARCH =====
