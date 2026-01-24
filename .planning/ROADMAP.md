@@ -248,14 +248,14 @@ Plans:
 Plans:
 - [x] 59-01: Rules engine utility, API integration, 37 unit tests
 
-#### Phase 60: Cert Lookup Metal Autofill
+#### Phase 60: Cert Lookup Metal Autofill - COMPLETE
 **Goal**: Extend PCGS/NGC cert lookup to populate metal content when available from certification data
 **Depends on**: Phase 59
 **Research**: Unlikely (existing cert lookup patterns)
-**Plans**: TBD
+**Plans**: 1/1
 
 Plans:
-- [ ] 60-01: TBD
+- [x] 60-01: API metal content fields, hook interface, integration tests
 
 #### Phase 61: Manual Metal Input UI
 **Goal**: Add fallback UI for raw coins / ungraded coins - metal type selector, purity input, weight input with validation
@@ -301,6 +301,6 @@ Phases execute in numeric order. v1.8 and v1.9 can partially overlap (testing ca
 | 54-57 | v2.4 | 4/4 | **SHIPPED** | 2026-01-23 |
 | 58. Metal Content Data Model | v2.5 | 1/1 | **COMPLETE** | 2026-01-24 |
 | 59. US Historical Coinage Rules | v2.5 | 1/1 | **COMPLETE** | 2026-01-24 |
-| 60. Cert Lookup Metal Autofill | v2.5 | 0/? | Not started | - |
+| 60. Cert Lookup Metal Autofill | v2.5 | 1/1 | **COMPLETE** | 2026-01-24 |
 | 61. Manual Metal Input UI | v2.5 | 0/? | Not started | - |
 | 62. Portfolio Metal Aggregation | v2.5 | 0/? | Not started | - |
