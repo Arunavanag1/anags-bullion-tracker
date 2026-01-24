@@ -24,7 +24,7 @@ None (standard web/mobile patterns)
 - :white_check_mark: **v2.2 Cert Number Autofill** - Phases 49-51 (shipped 2026-01-18)
 - :white_check_mark: **v2.3 App Store Legal** — Phases 52-53 (shipped 2026-01-19)
 - :white_check_mark: **v2.4 Security & Stability** — Phases 54-57 (shipped 2026-01-23)
-- :construction: **v2.5 Numismatic Metal Content** — Phases 58-62 (in progress)
+- :white_check_mark: **v2.5 Numismatic Metal Content** — Phases 58-62 (shipped 2026-01-24)
 
 ## Phases
 
@@ -266,14 +266,14 @@ Plans:
 Plans:
 - [x] 61-01: API metal content fields, web RAW form inputs, mobile form inputs
 
-#### Phase 62: Portfolio Metal Aggregation
+#### Phase 62: Portfolio Metal Aggregation - COMPLETE
 **Goal**: Calculate total precious metal weight across portfolio, display breakdown by metal type (gold oz, silver oz, platinum oz, etc.)
 **Depends on**: Phase 61
 **Research**: Unlikely (existing portfolio calculation patterns)
 **Plans**: 1/1
 
 Plans:
-- [ ] 62-01: API aggregation, web dashboard card, mobile calculations, mobile dashboard card
+- [x] 62-01: API aggregation, web dashboard card, mobile calculations, mobile dashboard card
 
 ---
 
@@ -303,4 +303,4 @@ Phases execute in numeric order. v1.8 and v1.9 can partially overlap (testing ca
 | 59. US Historical Coinage Rules | v2.5 | 1/1 | **COMPLETE** | 2026-01-24 |
 | 60. Cert Lookup Metal Autofill | v2.5 | 1/1 | **COMPLETE** | 2026-01-24 |
 | 61. Manual Metal Input UI | v2.5 | 1/1 | **COMPLETE** | 2026-01-24 |
-| 62. Portfolio Metal Aggregation | v2.5 | 0/1 | Planned | - |
+| 62. Portfolio Metal Aggregation | v2.5 | 1/1 | **COMPLETE** | 2026-01-24 |
