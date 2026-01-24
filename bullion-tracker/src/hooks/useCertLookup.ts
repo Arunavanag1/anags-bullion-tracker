@@ -14,6 +14,9 @@ export interface CertLookupData {
   mintage: number | null;
   imageUrl: string | null;
   matchedCoinId: string | null;
+  metalPurity: number | null;
+  metalWeightOz: number | null;
+  preciousMetalOz: number | null;
 }
 
 export interface CertLookupResponse {
