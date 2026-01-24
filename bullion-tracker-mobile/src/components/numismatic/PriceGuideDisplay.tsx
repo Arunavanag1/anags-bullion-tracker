@@ -41,7 +41,13 @@ export function PriceGuideDisplay({
         <TextInput
           style={[styles.input, (!useCustom && isLoading) && styles.inputDisabled]}
           value={value}
-          onChangeText={onChange}
+          onChangeText={(text) => {
+            // Automatically switch to custom mode when user types
+            if (!useCustom && text !== value) {
+              onToggleCustom(true);
+            }
+            onChange(text);
+          }}
           placeholder={isLoading ? 'Loading from price guide...' : useCustom ? 'Enter custom value' : 'Auto-filled from price guide'}
           placeholderTextColor="#9CA3AF"
           keyboardType="decimal-pad"
