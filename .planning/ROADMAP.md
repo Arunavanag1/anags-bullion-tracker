@@ -261,10 +261,10 @@ Plans:
 **Goal**: Add fallback UI for raw coins / ungraded coins - metal type selector, purity input, weight input with validation
 **Depends on**: Phase 60
 **Research**: Unlikely (internal form patterns)
-**Plans**: TBD
+**Plans**: 1/1
 
 Plans:
-- [ ] 61-01: TBD
+- [ ] 61-01: API metal content fields, web RAW form inputs, mobile form inputs
 
 #### Phase 62: Portfolio Metal Aggregation
 **Goal**: Calculate total precious metal weight across portfolio, display breakdown by metal type (gold oz, silver oz, platinum oz, etc.)
