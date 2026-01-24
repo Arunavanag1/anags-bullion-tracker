@@ -239,15 +239,14 @@ See [milestones/v2.4-ROADMAP.md](milestones/v2.4-ROADMAP.md) for full details.
 Plans:
 - [x] 58-01: Schema fields, calculation utility, TypeScript types
 
-#### Phase 59: US Historical Coinage Rules Engine
+#### Phase 59: US Historical Coinage Rules Engine - COMPLETE
 **Goal**: Implement automatic metal detection for US coins: pre-1965 dimes/quarters/half dollars (90% silver), pre-1933 gold denominations ($2.50, $5, $10, $20 with known gold weights)
 **Depends on**: Phase 58
-**Research**: Likely (need exact metal weights for each US gold denomination)
-**Research topics**: US Mint specifications for gold coin weights, 90% silver alloy compositions
-**Plans**: TBD
+**Research**: Completed (US Mint specifications documented)
+**Plans**: 1/1
 
 Plans:
-- [ ] 59-01: TBD
+- [x] 59-01: Rules engine utility, API integration, 37 unit tests
 
 #### Phase 60: Cert Lookup Metal Autofill
 **Goal**: Extend PCGS/NGC cert lookup to populate metal content when available from certification data
@@ -301,7 +300,7 @@ Phases execute in numeric order. v1.8 and v1.9 can partially overlap (testing ca
 | 53. Contact & Support Page | v2.3 | 1/1 | **COMPLETE** | 2026-01-19 |
 | 54-57 | v2.4 | 4/4 | **SHIPPED** | 2026-01-23 |
 | 58. Metal Content Data Model | v2.5 | 1/1 | **COMPLETE** | 2026-01-24 |
-| 59. US Historical Coinage Rules | v2.5 | 0/? | Not started | - |
+| 59. US Historical Coinage Rules | v2.5 | 1/1 | **COMPLETE** | 2026-01-24 |
 | 60. Cert Lookup Metal Autofill | v2.5 | 0/? | Not started | - |
 | 61. Manual Metal Input UI | v2.5 | 0/? | Not started | - |
 | 62. Portfolio Metal Aggregation | v2.5 | 0/? | Not started | - |

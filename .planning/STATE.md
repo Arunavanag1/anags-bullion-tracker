@@ -2,12 +2,12 @@
 
 ## Current Position
 
-Phase: 58 of 62 (Metal Content Data Model)
+Phase: 59 of 62 (US Historical Coinage Rules Engine)
 Plan: 1 of 1 in current phase
 Status: Phase complete
-Last activity: 2026-01-24 - Completed 58-01-PLAN.md
+Last activity: 2026-01-24 - Completed 59-01-PLAN.md
 
-Progress: ██░░░░░░░░ 20% (1/5 phases in v2.5)
+Progress: ████░░░░░░ 40% (2/5 phases in v2.5)
 
 ## Shipped Milestones
 
@@ -22,9 +22,9 @@ Progress: ██░░░░░░░░ 20% (1/5 phases in v2.5)
 ## Session Continuity
 
 Last session: 2026-01-24
-Stopped at: Completed 58-01-PLAN.md
+Stopped at: Completed 59-01-PLAN.md
 Resume file: None
-Next: Plan Phase 59 (US Historical Coinage Rules Engine)
+Next: Plan Phase 60 (Cert Lookup Metal Autofill)
 
 ## Accumulated Context
 
@@ -36,6 +36,9 @@ Next: Plan Phase 59 (US Historical Coinage Rules Engine)
 - Float (0.0-1.0) for purity rather than percentage (Phase 58)
 - Nullable metal content fields for backward compatibility (Phase 58)
 - Separate utility file for metal calculations (Phase 58)
+- Check gold rules first for denominations containing $, dollar, eagle, gold (Phase 59)
+- CoinReference data takes precedence over rules engine for flexibility (Phase 59)
+- Use US Mint official specs for preciousMetalOz values (Phase 59)
 
 ### Key Decisions (v2.4)
 - 4 phases focused on security audit and hardening
