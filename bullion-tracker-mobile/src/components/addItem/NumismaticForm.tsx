@@ -10,6 +10,16 @@ import { CertScanner } from './CertScanner';
 import { lookupCertNumber, CertLookupResponse, searchCoins } from '../../lib/api';
 import type { Metal, GradingService, ProblemType, CoinReference } from '../../types';
 
+// US silver coin specifications (90% silver, pre-1965)
+const US_SILVER_SPECS: Record<string, { purity: number; weightOz: number }> = {
+  '10c': { purity: 90, weightOz: 0.07234 },
+  '25c': { purity: 90, weightOz: 0.18084 },
+  '50c': { purity: 90, weightOz: 0.36169 },
+  '$1': { purity: 90, weightOz: 0.77344 },
+};
+
+type Denomination = '10c' | '25c' | '50c' | '$1' | 'other';
+
 /**
  * NumismaticForm - Details form for numismatic (collectible coin) items
  *
@@ -62,6 +72,10 @@ export function NumismaticForm({ gradingService, onSubmit, loading, initialData,
   const [metalPurity, setMetalPurity] = useState(initialData?.metalPurity || '');
   const [metalWeightOz, setMetalWeightOz] = useState(initialData?.metalWeightOz || '');
   const [currentGradingService, setCurrentGradingService] = useState<GradingService>(gradingService);
+
+  // Denomination and country for auto-fill
+  const [denomination, setDenomination] = useState<Denomination>('other');
+  const [isUSCoin, setIsUSCoin] = useState(false);
 
   // Cert lookup state
   const [certLookupLoading, setCertLookupLoading] = useState(false);
@@ -172,6 +186,18 @@ export function NumismaticForm({ gradingService, onSubmit, loading, initialData,
     // For NGC, the ngcLookupUrl effect will set the manual lookup URL
   };
 
+  // Auto-fill metal content for US silver coins
+  useEffect(() => {
+    if (isUSCoin && denomination !== 'other') {
+      const specs = US_SILVER_SPECS[denomination];
+      if (specs) {
+        setMetalPurity(specs.purity.toString());
+        setMetalWeightOz(specs.weightOz.toString());
+        setNumismaticMetal('silver');
+      }
+    }
+  }, [isUSCoin, denomination]);
+
   // Update form when initialData changes (for editing)
   useEffect(() => {
     if (initialData) {
@@ -257,6 +283,9 @@ export function NumismaticForm({ gradingService, onSubmit, loading, initialData,
 
   const isRaw = gradingService === 'RAW';
 
+  // Check if we should show auto-filled values (US coin with known denomination)
+  const hasAutoFilledContent = isUSCoin && denomination !== 'other';
+
   return (
     <ScrollView style={styles.form} contentContainerStyle={styles.formContent}>
       <CoinSearchInput
@@ -285,33 +314,74 @@ export function NumismaticForm({ gradingService, onSubmit, loading, initialData,
         </View>
       )}
 
-      {/* Metal Content (Optional) - for RAW coins */}
+      {/* Metal Content - for RAW coins */}
       {isRaw && (
         <View style={styles.metalContentSection}>
-          <Text style={styles.label}>Metal Content (Optional)</Text>
-          <View style={styles.metalContentRow}>
-            <View style={styles.metalContentInput}>
-              <Input
-                label="Purity (%)"
-                value={metalPurity}
-                onChangeText={setMetalPurity}
-                placeholder="e.g., 90"
-                keyboardType="decimal-pad"
-              />
-            </View>
-            <View style={styles.metalContentInput}>
-              <Input
-                label="Weight (oz)"
-                value={metalWeightOz}
-                onChangeText={setMetalWeightOz}
-                placeholder="e.g., 0.7234"
-                keyboardType="decimal-pad"
-              />
-            </View>
+          <Text style={styles.label}>Metal Content</Text>
+
+          {/* US Coin Toggle */}
+          <View style={styles.usToggleRow}>
+            <Text style={styles.usToggleLabel}>US Silver Coin</Text>
+            <Switch
+              value={isUSCoin}
+              onValueChange={setIsUSCoin}
+            />
           </View>
-          <Text style={styles.metalContentHint}>
-            For calculating precious metal value (e.g., 90% silver = 90)
-          </Text>
+
+          {/* Denomination picker (only for US coins) */}
+          {isUSCoin && (
+            <View style={styles.denomSection}>
+              <Text style={styles.denomLabel}>Denomination</Text>
+              <View style={styles.denomButtons}>
+                {(['10c', '25c', '50c', '$1', 'other'] as Denomination[]).map((d) => (
+                  <TouchableOpacity
+                    key={d}
+                    style={[styles.denomButton, denomination === d && styles.denomButtonActive]}
+                    onPress={() => setDenomination(d)}
+                  >
+                    <Text style={[styles.denomButtonText, denomination === d && styles.denomButtonTextActive]}>
+                      {d === 'other' ? 'Other' : d}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+          )}
+
+          {/* Auto-filled message or manual input */}
+          {hasAutoFilledContent ? (
+            <View style={styles.autoDetectedContainer}>
+              <Text style={styles.autoDetectedText}>
+                90% silver, {US_SILVER_SPECS[denomination]?.weightOz} oz pure silver
+              </Text>
+            </View>
+          ) : (
+            <>
+              <View style={styles.metalContentRow}>
+                <View style={styles.metalContentInput}>
+                  <Input
+                    label="Purity (%)"
+                    value={metalPurity}
+                    onChangeText={setMetalPurity}
+                    placeholder="e.g., 90"
+                    keyboardType="decimal-pad"
+                  />
+                </View>
+                <View style={styles.metalContentInput}>
+                  <Input
+                    label="Weight (oz)"
+                    value={metalWeightOz}
+                    onChangeText={setMetalWeightOz}
+                    placeholder="e.g., 0.7234"
+                    keyboardType="decimal-pad"
+                  />
+                </View>
+              </View>
+              <Text style={styles.metalContentHint}>
+                Optional - for calculating precious metal value
+              </Text>
+            </>
+          )}
         </View>
       )}
 
@@ -765,5 +835,60 @@ const styles = StyleSheet.create({
     color: '#6B7280',
     marginTop: 4,
     fontStyle: 'italic',
+  },
+  usToggleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  usToggleLabel: {
+    fontSize: 14,
+    color: '#1F2937',
+  },
+  denomSection: {
+    marginBottom: 12,
+  },
+  denomLabel: {
+    fontSize: 12,
+    color: '#6B7280',
+    marginBottom: 8,
+  },
+  denomButtons: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  denomButton: {
+    flex: 1,
+    paddingVertical: 10,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 6,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+  },
+  denomButtonActive: {
+    backgroundColor: '#3B82F6',
+    borderColor: '#3B82F6',
+  },
+  denomButtonText: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: '#6B7280',
+  },
+  denomButtonTextActive: {
+    color: '#FFFFFF',
+  },
+  autoDetectedContainer: {
+    backgroundColor: '#ECFDF5',
+    padding: 12,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: '#A7F3D0',
+  },
+  autoDetectedText: {
+    fontSize: 13,
+    color: '#047857',
+    textAlign: 'center',
   },
 });

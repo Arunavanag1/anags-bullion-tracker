@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useGrades } from '../../hooks/useCoins';
 
@@ -60,11 +60,14 @@ export function GradePicker({ value, onChange, disabled, isEstimated }: GradePic
 
         {showSuggestions && suggestions.length > 0 && (
           <View style={styles.suggestionsContainer}>
-            <FlatList
-              data={suggestions}
-              keyExtractor={(item) => item.gradeCode}
-              renderItem={({ item, index }) => (
+            <ScrollView
+              style={styles.suggestionsList}
+              keyboardShouldPersistTaps="handled"
+              nestedScrollEnabled
+            >
+              {suggestions.map((item, index) => (
                 <TouchableOpacity
+                  key={item.gradeCode}
                   style={[styles.suggestionItem, index !== suggestions.length - 1 && styles.suggestionBorder]}
                   onPress={() => {
                     onChange(item.gradeCode);
@@ -74,11 +77,8 @@ export function GradePicker({ value, onChange, disabled, isEstimated }: GradePic
                   <Text style={styles.suggestionText}>{item.gradeCode}</Text>
                   <Text style={styles.suggestionCategory}>{item.gradeCategory}</Text>
                 </TouchableOpacity>
-              )}
-              style={styles.suggestionsList}
-              keyboardShouldPersistTaps="handled"
-              nestedScrollEnabled
-            />
+              ))}
+            </ScrollView>
           </View>
         )}
       </View>

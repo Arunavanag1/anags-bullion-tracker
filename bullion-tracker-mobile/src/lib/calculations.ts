@@ -2,10 +2,19 @@ import type { CollectionItem, PortfolioSummary, SpotPrices } from '../types';
 
 /**
  * Calculate the current melt value of an item
+ * - For bullion: weightOz × spotPrice × quantity
+ * - For numismatic: preciousMetalOz × spotPrice × quantity (if metal content exists)
  */
 export function calculateMeltValue(item: CollectionItem, spotPrice: number): number {
-  // weightOz is already pure weight, no purity calculation needed
-  return (item.weightOz || 0) * spotPrice * (item.quantity || 1);
+  const quantity = item.quantity || 1;
+
+  // For numismatic coins, use preciousMetalOz if available
+  if (item.category === 'NUMISMATIC' && item.preciousMetalOz) {
+    return item.preciousMetalOz * spotPrice * quantity;
+  }
+
+  // For bullion, weightOz is already pure weight
+  return (item.weightOz || 0) * spotPrice * quantity;
 }
 
 /**
