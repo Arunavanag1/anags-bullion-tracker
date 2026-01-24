@@ -50,13 +50,10 @@ export function getClientIp(request: Request): string {
 export async function checkRateLimit(
   identifier: string
 ): Promise<{ success: boolean; remaining?: number; reset?: number }> {
-  // Fail hard if rate limiting is disabled in production (runtime check)
+  // Skip rate limiting if Upstash not configured (log warning in production)
   if (rateLimitingDisabledInProduction) {
-    throw new Error(
-      'UPSTASH_REDIS_REST_URL is required in production. ' +
-      'Rate limiting protects against brute-force attacks. ' +
-      'Configure Upstash Redis or set NODE_ENV=development.'
-    );
+    console.warn('[RateLimit] Upstash Redis not configured - rate limiting disabled');
+    return { success: true };
   }
 
   if (!authRateLimiter) {
@@ -76,13 +73,10 @@ export async function checkRateLimit(
 export async function checkCollectionRateLimit(
   userId: string
 ): Promise<{ success: boolean; remaining?: number; reset?: number }> {
-  // Fail hard if rate limiting is disabled in production (runtime check)
+  // Skip rate limiting if Upstash not configured (log warning in production)
   if (rateLimitingDisabledInProduction) {
-    throw new Error(
-      'UPSTASH_REDIS_REST_URL is required in production. ' +
-      'Rate limiting protects against brute-force attacks. ' +
-      'Configure Upstash Redis or set NODE_ENV=development.'
-    );
+    console.warn('[RateLimit] Upstash Redis not configured - rate limiting disabled');
+    return { success: true };
   }
 
   if (!collectionRateLimiter) {

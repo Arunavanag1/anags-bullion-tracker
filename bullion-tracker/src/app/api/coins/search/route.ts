@@ -96,48 +96,28 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(coins);
     }
 
-    // Full-text search with relevance ranking for 3+ character queries
-    // Use raw SQL for tsvector queries (Prisma doesn't support tsvector natively)
-    const coins = await prisma.$queryRaw<CoinSearchResult[]>`
-      SELECT
-        id,
-        "pcgsNumber",
-        year,
-        "mintMark",
-        denomination,
-        series,
-        "fullName",
-        metal
-      FROM "CoinReference"
-      WHERE "searchVector" @@ plainto_tsquery('english', ${query})
-      ORDER BY ts_rank("searchVector", plainto_tsquery('english', ${query})) DESC
-      LIMIT ${limit}
-    `;
-
-    // If full-text search returns no results, fall back to LIKE
-    if (coins.length === 0) {
-      const fallbackCoins = await prisma.coinReference.findMany({
-        where: {
-          OR: [
-            { fullName: { contains: query, mode: 'insensitive' } },
-            { series: { contains: query, mode: 'insensitive' } },
-          ],
-        },
-        take: limit,
-        orderBy: [{ series: 'asc' }, { year: 'desc' }],
-        select: {
-          id: true,
-          pcgsNumber: true,
-          year: true,
-          mintMark: true,
-          denomination: true,
-          series: true,
-          fullName: true,
-          metal: true,
-        },
-      });
-      return NextResponse.json(fallbackCoins);
-    }
+    // Use LIKE search (searchVector column not available in production)
+    const coins = await prisma.coinReference.findMany({
+      where: {
+        OR: [
+          { fullName: { contains: query, mode: 'insensitive' } },
+          { series: { contains: query, mode: 'insensitive' } },
+          { denomination: { contains: query, mode: 'insensitive' } },
+        ],
+      },
+      take: limit,
+      orderBy: [{ series: 'asc' }, { year: 'desc' }],
+      select: {
+        id: true,
+        pcgsNumber: true,
+        year: true,
+        mintMark: true,
+        denomination: true,
+        series: true,
+        fullName: true,
+        metal: true,
+      },
+    });
 
     return NextResponse.json(coins);
   } catch (error) {
