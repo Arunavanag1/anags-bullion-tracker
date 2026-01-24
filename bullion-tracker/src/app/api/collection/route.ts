@@ -5,6 +5,7 @@ import { getUserId } from '@/lib/auth';
 import { validationError, notFoundError, rateLimitedError, handleApiError } from '@/lib/api-errors';
 import { checkCollectionRateLimit } from '@/lib/ratelimit';
 import { sanitizeString, validatePositiveNumber, validateEnum } from '@/lib/validation';
+import { detectUSCoinMetalContent } from '@/lib/us-coinage-rules';
 
 export const dynamic = 'force-dynamic';
 
@@ -184,6 +185,25 @@ export async function POST(request: NextRequest) {
         // Use provided metal, or fall back to coin reference metal
         finalMetal = metal || coinReference.metal || 'silver';
         finalWeightOz = coinReference.weightOz ? parseFloat(coinReference.weightOz.toString()) : null;
+
+        // Apply US historical coinage rules for metal content
+        // CoinReference fineness/weightOz takes precedence if present
+        if (coinReference.fineness && coinReference.weightOz) {
+          // Use coinReference data directly
+          const purity = parseFloat(coinReference.fineness.toString());
+          const weight = parseFloat(coinReference.weightOz.toString());
+          createData.metalPurity = purity;
+          createData.metalWeightOz = weight;
+          createData.preciousMetalOz = Math.round(purity * weight * 1000000) / 1000000;
+        } else {
+          // Fall back to US coinage rules detection
+          const metalContent = detectUSCoinMetalContent(coinReference.denomination, coinReference.year);
+          if (metalContent) {
+            createData.metalPurity = metalContent.metalPurity;
+            createData.metalWeightOz = metalContent.metalWeightOz;
+            createData.preciousMetalOz = metalContent.preciousMetalOz;
+          }
+        }
 
         // Build title: [Year] [Grading Service/RAW] [Grade] [Denomination] [Coin Name]
         // Example: "2025 PCGS MS65 $1 Morgan Dollar"
