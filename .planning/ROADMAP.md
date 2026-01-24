@@ -270,10 +270,10 @@ Plans:
 **Goal**: Calculate total precious metal weight across portfolio, display breakdown by metal type (gold oz, silver oz, platinum oz, etc.)
 **Depends on**: Phase 61
 **Research**: Unlikely (existing portfolio calculation patterns)
-**Plans**: TBD
+**Plans**: 1/1
 
 Plans:
-- [ ] 62-01: TBD
+- [ ] 62-01: API aggregation, web dashboard card, mobile calculations, mobile dashboard card
 
 ---
 
@@ -303,4 +303,4 @@ Phases execute in numeric order. v1.8 and v1.9 can partially overlap (testing ca
 | 59. US Historical Coinage Rules | v2.5 | 1/1 | **COMPLETE** | 2026-01-24 |
 | 60. Cert Lookup Metal Autofill | v2.5 | 1/1 | **COMPLETE** | 2026-01-24 |
 | 61. Manual Metal Input UI | v2.5 | 1/1 | **COMPLETE** | 2026-01-24 |
-| 62. Portfolio Metal Aggregation | v2.5 | 0/? | Not started | - |
+| 62. Portfolio Metal Aggregation | v2.5 | 0/1 | Planned | - |
