@@ -203,7 +203,29 @@ export function detectUSCoinMetalContent(
   denomination: string,
   year: number
 ): MetalContent | null {
-  // Check silver rules first (more common in collections)
+  const normalizedDenom = normalizeUSCoinDenomination(denomination);
+
+  // Check gold rules FIRST if denomination suggests gold coin
+  // Patterns: "$20", "20 Dollar", "gold", "eagle", "saint"
+  const looksLikeGold = /\$\d|\d+\s*dollar|gold|eagle|saint/i.test(denomination);
+
+  if (looksLikeGold) {
+    for (const rule of GOLD_COIN_RULES) {
+      if (
+        denominationMatches(denomination, rule) &&
+        year >= rule.yearRange.start &&
+        year <= rule.yearRange.end
+      ) {
+        return {
+          metalPurity: rule.purity,
+          metalWeightOz: rule.totalWeightOz,
+          preciousMetalOz: rule.preciousMetalOz,
+        };
+      }
+    }
+  }
+
+  // Check silver rules (most common denominations)
   for (const rule of SILVER_COIN_RULES) {
     if (
       denominationMatches(denomination, rule) &&
@@ -218,7 +240,7 @@ export function detectUSCoinMetalContent(
     }
   }
 
-  // Check gold rules
+  // Check gold rules (for any remaining gold denominations not caught above)
   for (const rule of GOLD_COIN_RULES) {
     if (
       denominationMatches(denomination, rule) &&
