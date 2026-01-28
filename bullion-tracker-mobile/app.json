@@ -42,7 +42,7 @@
       "favicon": "./assets/favicon.png"
     },
     "extra": {
-      "apiUrl": "https://bullion-tracker-plum.vercel.app",
+      "apiUrl": "http://10.0.0.146:3000",
       "metalPriceApiKey": "de370593eb772aeca103b27bb7c8c226",
       "eas": {
         "projectId": "434c39cc-3a97-4d3d-8553-b2882aa52a77"

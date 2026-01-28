@@ -25,7 +25,12 @@ interface MetalPriceAPIResponse {
  * This ensures we always have accurate historical data for calculating
  * the 24-hour price change percentage.
  *
- * Schedule: Every 8 hours (3 times daily) - configured in vercel.json
+ * Query params:
+ * - metals: comma-separated list of metals to fetch (gold,silver,platinum)
+ *   Defaults to all if not specified
+ *
+ * Schedule: Every hour (configured in vercel.json)
+ * ~720 API calls/month (24/day × 30 days)
  */
 export async function GET(request: NextRequest) {
   try {
@@ -49,10 +54,34 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Parse metals query parameter
+    const { searchParams } = new URL(request.url);
+    const metalsParam = searchParams.get('metals');
+    const requestedMetals = metalsParam
+      ? metalsParam.split(',').map(m => m.trim().toLowerCase())
+      : ['gold', 'silver', 'platinum'];
+
+    // Map metal names to API symbols
+    const metalToSymbol: Record<string, string> = {
+      gold: 'XAU',
+      silver: 'XAG',
+      platinum: 'XPT',
+    };
+
+    const validMetals = requestedMetals.filter(m => metalToSymbol[m]);
+    if (validMetals.length === 0) {
+      return NextResponse.json(
+        { success: false, error: 'No valid metals specified' },
+        { status: 400 }
+      );
+    }
+
+    const currencies = validMetals.map(m => metalToSymbol[m]).join(',');
+
     const startTime = Date.now();
 
     // Fetch current prices from Metal Price API
-    const url = `https://api.metalpriceapi.com/v1/latest?api_key=${apiKey}&base=USD&currencies=XAU,XAG,XPT`;
+    const url = `https://api.metalpriceapi.com/v1/latest?api_key=${apiKey}&base=USD&currencies=${currencies}`;
 
     const response = await fetch(url, {
       headers: { 'Accept': 'application/json' },
@@ -68,41 +97,40 @@ export async function GET(request: NextRequest) {
       throw new Error('Invalid response from Metal Price API');
     }
 
-    if (!data.rates.XAU || !data.rates.XAG || !data.rates.XPT) {
-      throw new Error('Missing metal rates in API response');
+    const now = new Date();
+    const prices: Record<string, number> = {};
+    const dbOperations = [];
+
+    // Process each requested metal
+    for (const metal of validMetals) {
+      const symbol = metalToSymbol[metal] as keyof typeof data.rates;
+      const rate = data.rates[symbol];
+
+      if (!rate) {
+        console.warn(`Missing rate for ${metal} (${symbol})`);
+        continue;
+      }
+
+      const priceOz = 1 / rate;
+      prices[metal] = Math.round(priceOz * 100) / 100;
+
+      dbOperations.push(
+        prisma.priceHistory.create({
+          data: {
+            metal,
+            priceOz,
+            timestamp: now,
+          },
+        })
+      );
     }
 
-    // Convert rates to USD per ounce
-    const goldPrice = 1 / data.rates.XAU;
-    const silverPrice = 1 / data.rates.XAG;
-    const platinumPrice = 1 / data.rates.XPT;
-
-    const now = new Date();
+    if (dbOperations.length === 0) {
+      throw new Error('No valid prices received from API');
+    }
 
     // Save to PriceHistory table
-    await prisma.$transaction([
-      prisma.priceHistory.create({
-        data: {
-          metal: 'gold',
-          priceOz: goldPrice,
-          timestamp: now,
-        },
-      }),
-      prisma.priceHistory.create({
-        data: {
-          metal: 'silver',
-          priceOz: silverPrice,
-          timestamp: now,
-        },
-      }),
-      prisma.priceHistory.create({
-        data: {
-          metal: 'platinum',
-          priceOz: platinumPrice,
-          timestamp: now,
-        },
-      }),
-    ]);
+    await prisma.$transaction(dbOperations);
 
     // Clean up old entries (keep only last 90 days to prevent DB bloat)
     const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000);
@@ -117,14 +145,11 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: {
-        prices: {
-          gold: Math.round(goldPrice * 100) / 100,
-          silver: Math.round(silverPrice * 100) / 100,
-          platinum: Math.round(platinumPrice * 100) / 100,
-        },
+        metals: validMetals,
+        prices,
         timestamp: now.toISOString(),
         cleanedUp: deleted.count,
-        message: 'Spot prices saved successfully',
+        message: `Spot prices saved for: ${validMetals.join(', ')}`,
         durationMs,
       },
     });
