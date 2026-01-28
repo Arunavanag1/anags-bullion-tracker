@@ -7,6 +7,7 @@ import { ChartContainer } from './ChartContainer';
 import { ChartTheme } from '../../lib/chartTheme';
 import { Colors } from '../../lib/colors';
 import { api } from '../../lib/api';
+import { useAuth } from '../../contexts/AuthContext';
 import type { HistoricalPoint } from '../../types';
 
 type TimeRange = '1W' | '1M' | '1Y' | '5Y';
@@ -30,6 +31,7 @@ interface PortfolioLineChartProps {
 }
 
 export function PortfolioLineChart({ currentPortfolioValue }: PortfolioLineChartProps) {
+  const { user } = useAuth();
   const [timeRange, setTimeRange] = useState<TimeRange>('1M');
   const [data, setData] = useState<ChartDataPoint[]>([]);
   const [loading, setLoading] = useState(true);
@@ -56,10 +58,18 @@ export function PortfolioLineChart({ currentPortfolioValue }: PortfolioLineChart
     : null;
 
   useEffect(() => {
-    loadData();
-  }, [timeRange]);
+    if (user) {
+      loadData();
+    } else {
+      setLoading(false);
+    }
+  }, [timeRange, user]);
 
   const loadData = async () => {
+    if (!user) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     setError(null);
     setActivePointIndex(null);

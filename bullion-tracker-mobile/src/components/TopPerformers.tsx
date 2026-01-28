@@ -4,6 +4,7 @@ import { Card } from './ui/Card';
 import { Colors } from '../lib/colors';
 import { api } from '../lib/api';
 import { useSpotPrices } from '../contexts/SpotPricesContext';
+import { useAuth } from '../contexts/AuthContext';
 
 interface MetalPerformance {
   metal: 'gold' | 'silver' | 'platinum';
@@ -52,14 +53,19 @@ const METAL_COLORS: Record<string, string> = {
 };
 
 export function TopPerformers() {
+  const { user } = useAuth();
   const { spotPrices } = useSpotPrices();
   const [metalData, setMetalData] = useState<MetalPerformanceResponse | null>(null);
   const [coinData, setCoinData] = useState<CoinPerformanceResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadData();
-  }, []);
+    if (user) {
+      loadData();
+    } else {
+      setLoading(false);
+    }
+  }, [user]);
 
   const loadData = async () => {
     try {

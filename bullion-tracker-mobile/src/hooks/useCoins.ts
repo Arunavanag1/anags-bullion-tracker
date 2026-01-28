@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { api } from '../lib/api';
+import { useAuth } from '../contexts/AuthContext';
 import type { CoinReference, ValidGrade, PriceGuideData, CollectionSummary } from '../types';
 
 /**
@@ -101,13 +102,19 @@ export function useGrades() {
 
 /**
  * Get collection summary
+ * Only fetches when user is authenticated
  */
 export function useCollectionSummary() {
+  const { user } = useAuth();
   const [data, setData] = useState<CollectionSummary | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  const refetch = async () => {
+  const refetch = useCallback(async () => {
+    if (!user) {
+      setIsLoading(false);
+      return;
+    }
     try {
       setIsLoading(true);
       const summary = await api.getCollectionSummary();
@@ -117,11 +124,11 @@ export function useCollectionSummary() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     refetch();
-  }, []);
+  }, [refetch]);
 
   return { data, isLoading, error, refetch };
 }

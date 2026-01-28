@@ -2,6 +2,7 @@ import * as SecureStore from 'expo-secure-store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Fuse from 'fuse.js';
 import Constants from 'expo-constants';
+import { getToken as getTokenFromStore } from './tokenStore';
 import type { CoinReference, ValidGrade, PriceGuideData, CollectionSummary, ItemCategory, GradingService, ProblemType, BookValueType, ValueHistoryEntry, ValuationBreakdown, HistoricalPoint, Metal } from '../types';
 
 // ===== CERT LOOKUP TYPES =====
@@ -64,6 +65,13 @@ export const API_URL = getApiUrl();
 const TOKEN_KEY = 'auth_token';
 
 async function getAuthToken(): Promise<string | null> {
+  // First check in-memory store (set immediately on login)
+  const memoryToken = getTokenFromStore();
+  if (memoryToken) {
+    return memoryToken;
+  }
+
+  // Fall back to SecureStore (for app restarts)
   try {
     return await SecureStore.getItemAsync(TOKEN_KEY);
   } catch (error) {

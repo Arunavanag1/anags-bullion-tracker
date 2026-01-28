@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import * as SecureStore from 'expo-secure-store';
 import { API_URL } from '../lib/api';
+import { setToken as setTokenStore, clearToken as clearTokenStore } from '../lib/tokenStore';
 
 /**
  * AuthContext - Mobile Authentication Provider
@@ -80,6 +81,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       ]) as { storedToken: string | null; storedUser: string | null };
 
       if (storedToken && storedUser) {
+        setTokenStore(storedToken); // Set in memory store for API access
         setToken(storedToken);
         setUser(JSON.parse(storedUser));
       }
@@ -108,7 +110,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       const data = await response.json();
 
-      // Store auth data
+      // Set token in memory store FIRST (immediate access for API calls)
+      setTokenStore(data.token);
+
+      // Then persist to SecureStore (for app restarts)
       await SecureStore.setItemAsync(TOKEN_KEY, data.token);
       await SecureStore.setItemAsync(USER_KEY, JSON.stringify(data.user));
 
@@ -145,6 +150,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function signOut() {
     try {
+      clearTokenStore(); // Clear in-memory token
       await SecureStore.deleteItemAsync(TOKEN_KEY);
       await SecureStore.deleteItemAsync(USER_KEY);
       setToken(null);

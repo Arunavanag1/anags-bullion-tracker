@@ -51,6 +51,12 @@ export function DashboardScreen({ navigation }: Props) {
   };
 
   const loadData = useCallback(async () => {
+    // Skip if not authenticated
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+
     try {
       const [itemsData, gainFormat, breakdown] = await Promise.all([
         api.getCollectionItems(),
@@ -97,7 +103,7 @@ export function DashboardScreen({ navigation }: Props) {
         setRefreshing(false);
       }
     }
-  }, [spotPrices]);
+  }, [spotPrices, user]);
 
   useEffect(() => {
     isMountedRef.current = true;
