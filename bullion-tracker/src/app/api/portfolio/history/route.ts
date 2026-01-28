@@ -3,6 +3,7 @@ import { getUserId } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import { generateDailyPrices } from '@/lib/historical-data';
 import { calculateCurrentMeltValue, calculateCurrentBookValue } from '@/lib/calculations';
+import { fetchSpotPrices } from '@/lib/prices';
 import type { CollectionItem } from '@/types';
 
 export const dynamic = 'force-dynamic';
@@ -135,15 +136,18 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Calculate portfolio values for each historical point
-    const portfolioHistory: HistoricalPoint[] = historicalPrices.map((pricePoint) => {
+    // Helper to calculate portfolio value for a price point
+    const calculatePortfolioForPrices = (
+      prices: { gold: number; silver: number; platinum: number },
+      timestamp: Date
+    ): HistoricalPoint => {
       let meltValue = 0;
       let bookValue = 0;
       let bullionValue = 0;
       let numismaticValue = 0;
 
       collection.forEach((item) => {
-        const spotPrice = pricePoint[item.metal];
+        const spotPrice = prices[item.metal];
         const itemMeltValue = calculateCurrentMeltValue(item, spotPrice);
         const itemBookValue = calculateCurrentBookValue(item, spotPrice);
 
@@ -158,8 +162,7 @@ export async function GET(request: NextRequest) {
         }
       });
 
-      const timestamp = pricePoint.timestamp.getTime();
-      const date = pricePoint.timestamp.toLocaleDateString('en-US', {
+      const date = timestamp.toLocaleDateString('en-US', {
         month: 'short',
         day: 'numeric',
         ...(days > 365 && { year: '2-digit' }),
@@ -171,10 +174,39 @@ export async function GET(request: NextRequest) {
         bookValue: Math.round(bookValue * 100) / 100,
         bullionValue: Math.round(bullionValue * 100) / 100,
         numismaticValue: Math.round(numismaticValue * 100) / 100,
-        totalValue: Math.round((bullionValue + numismaticValue) * 100) / 100,
-        timestamp,
+        totalValue: Math.round(bookValue * 100) / 100, // Use bookValue which includes premiums
+        timestamp: timestamp.getTime(),
       };
-    });
+    };
+
+    // Calculate portfolio values for each historical point
+    const portfolioHistory: HistoricalPoint[] = historicalPrices.map((pricePoint) =>
+      calculatePortfolioForPrices(pricePoint, pricePoint.timestamp)
+    );
+
+    // Add today's data point using current spot prices to ensure chart matches current value
+    try {
+      const currentSpotPrices = await fetchSpotPrices();
+      const today = new Date();
+      const lastHistoricalDate = historicalPrices[historicalPrices.length - 1]?.timestamp;
+
+      // Only add if today is after the last historical date
+      if (!lastHistoricalDate || today.getTime() - lastHistoricalDate.getTime() > 12 * 60 * 60 * 1000) {
+        const todayPoint = calculatePortfolioForPrices(
+          {
+            gold: currentSpotPrices.gold.pricePerOz,
+            silver: currentSpotPrices.silver.pricePerOz,
+            platinum: currentSpotPrices.platinum.pricePerOz,
+          },
+          today
+        );
+        todayPoint.date = 'Today';
+        portfolioHistory.push(todayPoint);
+      }
+    } catch (err) {
+      // If we can't get current prices, just use historical data
+      console.log('Could not fetch current spot prices for today point:', err);
+    }
 
     return NextResponse.json({ data: portfolioHistory });
   } catch (error) {

@@ -158,10 +158,6 @@ export function DashboardScreen({ navigation }: Props) {
               <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
                 <Text style={styles.settingsText}>Settings</Text>
               </TouchableOpacity>
-              <Text style={{ color: Colors.textSecondary }}>•</Text>
-              <TouchableOpacity onPress={handleSignOut}>
-                <Text style={styles.signOutText}>Sign Out</Text>
-              </TouchableOpacity>
             </View>
           </View>
           <TouchableOpacity
@@ -394,6 +390,13 @@ export function DashboardScreen({ navigation }: Props) {
           >
             <Text style={styles.footerLinkText}>Contact & Support</Text>
           </TouchableOpacity>
+          <Text style={styles.footerDivider}>•</Text>
+          <TouchableOpacity
+            onPress={handleSignOut}
+            style={styles.footerLinkButton}
+          >
+            <Text style={styles.footerLinkText}>Sign Out</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
 
@@ -458,11 +461,6 @@ const styles = StyleSheet.create({
   lastUpdated: {
     fontSize: 13,
     color: Colors.textSecondary,
-  },
-  signOutText: {
-    fontSize: 13,
-    color: Colors.textSecondary,
-    textDecorationLine: 'underline',
   },
   settingsText: {
     fontSize: 13,
