@@ -621,35 +621,39 @@ export async function fetchHistoricalPrices(
 
 /**
  * Save price snapshot to database for historical tracking
+ * Prevents duplicates by checking for recent entries (within 30 minutes)
  */
 export async function savePriceSnapshot(
   prices: SpotPricesResponse
 ): Promise<void> {
   const { prisma } = await import('./db');
 
-  await Promise.all([
-    prisma.priceHistory.create({
-      data: {
-        metal: 'gold',
-        priceOz: prices.gold.pricePerOz,
-        timestamp: prices.gold.lastUpdated,
+  const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
+  const metals = [
+    { metal: 'gold', price: prices.gold },
+    { metal: 'silver', price: prices.silver },
+    { metal: 'platinum', price: prices.platinum },
+  ];
+
+  for (const { metal, price } of metals) {
+    // Check for recent entry to prevent duplicates
+    const recentEntry = await prisma.priceHistory.findFirst({
+      where: {
+        metal,
+        timestamp: { gte: thirtyMinutesAgo },
       },
-    }),
-    prisma.priceHistory.create({
-      data: {
-        metal: 'silver',
-        priceOz: prices.silver.pricePerOz,
-        timestamp: prices.silver.lastUpdated,
-      },
-    }),
-    prisma.priceHistory.create({
-      data: {
-        metal: 'platinum',
-        priceOz: prices.platinum.pricePerOz,
-        timestamp: prices.platinum.lastUpdated,
-      },
-    }),
-  ]);
+    });
+
+    if (!recentEntry) {
+      await prisma.priceHistory.create({
+        data: {
+          metal,
+          priceOz: price.pricePerOz,
+          timestamp: price.lastUpdated,
+        },
+      });
+    }
+  }
 }
 
 /**

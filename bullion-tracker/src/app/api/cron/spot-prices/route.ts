@@ -99,7 +99,10 @@ export async function GET(request: NextRequest) {
 
     const now = new Date();
     const prices: Record<string, number> = {};
-    const dbOperations = [];
+    const savedMetals: string[] = [];
+
+    // Check for recent entries to prevent duplicates (within last 30 minutes)
+    const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
 
     // Process each requested metal
     for (const metal of validMetals) {
@@ -114,23 +117,34 @@ export async function GET(request: NextRequest) {
       const priceOz = 1 / rate;
       prices[metal] = Math.round(priceOz * 100) / 100;
 
-      dbOperations.push(
-        prisma.priceHistory.create({
-          data: {
-            metal,
-            priceOz,
-            timestamp: now,
-          },
-        })
-      );
+      // Check if we already have a recent entry for this metal
+      const recentEntry = await prisma.priceHistory.findFirst({
+        where: {
+          metal,
+          timestamp: { gte: thirtyMinutesAgo },
+        },
+        orderBy: { timestamp: 'desc' },
+      });
+
+      if (recentEntry) {
+        // Skip if we already have a recent entry
+        continue;
+      }
+
+      // Create new entry
+      await prisma.priceHistory.create({
+        data: {
+          metal,
+          priceOz,
+          timestamp: now,
+        },
+      });
+      savedMetals.push(metal);
     }
 
-    if (dbOperations.length === 0) {
+    if (Object.keys(prices).length === 0) {
       throw new Error('No valid prices received from API');
     }
-
-    // Save to PriceHistory table
-    await prisma.$transaction(dbOperations);
 
     // Clean up old entries (keep only last 90 days to prevent DB bloat)
     const ninetyDaysAgo = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000);
@@ -147,9 +161,13 @@ export async function GET(request: NextRequest) {
       data: {
         metals: validMetals,
         prices,
+        saved: savedMetals,
+        skipped: validMetals.filter(m => !savedMetals.includes(m)),
         timestamp: now.toISOString(),
         cleanedUp: deleted.count,
-        message: `Spot prices saved for: ${validMetals.join(', ')}`,
+        message: savedMetals.length > 0
+          ? `Spot prices saved for: ${savedMetals.join(', ')}`
+          : 'No new prices saved (recent entries exist)',
         durationMs,
       },
     });
