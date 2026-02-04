@@ -268,10 +268,10 @@ Plans:
 **Goal**: End-to-end walkthrough of both forms on iOS/Android, fix any remaining layout or keyboard issues discovered during testing
 **Depends on**: Phase 64
 **Research**: Unlikely (internal QA)
-**Plans**: TBD
+**Plans**: 1/1
 
 Plans:
-- [ ] 65-01: TBD (run /gsd:plan-phase 65 to break down)
+- [ ] 65-01: Combined Phase 63+64 human verification, fix any issues
 
 ---
 
@@ -300,4 +300,4 @@ Phases execute in numeric order. v1.8 and v1.9 can partially overlap (testing ca
 | 58-62 | v2.5 | 5/5 | **SHIPPED** | 2026-01-24 |
 | 63. Keyboard Management | v2.6 | 1/1 | **COMPLETE** | 2026-02-04 |
 | 64. Form Spacing & Layout | v2.6 | 1/1 | **COMPLETE** | 2026-02-04 |
-| 65. Form UX Verification | v2.6 | 0/? | Not started | - |
+| 65. Form UX Verification | v2.6 | 0/1 | Not started | - |
