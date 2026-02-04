@@ -287,7 +287,7 @@ export function NumismaticForm({ gradingService, onSubmit, loading, initialData,
   const hasAutoFilledContent = isUSCoin && denomination !== 'other';
 
   return (
-    <ScrollView style={styles.form} contentContainerStyle={styles.formContent}>
+    <ScrollView style={styles.form} contentContainerStyle={styles.formContent} keyboardDismissMode="interactive" keyboardShouldPersistTaps="handled">
       <CoinSearchInput
         onSelect={setSelectedCoin}
         selectedCoin={selectedCoin}
@@ -595,7 +595,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   formContent: {
-    paddingBottom: 40,
+    paddingBottom: 120,
   },
   section: {
     marginBottom: 20,

@@ -113,7 +113,7 @@ export function BullionForm({ onSubmit, loading, initialData, isEditing = false 
   };
 
   return (
-    <ScrollView style={styles.form} contentContainerStyle={styles.formContent}>
+    <ScrollView style={styles.form} contentContainerStyle={styles.formContent} keyboardDismissMode="interactive" keyboardShouldPersistTaps="handled">
       <Input
         label="Description"
         value={name}
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   formContent: {
-    paddingBottom: 40,
+    paddingBottom: 120,
   },
   section: {
     marginBottom: 20,

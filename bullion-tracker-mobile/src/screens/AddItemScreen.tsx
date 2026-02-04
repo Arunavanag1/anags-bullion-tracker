@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, Alert, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, Alert, StyleSheet, ActivityIndicator, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../App';
 import { Card } from '../components/ui/Card';
@@ -348,40 +348,48 @@ export function AddItemScreen({ navigation, route }: Props) {
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>{isEditing ? 'Edit Item' : 'Add Item'}</Text>
-        {(step !== 'category' || isEditing) && (
-          <TouchableOpacity onPress={handleBack} style={styles.backButton}>
-            <Text style={styles.backButtonText}>{isEditing ? '← Cancel' : '← Back'}</Text>
-          </TouchableOpacity>
-        )}
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>{isEditing ? 'Edit Item' : 'Add Item'}</Text>
+          {(step !== 'category' || isEditing) && (
+            <TouchableOpacity onPress={handleBack} style={styles.backButton}>
+              <Text style={styles.backButtonText}>{isEditing ? '← Cancel' : '← Back'}</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+
+        {renderStepIndicator()}
+
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={100}
+        >
+          <Card style={styles.card}>
+            {step === 'category' && !isEditing && <CategoryStep onSelect={handleCategorySelect} />}
+            {step === 'grading' && !isEditing && <GradingStep onSelect={handleGradingSelect} />}
+            {step === 'details' && category === 'BULLION' && (
+              <BullionForm
+                onSubmit={handleBullionSubmit}
+                loading={loading}
+                initialData={bullionInitialData}
+                isEditing={isEditing}
+              />
+            )}
+            {step === 'details' && category === 'NUMISMATIC' && gradingService && (
+              <NumismaticForm
+                gradingService={gradingService}
+                onSubmit={handleNumismaticSubmit}
+                loading={loading}
+                initialData={numismaticInitialData}
+                isEditing={isEditing}
+              />
+            )}
+          </Card>
+        </KeyboardAvoidingView>
       </View>
-
-      {renderStepIndicator()}
-
-      <Card style={styles.card}>
-        {step === 'category' && !isEditing && <CategoryStep onSelect={handleCategorySelect} />}
-        {step === 'grading' && !isEditing && <GradingStep onSelect={handleGradingSelect} />}
-        {step === 'details' && category === 'BULLION' && (
-          <BullionForm
-            onSubmit={handleBullionSubmit}
-            loading={loading}
-            initialData={bullionInitialData}
-            isEditing={isEditing}
-          />
-        )}
-        {step === 'details' && category === 'NUMISMATIC' && gradingService && (
-          <NumismaticForm
-            gradingService={gradingService}
-            onSubmit={handleNumismaticSubmit}
-            loading={loading}
-            initialData={numismaticInitialData}
-            isEditing={isEditing}
-          />
-        )}
-      </Card>
-    </View>
+    </TouchableWithoutFeedback>
   );
 }
 
