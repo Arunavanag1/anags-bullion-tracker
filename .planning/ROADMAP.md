@@ -25,7 +25,7 @@ None (standard web/mobile patterns)
 - :white_check_mark: **v2.3 App Store Legal** — Phases 52-53 (shipped 2026-01-19)
 - :white_check_mark: **v2.4 Security & Stability** — Phases 54-57 (shipped 2026-01-23)
 - :white_check_mark: **v2.5 Numismatic Metal Content** — Phases 58-62 (shipped 2026-01-24)
-- :construction: **v2.6 Mobile Form UX** — Phases 63-65 (in progress)
+- :white_check_mark: **v2.6 Mobile Form UX** — Phases 63-65 (shipped 2026-02-04)
 
 ## Phases
 
@@ -242,7 +242,7 @@ See [milestones/v2.5-ROADMAP.md](milestones/v2.5-ROADMAP.md) for full details.
 
 ---
 
-### :construction: v2.6 Mobile Form UX (In Progress)
+### :white_check_mark: v2.6 Mobile Form UX (Shipped 2026-02-04)
 
 **Milestone Goal:** Improve the mobile add coin/bullion form experience with better keyboard management, field spacing, and overall usability.
 
@@ -264,14 +264,14 @@ Plans:
 Plans:
 - [x] 64-01: Input marginBottom, section dividers & headers for both forms
 
-#### Phase 65: Form UX Verification
+#### Phase 65: Form UX Verification - COMPLETE
 **Goal**: End-to-end walkthrough of both forms on iOS/Android, fix any remaining layout or keyboard issues discovered during testing
 **Depends on**: Phase 64
 **Research**: Unlikely (internal QA)
 **Plans**: 1/1
 
 Plans:
-- [ ] 65-01: Combined Phase 63+64 human verification, fix any issues
+- [x] 65-01: Combined Phase 63+64 human verification, fix any issues
 
 ---
 
@@ -300,4 +300,4 @@ Phases execute in numeric order. v1.8 and v1.9 can partially overlap (testing ca
 | 58-62 | v2.5 | 5/5 | **SHIPPED** | 2026-01-24 |
 | 63. Keyboard Management | v2.6 | 1/1 | **COMPLETE** | 2026-02-04 |
 | 64. Form Spacing & Layout | v2.6 | 1/1 | **COMPLETE** | 2026-02-04 |
-| 65. Form UX Verification | v2.6 | 0/1 | Not started | - |
+| 65. Form UX Verification | v2.6 | 1/1 | **COMPLETE** | 2026-02-04 |
