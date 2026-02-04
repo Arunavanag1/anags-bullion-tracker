@@ -25,6 +25,7 @@ None (standard web/mobile patterns)
 - :white_check_mark: **v2.3 App Store Legal** — Phases 52-53 (shipped 2026-01-19)
 - :white_check_mark: **v2.4 Security & Stability** — Phases 54-57 (shipped 2026-01-23)
 - :white_check_mark: **v2.5 Numismatic Metal Content** — Phases 58-62 (shipped 2026-01-24)
+- :construction: **v2.6 Mobile Form UX** — Phases 63-65 (in progress)
 
 ## Phases
 
@@ -226,54 +227,51 @@ See [milestones/v2.4-ROADMAP.md](milestones/v2.4-ROADMAP.md) for full details.
 
 ---
 
-### :construction: v2.5 Numismatic Metal Content (In Progress)
+<details>
+<summary>:white_check_mark: v2.5 Numismatic Metal Content (Phases 58-62) — SHIPPED 2026-01-24</summary>
 
-**Milestone Goal:** Automatically capture and calculate metal content for numismatic coins through multiple methodologies - cert lookup autofill, US coinage historical rules, and manual input fallback.
+See [milestones/v2.5-ROADMAP.md](milestones/v2.5-ROADMAP.md) for full details.
 
-#### Phase 58: Metal Content Data Model - COMPLETE
-**Goal**: Add metal content fields to coin schema (metal type, purity %, weight in troy oz, calculated precious metal weight)
-**Depends on**: Phase 57
-**Research**: Unlikely (internal Prisma patterns)
-**Plans**: 1/1
+- [x] Phase 58: Metal Content Data Model (1/1 plan) — Schema fields, calculation utility, TypeScript types
+- [x] Phase 59: US Historical Coinage Rules Engine (1/1 plan) — Rules engine, API integration, 37 unit tests
+- [x] Phase 60: Cert Lookup Metal Autofill (1/1 plan) — API metal content fields, hook interface
+- [x] Phase 61: Manual Metal Input UI (1/1 plan) — Web RAW form inputs, mobile form inputs
+- [x] Phase 62: Portfolio Metal Aggregation (1/1 plan) — API aggregation, dashboard cards
 
-Plans:
-- [x] 58-01: Schema fields, calculation utility, TypeScript types
+</details>
 
-#### Phase 59: US Historical Coinage Rules Engine - COMPLETE
-**Goal**: Implement automatic metal detection for US coins: pre-1965 dimes/quarters/half dollars (90% silver), pre-1933 gold denominations ($2.50, $5, $10, $20 with known gold weights)
-**Depends on**: Phase 58
-**Research**: Completed (US Mint specifications documented)
-**Plans**: 1/1
+---
 
-Plans:
-- [x] 59-01: Rules engine utility, API integration, 37 unit tests
+### :construction: v2.6 Mobile Form UX (In Progress)
 
-#### Phase 60: Cert Lookup Metal Autofill - COMPLETE
-**Goal**: Extend PCGS/NGC cert lookup to populate metal content when available from certification data
-**Depends on**: Phase 59
-**Research**: Unlikely (existing cert lookup patterns)
-**Plans**: 1/1
+**Milestone Goal:** Improve the mobile add coin/bullion form experience with better keyboard management, field spacing, and overall usability.
+
+#### Phase 63: Keyboard Management
+**Goal**: Add KeyboardAvoidingView, tap-to-dismiss overlay, "Done" toolbar button above keyboard, and "Next" button to advance through fields sequentially
+**Depends on**: Phase 62
+**Research**: Unlikely (standard React Native patterns)
+**Plans**: TBD
 
 Plans:
-- [x] 60-01: API metal content fields, hook interface, integration tests
+- [ ] 63-01: TBD (run /gsd:plan-phase 63 to break down)
 
-#### Phase 61: Manual Metal Input UI - COMPLETE
-**Goal**: Add fallback UI for raw coins / ungraded coins - metal type selector, purity input, weight input with validation
-**Depends on**: Phase 60
-**Research**: Unlikely (internal form patterns)
-**Plans**: 1/1
-
-Plans:
-- [x] 61-01: API metal content fields, web RAW form inputs, mobile form inputs
-
-#### Phase 62: Portfolio Metal Aggregation - COMPLETE
-**Goal**: Calculate total precious metal weight across portfolio, display breakdown by metal type (gold oz, silver oz, platinum oz, etc.)
-**Depends on**: Phase 61
-**Research**: Unlikely (existing portfolio calculation patterns)
-**Plans**: 1/1
+#### Phase 64: Form Spacing & Layout
+**Goal**: Increase gaps between field groups, add section dividers, improve visual hierarchy, fix photo/notes section padding across both BullionForm and NumismaticForm
+**Depends on**: Phase 63
+**Research**: Unlikely (internal styling)
+**Plans**: TBD
 
 Plans:
-- [x] 62-01: API aggregation, web dashboard card, mobile calculations, mobile dashboard card
+- [ ] 64-01: TBD (run /gsd:plan-phase 64 to break down)
+
+#### Phase 65: Form UX Verification
+**Goal**: End-to-end walkthrough of both forms on iOS/Android, fix any remaining layout or keyboard issues discovered during testing
+**Depends on**: Phase 64
+**Research**: Unlikely (internal QA)
+**Plans**: TBD
+
+Plans:
+- [ ] 65-01: TBD (run /gsd:plan-phase 65 to break down)
 
 ---
 
@@ -299,8 +297,7 @@ Phases execute in numeric order. v1.8 and v1.9 can partially overlap (testing ca
 | 52. Privacy Policy Page | v2.3 | 1/1 | **COMPLETE** | 2026-01-19 |
 | 53. Contact & Support Page | v2.3 | 1/1 | **COMPLETE** | 2026-01-19 |
 | 54-57 | v2.4 | 4/4 | **SHIPPED** | 2026-01-23 |
-| 58. Metal Content Data Model | v2.5 | 1/1 | **COMPLETE** | 2026-01-24 |
-| 59. US Historical Coinage Rules | v2.5 | 1/1 | **COMPLETE** | 2026-01-24 |
-| 60. Cert Lookup Metal Autofill | v2.5 | 1/1 | **COMPLETE** | 2026-01-24 |
-| 61. Manual Metal Input UI | v2.5 | 1/1 | **COMPLETE** | 2026-01-24 |
-| 62. Portfolio Metal Aggregation | v2.5 | 1/1 | **COMPLETE** | 2026-01-24 |
+| 58-62 | v2.5 | 5/5 | **SHIPPED** | 2026-01-24 |
+| 63. Keyboard Management | v2.6 | 0/? | Not started | - |
+| 64. Form Spacing & Layout | v2.6 | 0/? | Not started | - |
+| 65. Form UX Verification | v2.6 | 0/? | Not started | - |
