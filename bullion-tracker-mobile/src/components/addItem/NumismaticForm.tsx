@@ -1,14 +1,17 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Switch, Image, StyleSheet, Alert, ActivityIndicator, Linking } from 'react-native';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, Switch, Image, StyleSheet, Alert, ActivityIndicator, Linking, TextInput, Keyboard } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
+import { FormToolbar } from '../ui/FormToolbar';
 import { CoinSearchInput } from '../numismatic/CoinSearchInput';
 import { GradePicker } from '../numismatic/GradePicker';
 import { PriceGuideDisplay } from '../numismatic/PriceGuideDisplay';
 import { CertScanner } from './CertScanner';
 import { lookupCertNumber, CertLookupResponse, searchCoins } from '../../lib/api';
 import type { Metal, GradingService, ProblemType, CoinReference } from '../../types';
+
+const NUMISMATIC_TOOLBAR_ID = 'numismatic-form-toolbar';
 
 // US silver coin specifications (90% silver, pre-1965)
 const US_SILVER_SPECS: Record<string, { purity: number; weightOz: number }> = {
@@ -76,6 +79,43 @@ export function NumismaticForm({ gradingService, onSubmit, loading, initialData,
   // Denomination and country for auto-fill
   const [denomination, setDenomination] = useState<Denomination>('other');
   const [isUSCoin, setIsUSCoin] = useState(false);
+
+  // Field refs for keyboard navigation (only standard TextInput-based fields)
+  // Complex components like CoinSearchInput, GradePicker, PriceGuideDisplay are skipped
+  const certNumberRef = useRef<TextInput>(null);
+  const metalPurityRef = useRef<TextInput>(null);
+  const metalWeightOzRef = useRef<TextInput>(null);
+  const purchasePriceRef = useRef<TextInput>(null);
+  const purchaseDateRef = useRef<TextInput>(null);
+  const notesRef = useRef<TextInput>(null);
+
+  const [activeFieldIndex, setActiveFieldIndex] = useState(0);
+
+  const isRaw = gradingService === 'RAW';
+
+  // Build field refs array based on grading service
+  // RAW: metalPurity(0), metalWeightOz(1), purchasePrice(2), purchaseDate(3), notes(4)
+  // Non-RAW: certNumber(0), purchasePrice(1), purchaseDate(2), notes(3)
+  const fieldRefs = useMemo(() => {
+    if (isRaw) {
+      return [metalPurityRef, metalWeightOzRef, purchasePriceRef, purchaseDateRef, notesRef];
+    }
+    return [certNumberRef, purchasePriceRef, purchaseDateRef, notesRef];
+  }, [isRaw]);
+
+  const focusField = (index: number) => {
+    if (index >= 0 && index < fieldRefs.length) {
+      fieldRefs[index].current?.focus();
+    }
+  };
+
+  const handleNextField = (currentIndex: number) => {
+    if (currentIndex < fieldRefs.length - 1) {
+      focusField(currentIndex + 1);
+    } else {
+      Keyboard.dismiss();
+    }
+  };
 
   // Cert lookup state
   const [certLookupLoading, setCertLookupLoading] = useState(false);
@@ -281,12 +321,11 @@ export function NumismaticForm({ gradingService, onSubmit, loading, initialData,
     });
   };
 
-  const isRaw = gradingService === 'RAW';
-
   // Check if we should show auto-filled values (US coin with known denomination)
   const hasAutoFilledContent = isUSCoin && denomination !== 'other';
 
   return (
+    <>
     <ScrollView style={styles.form} contentContainerStyle={styles.formContent} keyboardDismissMode="interactive" keyboardShouldPersistTaps="handled">
       <CoinSearchInput
         onSelect={setSelectedCoin}
@@ -360,20 +399,30 @@ export function NumismaticForm({ gradingService, onSubmit, loading, initialData,
               <View style={styles.metalContentRow}>
                 <View style={styles.metalContentInput}>
                   <Input
+                    ref={metalPurityRef}
                     label="Purity (%)"
                     value={metalPurity}
                     onChangeText={setMetalPurity}
                     placeholder="e.g., 90"
                     keyboardType="decimal-pad"
+                    inputAccessoryViewID={NUMISMATIC_TOOLBAR_ID}
+                    returnKeyType="next"
+                    onSubmitEditing={() => handleNextField(0)}
+                    onFocus={() => setActiveFieldIndex(0)}
                   />
                 </View>
                 <View style={styles.metalContentInput}>
                   <Input
+                    ref={metalWeightOzRef}
                     label="Weight (oz)"
                     value={metalWeightOz}
                     onChangeText={setMetalWeightOz}
                     placeholder="e.g., 0.7234"
                     keyboardType="decimal-pad"
+                    inputAccessoryViewID={NUMISMATIC_TOOLBAR_ID}
+                    returnKeyType="next"
+                    onSubmitEditing={() => handleNextField(1)}
+                    onFocus={() => setActiveFieldIndex(1)}
                   />
                 </View>
               </View>
@@ -390,11 +439,16 @@ export function NumismaticForm({ gradingService, onSubmit, loading, initialData,
           <View style={styles.certInputRow}>
             <View style={styles.certInputWrapper}>
               <Input
+                ref={certNumberRef}
                 label={currentGradingService === 'PCGS' ? 'Certification Number (Autofill)' : 'Certification Number'}
                 value={certNumber}
                 onChangeText={setCertNumber}
                 placeholder="e.g., 12345678"
                 keyboardType="number-pad"
+                inputAccessoryViewID={NUMISMATIC_TOOLBAR_ID}
+                returnKeyType="next"
+                onSubmitEditing={() => handleNextField(0)}
+                onFocus={() => setActiveFieldIndex(0)}
               />
             </View>
             {/* Scan button */}
@@ -518,26 +572,42 @@ export function NumismaticForm({ gradingService, onSubmit, loading, initialData,
       />
 
       <Input
+        ref={purchasePriceRef}
         label="Purchase Price ($)"
         value={purchasePrice}
         onChangeText={setPurchasePrice}
         keyboardType="decimal-pad"
         placeholder="What you paid"
+        inputAccessoryViewID={NUMISMATIC_TOOLBAR_ID}
+        returnKeyType="next"
+        onSubmitEditing={() => handleNextField(fieldRefs.indexOf(purchasePriceRef))}
+        onFocus={() => setActiveFieldIndex(fieldRefs.indexOf(purchasePriceRef))}
       />
 
       <Input
+        ref={purchaseDateRef}
         label="Purchase Date"
         value={purchaseDate}
         onChangeText={setPurchaseDate}
         placeholder="YYYY-MM-DD"
+        inputAccessoryViewID={NUMISMATIC_TOOLBAR_ID}
+        returnKeyType="next"
+        onSubmitEditing={() => handleNextField(fieldRefs.indexOf(purchaseDateRef))}
+        onFocus={() => setActiveFieldIndex(fieldRefs.indexOf(purchaseDateRef))}
       />
 
       <Input
+        ref={notesRef}
         label="Notes (Optional)"
         value={notes}
         onChangeText={setNotes}
         multiline
         placeholder="Add any notes..."
+        inputAccessoryViewID={NUMISMATIC_TOOLBAR_ID}
+        returnKeyType="done"
+        onSubmitEditing={() => Keyboard.dismiss()}
+        onFocus={() => setActiveFieldIndex(fieldRefs.indexOf(notesRef))}
+        blurOnSubmit
       />
 
       {/* Photo Section */}
@@ -587,6 +657,15 @@ export function NumismaticForm({ gradingService, onSubmit, loading, initialData,
         onScan={handleCertScan}
       />
     </ScrollView>
+    <FormToolbar
+      inputAccessoryViewID={NUMISMATIC_TOOLBAR_ID}
+      onPrevious={() => focusField(activeFieldIndex - 1)}
+      onNext={() => focusField(activeFieldIndex + 1)}
+      onDone={() => Keyboard.dismiss()}
+      hasPrevious={activeFieldIndex > 0}
+      hasNext={activeFieldIndex < fieldRefs.length - 1}
+    />
+    </>
   );
 }
 

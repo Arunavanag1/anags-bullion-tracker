@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, Alert } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, Image, StyleSheet, Alert, TextInput, Keyboard } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
+import { FormToolbar } from '../ui/FormToolbar';
 import type { Metal } from '../../types';
+
+const BULLION_TOOLBAR_ID = 'bullion-form-toolbar';
 
 /**
  * BullionForm - Details form for bullion items
@@ -41,6 +44,32 @@ export function BullionForm({ onSubmit, loading, initialData, isEditing = false 
   const [purchaseDate, setPurchaseDate] = useState(initialData?.purchaseDate || new Date().toISOString().split('T')[0]);
   const [notes, setNotes] = useState(initialData?.notes || '');
   const [images, setImages] = useState<string[]>(initialData?.images || []);
+
+  // Field refs for keyboard navigation
+  const nameRef = useRef<TextInput>(null);
+  const weightRef = useRef<TextInput>(null);
+  const quantityRef = useRef<TextInput>(null);
+  const purchasePriceRef = useRef<TextInput>(null);
+  const premiumRef = useRef<TextInput>(null);
+  const purchaseDateRef = useRef<TextInput>(null);
+  const notesRef = useRef<TextInput>(null);
+
+  const fieldRefs = [nameRef, weightRef, quantityRef, purchasePriceRef, premiumRef, purchaseDateRef, notesRef];
+  const [activeFieldIndex, setActiveFieldIndex] = useState(0);
+
+  const focusField = (index: number) => {
+    if (index >= 0 && index < fieldRefs.length) {
+      fieldRefs[index].current?.focus();
+    }
+  };
+
+  const handleNextField = (currentIndex: number) => {
+    if (currentIndex < fieldRefs.length - 1) {
+      focusField(currentIndex + 1);
+    } else {
+      Keyboard.dismiss();
+    }
+  };
 
   // Update form when initialData changes (for editing)
   useEffect(() => {
@@ -113,12 +142,18 @@ export function BullionForm({ onSubmit, loading, initialData, isEditing = false 
   };
 
   return (
+    <>
     <ScrollView style={styles.form} contentContainerStyle={styles.formContent} keyboardDismissMode="interactive" keyboardShouldPersistTaps="handled">
       <Input
+        ref={nameRef}
         label="Description"
         value={name}
         onChangeText={setName}
         placeholder="e.g., APMEX 10 oz Silver Bar"
+        inputAccessoryViewID={BULLION_TOOLBAR_ID}
+        returnKeyType="next"
+        onSubmitEditing={() => handleNextField(0)}
+        onFocus={() => setActiveFieldIndex(0)}
       />
 
       <View style={styles.section}>
@@ -139,50 +174,81 @@ export function BullionForm({ onSubmit, loading, initialData, isEditing = false 
       </View>
 
       <Input
+        ref={weightRef}
         label="Weight (oz)"
         value={weight}
         onChangeText={setWeight}
         keyboardType="decimal-pad"
         placeholder="e.g., 10"
+        inputAccessoryViewID={BULLION_TOOLBAR_ID}
+        returnKeyType="next"
+        onSubmitEditing={() => handleNextField(1)}
+        onFocus={() => setActiveFieldIndex(1)}
       />
 
       <Input
+        ref={quantityRef}
         label="Quantity"
         value={quantity}
         onChangeText={setQuantity}
         keyboardType="number-pad"
         placeholder="1"
+        inputAccessoryViewID={BULLION_TOOLBAR_ID}
+        returnKeyType="next"
+        onSubmitEditing={() => handleNextField(2)}
+        onFocus={() => setActiveFieldIndex(2)}
       />
 
       <Input
+        ref={purchasePriceRef}
         label="Purchase Price ($)"
         value={purchasePrice}
         onChangeText={setPurchasePrice}
         keyboardType="decimal-pad"
         placeholder="0.00"
+        inputAccessoryViewID={BULLION_TOOLBAR_ID}
+        returnKeyType="next"
+        onSubmitEditing={() => handleNextField(3)}
+        onFocus={() => setActiveFieldIndex(3)}
       />
 
       <Input
+        ref={premiumRef}
         label="Premium/Discount %"
         value={premiumPercent}
         onChangeText={setPremiumPercent}
         keyboardType="decimal-pad"
         placeholder="0 (e.g., 5 for 5% premium, -3 for 3% discount)"
+        inputAccessoryViewID={BULLION_TOOLBAR_ID}
+        returnKeyType="next"
+        onSubmitEditing={() => handleNextField(4)}
+        onFocus={() => setActiveFieldIndex(4)}
       />
 
       <Input
+        ref={purchaseDateRef}
         label="Purchase Date"
         value={purchaseDate}
         onChangeText={setPurchaseDate}
         placeholder="YYYY-MM-DD"
+        inputAccessoryViewID={BULLION_TOOLBAR_ID}
+        returnKeyType="next"
+        onSubmitEditing={() => handleNextField(5)}
+        onFocus={() => setActiveFieldIndex(5)}
       />
 
       <Input
+        ref={notesRef}
         label="Notes (Optional)"
         value={notes}
         onChangeText={setNotes}
         multiline
         placeholder="Add any notes..."
+        inputAccessoryViewID={BULLION_TOOLBAR_ID}
+        returnKeyType="done"
+        onSubmitEditing={() => Keyboard.dismiss()}
+        onFocus={() => setActiveFieldIndex(6)}
+        blurOnSubmit
       />
 
       {/* Photo Section */}
@@ -225,6 +291,15 @@ export function BullionForm({ onSubmit, loading, initialData, isEditing = false 
         </Button>
       </View>
     </ScrollView>
+    <FormToolbar
+      inputAccessoryViewID={BULLION_TOOLBAR_ID}
+      onPrevious={() => focusField(activeFieldIndex - 1)}
+      onNext={() => focusField(activeFieldIndex + 1)}
+      onDone={() => Keyboard.dismiss()}
+      hasPrevious={activeFieldIndex > 0}
+      hasNext={activeFieldIndex < fieldRefs.length - 1}
+    />
+    </>
   );
 }
 
