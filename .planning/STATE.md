@@ -2,15 +2,16 @@
 
 ## Current Position
 
-Phase: 65 of 65 (Form UX Verification)
-Plan: 1 of 1 in current phase
-Status: Phase complete — v2.6 milestone done
-Last activity: 2026-02-04 - Phase 65 complete
+Phase: No active milestone
+Plan: Not started
+Status: v2.6 milestone shipped — planning next milestone
+Last activity: 2026-02-04 - v2.6 milestone archived
 
-Progress: ██████████ 100% (3/3 phases in v2.6)
+Progress: Ready for next milestone
 
 ## Shipped Milestones
 
+- **v2.6 Mobile Form UX** (2026-02-04) - Keyboard management, form spacing, section dividers, human-verified
 - **v2.5 Numismatic Metal Content** (2026-01-24) - Metal content data model, US coinage rules, cert autofill, manual input, portfolio aggregation
 - **v2.4 Security & Stability** (2026-01-23) - Auth audit, data security, account deletion, mobile hardening
 - **v2.3 App Store Legal** (2026-01-19) - Privacy policy, contact page, Vercel deployment

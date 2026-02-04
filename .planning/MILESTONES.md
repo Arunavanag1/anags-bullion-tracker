@@ -1,5 +1,31 @@
 # Project Milestones: Bullion Collection Tracker
 
+## v2.6 Mobile Form UX (Shipped: 2026-02-04)
+
+**Delivered:** Improved mobile add coin/bullion form experience with keyboard management, field spacing, and section dividers.
+
+**Phases completed:** 63-65 (3 plans total)
+
+**Key accomplishments:**
+- KeyboardAvoidingView with tap-to-dismiss and interactive scroll dismiss
+- iOS FormToolbar with Previous/Next/Done buttons via InputAccessoryView
+- Sequential field navigation with ref chains for both BullionForm and NumismaticForm
+- Default 16px Input spacing with StyleSheet.create migration
+- Section dividers and headers for BullionForm (3 sections) and NumismaticForm (4 sections)
+- Human-verified on iOS simulator — approved with no fixes needed
+
+**Stats:**
+- 5 code files modified
+- +438 / -90 lines of TypeScript
+- 3 phases, 3 plans, 7 tasks
+- 2 days (2026-02-03 → 2026-02-04)
+
+**Git range:** `feat(63-01)` → `docs(65-01)`
+
+**What's next:** TBD — next milestone planning
+
+---
+
 ## v2.2 Cert Number Autofill (Shipped: 2026-01-18)
 
 **Delivered:** PCGS/NGC cert number autofill on web and mobile with camera-based barcode scanning.

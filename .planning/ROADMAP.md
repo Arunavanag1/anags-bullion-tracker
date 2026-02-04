@@ -242,36 +242,16 @@ See [milestones/v2.5-ROADMAP.md](milestones/v2.5-ROADMAP.md) for full details.
 
 ---
 
-### :white_check_mark: v2.6 Mobile Form UX (Shipped 2026-02-04)
+<details>
+<summary>:white_check_mark: v2.6 Mobile Form UX (Phases 63-65) — SHIPPED 2026-02-04</summary>
 
-**Milestone Goal:** Improve the mobile add coin/bullion form experience with better keyboard management, field spacing, and overall usability.
+See [milestones/v2.6-ROADMAP.md](milestones/v2.6-ROADMAP.md) for full details.
 
-#### Phase 63: Keyboard Management - COMPLETE
-**Goal**: Add KeyboardAvoidingView, tap-to-dismiss overlay, "Done" toolbar button above keyboard, and "Next" button to advance through fields sequentially
-**Depends on**: Phase 62
-**Research**: Unlikely (standard React Native patterns)
-**Plans**: 1/1
+- [x] Phase 63: Keyboard Management (1/1 plan) — KeyboardAvoidingView, FormToolbar, field refs
+- [x] Phase 64: Form Spacing & Layout (1/1 plan) — Input marginBottom, section dividers & headers
+- [x] Phase 65: Form UX Verification (1/1 plan) — Human verification approved, no fixes
 
-Plans:
-- [x] 63-01: KeyboardAvoidingView, tap-to-dismiss, FormToolbar with Previous/Next/Done
-
-#### Phase 64: Form Spacing & Layout - COMPLETE
-**Goal**: Increase gaps between field groups, add section dividers, improve visual hierarchy, fix photo/notes section padding across both BullionForm and NumismaticForm
-**Depends on**: Phase 63
-**Research**: Unlikely (internal styling)
-**Plans**: 1/1
-
-Plans:
-- [x] 64-01: Input marginBottom, section dividers & headers for both forms
-
-#### Phase 65: Form UX Verification - COMPLETE
-**Goal**: End-to-end walkthrough of both forms on iOS/Android, fix any remaining layout or keyboard issues discovered during testing
-**Depends on**: Phase 64
-**Research**: Unlikely (internal QA)
-**Plans**: 1/1
-
-Plans:
-- [x] 65-01: Combined Phase 63+64 human verification, fix any issues
+</details>
 
 ---
 
