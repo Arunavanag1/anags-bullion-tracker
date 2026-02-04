@@ -144,6 +144,9 @@ export function BullionForm({ onSubmit, loading, initialData, isEditing = false 
   return (
     <>
     <ScrollView style={styles.form} contentContainerStyle={styles.formContent} keyboardDismissMode="interactive" keyboardShouldPersistTaps="handled">
+      {/* Section 1: Item Details */}
+      <Text style={styles.sectionHeader}>ITEM DETAILS</Text>
+
       <Input
         ref={nameRef}
         label="Description"
@@ -199,6 +202,10 @@ export function BullionForm({ onSubmit, loading, initialData, isEditing = false 
         onFocus={() => setActiveFieldIndex(2)}
       />
 
+      {/* Section 2: Purchase Info */}
+      <View style={styles.sectionDivider} />
+      <Text style={styles.sectionHeader}>PURCHASE INFO</Text>
+
       <Input
         ref={purchasePriceRef}
         label="Purchase Price ($)"
@@ -237,6 +244,10 @@ export function BullionForm({ onSubmit, loading, initialData, isEditing = false 
         onFocus={() => setActiveFieldIndex(5)}
       />
 
+      {/* Section 3: Notes & Photos */}
+      <View style={styles.sectionDivider} />
+      <Text style={styles.sectionHeader}>NOTES & PHOTOS</Text>
+
       <Input
         ref={notesRef}
         label="Notes (Optional)"
@@ -251,7 +262,6 @@ export function BullionForm({ onSubmit, loading, initialData, isEditing = false 
         blurOnSubmit
       />
 
-      {/* Photo Section */}
       <View style={styles.section}>
         <Text style={styles.label}>Photos</Text>
         <View style={styles.imageGrid}>
@@ -309,6 +319,20 @@ const styles = StyleSheet.create({
   },
   formContent: {
     paddingBottom: 120,
+  },
+  sectionHeader: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#9CA3AF',
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+    marginBottom: 12,
+    marginTop: 4,
+  },
+  sectionDivider: {
+    height: 1,
+    backgroundColor: '#E5E7EB',
+    marginVertical: 20,
   },
   section: {
     marginBottom: 20,
