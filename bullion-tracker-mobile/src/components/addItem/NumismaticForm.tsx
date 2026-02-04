@@ -327,6 +327,9 @@ export function NumismaticForm({ gradingService, onSubmit, loading, initialData,
   return (
     <>
     <ScrollView style={styles.form} contentContainerStyle={styles.formContent} keyboardDismissMode="interactive" keyboardShouldPersistTaps="handled">
+      {/* Section 1: Coin Identification */}
+      <Text style={styles.sectionHeader}>COIN IDENTIFICATION</Text>
+
       <CoinSearchInput
         onSelect={setSelectedCoin}
         selectedCoin={selectedCoin}
@@ -432,6 +435,21 @@ export function NumismaticForm({ gradingService, onSubmit, loading, initialData,
             </>
           )}
         </View>
+      )}
+
+      {/* Section 2: Certification & Grading (non-RAW) or Grading (RAW) */}
+      {!isRaw && (
+        <>
+          <View style={styles.sectionDivider} />
+          <Text style={styles.sectionHeader}>CERTIFICATION & GRADING</Text>
+        </>
+      )}
+
+      {isRaw && (
+        <>
+          <View style={styles.sectionDivider} />
+          <Text style={styles.sectionHeader}>GRADING</Text>
+        </>
       )}
 
       {!isRaw && (
@@ -562,6 +580,10 @@ export function NumismaticForm({ gradingService, onSubmit, loading, initialData,
         </View>
       )}
 
+      {/* Section 3: Valuation */}
+      <View style={styles.sectionDivider} />
+      <Text style={styles.sectionHeader}>VALUATION</Text>
+
       <PriceGuideDisplay
         coinId={selectedCoin?.id}
         grade={grade}
@@ -583,6 +605,10 @@ export function NumismaticForm({ gradingService, onSubmit, loading, initialData,
         onSubmitEditing={() => handleNextField(fieldRefs.indexOf(purchasePriceRef))}
         onFocus={() => setActiveFieldIndex(fieldRefs.indexOf(purchasePriceRef))}
       />
+
+      {/* Section 4: Notes & Photos */}
+      <View style={styles.sectionDivider} />
+      <Text style={styles.sectionHeader}>NOTES & PHOTOS</Text>
 
       <Input
         ref={purchaseDateRef}
@@ -610,7 +636,6 @@ export function NumismaticForm({ gradingService, onSubmit, loading, initialData,
         blurOnSubmit
       />
 
-      {/* Photo Section */}
       <View style={styles.section}>
         <Text style={styles.label}>Photos</Text>
         <View style={styles.imageGrid}>
@@ -675,6 +700,20 @@ const styles = StyleSheet.create({
   },
   formContent: {
     paddingBottom: 120,
+  },
+  sectionHeader: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#9CA3AF',
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+    marginBottom: 12,
+    marginTop: 4,
+  },
+  sectionDivider: {
+    height: 1,
+    backgroundColor: '#E5E7EB',
+    marginVertical: 20,
   },
   section: {
     marginBottom: 20,
