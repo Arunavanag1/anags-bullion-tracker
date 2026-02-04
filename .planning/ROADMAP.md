@@ -246,23 +246,23 @@ See [milestones/v2.5-ROADMAP.md](milestones/v2.5-ROADMAP.md) for full details.
 
 **Milestone Goal:** Improve the mobile add coin/bullion form experience with better keyboard management, field spacing, and overall usability.
 
-#### Phase 63: Keyboard Management
+#### Phase 63: Keyboard Management - COMPLETE
 **Goal**: Add KeyboardAvoidingView, tap-to-dismiss overlay, "Done" toolbar button above keyboard, and "Next" button to advance through fields sequentially
 **Depends on**: Phase 62
 **Research**: Unlikely (standard React Native patterns)
-**Plans**: TBD
+**Plans**: 1/1
 
 Plans:
-- [ ] 63-01: TBD (run /gsd:plan-phase 63 to break down)
+- [x] 63-01: KeyboardAvoidingView, tap-to-dismiss, FormToolbar with Previous/Next/Done
 
 #### Phase 64: Form Spacing & Layout
 **Goal**: Increase gaps between field groups, add section dividers, improve visual hierarchy, fix photo/notes section padding across both BullionForm and NumismaticForm
 **Depends on**: Phase 63
 **Research**: Unlikely (internal styling)
-**Plans**: TBD
+**Plans**: 1/1
 
 Plans:
-- [ ] 64-01: TBD (run /gsd:plan-phase 64 to break down)
+- [ ] 64-01: Input marginBottom, section dividers & headers for both forms
 
 #### Phase 65: Form UX Verification
 **Goal**: End-to-end walkthrough of both forms on iOS/Android, fix any remaining layout or keyboard issues discovered during testing
@@ -298,6 +298,6 @@ Phases execute in numeric order. v1.8 and v1.9 can partially overlap (testing ca
 | 53. Contact & Support Page | v2.3 | 1/1 | **COMPLETE** | 2026-01-19 |
 | 54-57 | v2.4 | 4/4 | **SHIPPED** | 2026-01-23 |
 | 58-62 | v2.5 | 5/5 | **SHIPPED** | 2026-01-24 |
-| 63. Keyboard Management | v2.6 | 0/? | Not started | - |
-| 64. Form Spacing & Layout | v2.6 | 0/? | Not started | - |
+| 63. Keyboard Management | v2.6 | 1/1 | **COMPLETE** | 2026-02-04 |
+| 64. Form Spacing & Layout | v2.6 | 0/1 | Not started | - |
 | 65. Form UX Verification | v2.6 | 0/? | Not started | - |
