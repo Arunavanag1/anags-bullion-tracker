@@ -208,19 +208,4 @@ export function getMetalEmoji(metal: Metal): string {
   }
 }
 
-/**
- * Get metal color for Tailwind classes
- */
-export function getMetalColor(metal: Metal): string {
-  switch (metal) {
-    case 'gold':
-      return '#D4AF37';
-    case 'silver':
-      return '#C0C0C0';
-    case 'platinum':
-      return '#E5E4E2';
-    default:
-      return '#6B7280';
-  }
-}
 

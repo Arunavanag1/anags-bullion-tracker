@@ -45,20 +45,6 @@ export function validationError(
 }
 
 /**
- * Create an unauthorized error (401)
- */
-export function unauthorizedError(message = 'Unauthorized'): ApiError {
-  return new ApiError(message, ApiErrorType.UNAUTHORIZED, 401);
-}
-
-/**
- * Create a forbidden error (403)
- */
-export function forbiddenError(message = 'Forbidden'): ApiError {
-  return new ApiError(message, ApiErrorType.FORBIDDEN, 403);
-}
-
-/**
  * Create a not found error (404)
  */
 export function notFoundError(message = 'Not found'): ApiError {
@@ -76,13 +62,6 @@ export function rateLimitedError(retryAfter?: number): ApiError {
     retryAfter ? { retryAfter } : undefined
   );
   return error;
-}
-
-/**
- * Create an internal server error (500)
- */
-export function internalError(message = 'Internal server error'): ApiError {
-  return new ApiError(message, ApiErrorType.INTERNAL, 500);
 }
 
 /**

@@ -216,34 +216,3 @@ export function validateEnum(
   return { valid: true };
 }
 
-/**
- * Validate that a string is a valid CUID
- *
- * CUIDs are 25 characters, start with 'c', and contain lowercase letters and numbers
- *
- * @param id - The ID to validate
- * @returns Validation result
- */
-export function validateId(id: unknown): ValidationResult {
-  if (id === null || id === undefined) {
-    return { valid: false, reason: 'ID is required' };
-  }
-
-  const strId = String(id);
-
-  // CUID format: starts with 'c', 25 characters total
-  if (strId.length !== 25) {
-    return { valid: false, reason: 'Invalid ID format' };
-  }
-
-  if (!strId.startsWith('c')) {
-    return { valid: false, reason: 'Invalid ID format' };
-  }
-
-  // Should contain only lowercase letters and numbers after the 'c'
-  if (!/^c[a-z0-9]{24}$/.test(strId)) {
-    return { valid: false, reason: 'Invalid ID format' };
-  }
-
-  return { valid: true };
-}

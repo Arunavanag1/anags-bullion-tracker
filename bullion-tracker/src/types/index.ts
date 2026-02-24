@@ -122,19 +122,6 @@ export interface BulkWeightFormData {
   customBookValue?: number;
 }
 
-// Portfolio Snapshot Interface
-export interface PortfolioSnapshot {
-  timestamp: Date;
-  totalMeltValue: number;
-  totalBookValue: number;
-  goldOz: number;
-  silverOz: number;
-  platinumOz: number;
-  goldPrice: number;
-  silverPrice: number;
-  platinumPrice: number;
-}
-
 // Collection Summary Interface
 export interface CollectionSummary {
   totalItems: number;
@@ -158,20 +145,6 @@ export interface CalculatedValues {
   isTracking: boolean; // Whether book value is tracking spot
 }
 
-// Image Upload Interface
-export interface ImageData {
-  id: string;
-  url: string;
-  order: number;
-}
-
-// API Response Types
-export interface ApiResponse<T> {
-  success: boolean;
-  data?: T;
-  error?: string;
-}
-
 export interface SpotPricesResponse {
   gold: SpotPrice;
   silver: SpotPrice;
@@ -180,13 +153,6 @@ export interface SpotPricesResponse {
 
 // Time Range for Charts
 export type TimeRange = '24H' | '1W' | '1M' | '1Y' | '5Y' | 'custom';
-
-// Chart Data Point
-export interface ChartDataPoint {
-  timestamp: number;
-  meltValue: number;
-  bookValue: number;
-}
 
 // Value History Entry for tracking item value changes over time
 export interface ValueHistoryEntry {
@@ -216,15 +182,3 @@ export interface ValuationBreakdown {
   lastSyncDate: string | null;  // From most recent ItemValueHistory
 }
 
-// Pagination Types
-export interface PaginationMeta {
-  hasMore: boolean;
-  nextCursor: string | null;
-  limit: number;
-}
-
-export interface PaginatedResponse<T> {
-  success: true;
-  data: T[];
-  pagination: PaginationMeta;
-}

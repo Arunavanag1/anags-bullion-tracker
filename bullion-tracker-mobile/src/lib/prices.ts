@@ -18,29 +18,24 @@ interface CachedPrices {
  */
 export async function fetchSpotPrices(_apiKey?: string): Promise<SpotPrices> {
   try {
-    // DEBUG: Skip cache to force fresh fetch
-    console.log('[PRICES] Skipping cache, forcing fresh fetch');
     // Check cache first (short duration since backend handles main caching)
-    // const cached = await getCachedPrices();
-    // if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
-    //   return cached.prices;
-    // }
+    const cached = await getCachedPrices();
+    if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+      return cached.prices;
+    }
 
-    // DEBUG: Skip error delay check
     // Check if we recently had an API error
-    // const lastError = await getLastErrorTimestamp();
-    // if (lastError && Date.now() - lastError < ERROR_RETRY_DELAY) {
-    //   if (cached) {
-    //     return cached.prices;
-    //   }
-    //   return getFallbackPrices();
-    // }
+    const lastError = await getLastErrorTimestamp();
+    if (lastError && Date.now() - lastError < ERROR_RETRY_DELAY) {
+      if (cached) {
+        return cached.prices;
+      }
+      return getFallbackPrices();
+    }
 
     // Fetch from backend API (handles Metal Price API and caching)
     const apiUrl = Constants.expoConfig?.extra?.apiUrl || 'https://bullion-tracker-plum.vercel.app';
-    console.log('[PRICES] Fetching from:', `${apiUrl}/api/prices`);
     const response = await fetch(`${apiUrl}/api/prices`);
-    console.log('[PRICES] Response status:', response.status);
 
     if (!response.ok) {
       throw new Error(`Backend API returned ${response.status}`);

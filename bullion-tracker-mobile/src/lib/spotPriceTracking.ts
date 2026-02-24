@@ -89,29 +89,6 @@ export async function get24hAgoSpotPrices(): Promise<{ gold: number; silver: num
   }
 }
 
-/**
- * Calculate daily spot price changes
- */
-export async function calculateDailySpotChanges(currentPrices: SpotPrices): Promise<{
-  gold: { change: number; percent: number };
-  silver: { change: number; percent: number };
-  platinum: { change: number; percent: number };
-} | null> {
-  const yesterdayPrices = await get24hAgoSpotPrices();
-  if (!yesterdayPrices) return null;
-
-  const calcChange = (current: number, yesterday: number) => ({
-    change: current - yesterday,
-    percent: yesterday > 0 ? ((current - yesterday) / yesterday) * 100 : 0,
-  });
-
-  return {
-    gold: calcChange(currentPrices.gold, yesterdayPrices.gold),
-    silver: calcChange(currentPrices.silver, yesterdayPrices.silver),
-    platinum: calcChange(currentPrices.platinum, yesterdayPrices.platinum),
-  };
-}
-
 async function getSpotPriceHistory(): Promise<SpotPriceSnapshot[]> {
   try {
     const data = await AsyncStorage.getItem(SPOT_PRICE_HISTORY_KEY);

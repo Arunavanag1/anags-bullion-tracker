@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { View, Text, ScrollView, RefreshControl, TouchableOpacity, Alert, StyleSheet, Platform, StatusBar, Linking } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../App';
 import { useAuth } from '../contexts/AuthContext';
@@ -437,13 +436,6 @@ const styles = StyleSheet.create({
   statusBarSpacer: {
     height: 44, // Standard iOS status bar height
     backgroundColor: Colors.bannerGradientStart,
-  },
-  spotBanner: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
   },
   scrollView: {
     flex: 1,
